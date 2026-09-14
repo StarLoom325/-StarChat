@@ -1,0 +1,3304 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>StarChat | StarLoom</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#070812;
+    --panel:#0d1020;
+    --panel2:#11152a;
+    --panel3:#171c35;
+    --border:rgba(255,255,255,.08);
+    --text:#f5f7ff;
+    --muted:#8f97b7;
+    --purple:#7c5cff;
+    --purple2:#9a7cff;
+    --cyan:#21d4fd;
+    --green:#3ddc97;
+    --danger:#ff5c7a;
+    --shadow:0 20px 60px rgba(0,0,0,.45);
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 10% 10%,rgba(124,92,255,.15),transparent 30%),
+        radial-gradient(circle at 90% 90%,rgba(33,212,253,.10),transparent 30%),
+        var(--bg);
+    color:var(--text);
+    font-family:
+        Tahoma,
+        Arial,
+        sans-serif;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    border:0;
+    cursor:pointer;
+}
+
+.app{
+    width:100%;
+    height:100%;
+    display:flex;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    width:350px;
+    min-width:350px;
+    height:100%;
+    background:rgba(13,16,32,.96);
+    border-left:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    z-index:20;
+    backdrop-filter:blur(25px);
+}
+
+.sidebar-header{
+    padding:18px;
+    border-bottom:1px solid var(--border);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.logo{
+    width:48px;
+    height:48px;
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    font-size:24px;
+    background:
+        linear-gradient(135deg,var(--purple),var(--cyan));
+    box-shadow:
+        0 0 25px rgba(124,92,255,.35);
+}
+
+.brand-text strong{
+    display:block;
+    font-size:19px;
+}
+
+.brand-text span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+.search{
+    position:relative;
+}
+
+.search input{
+    width:100%;
+    height:44px;
+    padding:0 45px 0 14px;
+    border:1px solid var(--border);
+    border-radius:13px;
+    background:rgba(255,255,255,.04);
+    color:white;
+    outline:none;
+}
+
+.search input:focus{
+    border-color:rgba(124,92,255,.7);
+}
+
+.search-icon{
+    position:absolute;
+    right:14px;
+    top:11px;
+    color:var(--muted);
+}
+
+/* ================= CREATE BUTTONS ================= */
+
+.create-buttons{
+    display:flex;
+    gap:8px;
+    padding:12px 14px;
+    border-bottom:1px solid var(--border);
+}
+
+.create-btn{
+    flex:1;
+    min-height:43px;
+    border-radius:12px;
+    color:white;
+    font-weight:bold;
+    background:linear-gradient(
+        135deg,
+        rgba(124,92,255,.9),
+        rgba(33,212,253,.7)
+    );
+    box-shadow:0 8px 25px rgba(124,92,255,.15);
+    transition:.2s;
+}
+
+.create-btn:hover{
+    transform:translateY(-1px);
+}
+
+/* ================= LIST ================= */
+
+.list{
+    flex:1;
+    overflow-y:auto;
+    padding:8px;
+}
+
+.list-title{
+    padding:10px 10px 7px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    padding:11px;
+    margin-bottom:4px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:.2s;
+    text-align:right;
+}
+
+.item:hover{
+    background:rgba(255,255,255,.045);
+}
+
+.item.active{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(124,92,255,.22),
+            rgba(33,212,253,.08)
+        );
+}
+
+.avatar{
+    width:48px;
+    height:48px;
+    flex-shrink:0;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    overflow:hidden;
+    background:
+        linear-gradient(135deg,var(--purple),var(--cyan));
+    color:white;
+    font-weight:bold;
+    font-size:17px;
+}
+
+.avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.item-info{
+    min-width:0;
+    flex:1;
+}
+
+.item-name{
+    font-weight:bold;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.item-sub{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:12px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.type-badge{
+    font-size:10px;
+    color:#b9c0dc;
+    border:1px solid var(--border);
+    padding:3px 6px;
+    border-radius:7px;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    flex:1;
+    min-width:0;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    background:
+        radial-gradient(circle at 50% 20%,rgba(124,92,255,.06),transparent 40%);
+}
+
+.chat-header{
+    min-height:74px;
+    padding:12px 18px;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:rgba(7,8,18,.65);
+    backdrop-filter:blur(20px);
+}
+
+.mobile-menu{
+    display:none;
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    background:rgba(255,255,255,.06);
+    color:white;
+}
+
+.header-info{
+    flex:1;
+    min-width:0;
+}
+
+.header-name{
+    font-weight:bold;
+    font-size:17px;
+}
+
+.header-status{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:12px;
+}
+
+.header-actions{
+    display:flex;
+    gap:7px;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+    border-radius:11px;
+    color:white;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--border);
+}
+
+.icon-btn:hover{
+    background:rgba(124,92,255,.15);
+}
+
+/* ================= MESSAGES ================= */
+
+.messages{
+    flex:1;
+    overflow-y:auto;
+    padding:25px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.empty{
+    margin:auto;
+    max-width:420px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.empty-icon{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.message-row{
+    display:flex;
+}
+
+.message-row.mine{
+    justify-content:flex-start;
+}
+
+.message-row.other{
+    justify-content:flex-end;
+}
+
+.message{
+    max-width:min(70%,650px);
+    padding:11px 14px;
+    border-radius:17px;
+    line-height:1.65;
+    word-break:break-word;
+}
+
+.message-row.mine .message{
+    background:
+        linear-gradient(135deg,
+        rgba(124,92,255,.85),
+        rgba(96,67,215,.85));
+    border-bottom-right-radius:5px;
+}
+
+.message-row.other .message{
+    background:var(--panel3);
+    border:1px solid var(--border);
+    border-bottom-left-radius:5px;
+}
+
+.message-meta{
+    display:flex;
+    justify-content:flex-end;
+    gap:7px;
+    margin-top:5px;
+    font-size:10px;
+    color:rgba(255,255,255,.58);
+}
+
+/* ================= COMPOSER ================= */
+
+.composer{
+    padding:13px 17px;
+    border-top:1px solid var(--border);
+    background:rgba(13,16,32,.85);
+}
+
+.composer-inner{
+    display:flex;
+    gap:9px;
+    align-items:flex-end;
+}
+
+.composer textarea{
+    flex:1;
+    min-height:46px;
+    max-height:140px;
+    resize:none;
+    border:1px solid var(--border);
+    outline:none;
+    border-radius:15px;
+    background:rgba(255,255,255,.045);
+    color:white;
+    padding:12px 14px;
+}
+
+.composer textarea:focus{
+    border-color:rgba(124,92,255,.7);
+}
+
+.send-btn{
+    width:48px;
+    height:46px;
+    border-radius:14px;
+    color:white;
+    background:linear-gradient(135deg,var(--purple),var(--cyan));
+    font-size:19px;
+}
+
+/* ================= PROFILE ================= */
+
+.profile-bar{
+    padding:12px 15px;
+    border-top:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.profile-bar .avatar{
+    width:39px;
+    height:39px;
+    font-size:14px;
+}
+
+.profile-info{
+    flex:1;
+    min-width:0;
+}
+
+.profile-info strong{
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.profile-info span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.lock-btn{
+    width:38px;
+    height:38px;
+    border-radius:10px;
+    color:white;
+    background:rgba(255,255,255,.05);
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(10px);
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(500px,100%);
+    max-height:90vh;
+    overflow-y:auto;
+    border:1px solid var(--border);
+    border-radius:24px;
+    background:
+        linear-gradient(145deg,
+        rgba(20,24,48,.98),
+        rgba(10,12,26,.98));
+    box-shadow:var(--shadow);
+    padding:22px;
+}
+
+.modal-title{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:5px;
+}
+
+.modal-subtitle{
+    color:var(--muted);
+    font-size:12px;
+    margin-bottom:20px;
+}
+
+.form-group{
+    margin-bottom:14px;
+}
+
+.form-group label{
+    display:block;
+    color:#c9cde0;
+    font-size:12px;
+    margin-bottom:7px;
+}
+
+.form-input{
+    width:100%;
+    height:46px;
+    padding:0 13px;
+    border-radius:13px;
+    border:1px solid var(--border);
+    outline:none;
+    background:rgba(255,255,255,.045);
+    color:white;
+}
+
+.form-input:focus{
+    border-color:rgba(124,92,255,.8);
+}
+
+.form-textarea{
+    width:100%;
+    min-height:90px;
+    resize:vertical;
+    padding:12px;
+    border-radius:13px;
+    border:1px solid var(--border);
+    outline:none;
+    background:rgba(255,255,255,.045);
+    color:white;
+}
+
+.modal-actions{
+    display:flex;
+    gap:9px;
+    margin-top:18px;
+}
+
+.modal-btn{
+    flex:1;
+    min-height:45px;
+    border-radius:13px;
+    font-weight:bold;
+}
+
+.cancel{
+    color:white;
+    background:rgba(255,255,255,.06);
+}
+
+.primary{
+    color:white;
+    background:linear-gradient(135deg,var(--purple),var(--cyan));
+}
+
+/* ================= MEMBERS ================= */
+
+.member-search{
+    display:flex;
+    gap:8px;
+}
+
+.member-search input{
+    flex:1;
+}
+
+.member-results{
+    margin-top:10px;
+    max-height:230px;
+    overflow-y:auto;
+}
+
+.member-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:9px;
+    border-radius:12px;
+}
+
+.member-row:hover{
+    background:rgba(255,255,255,.04);
+}
+
+.member-row .avatar{
+    width:39px;
+    height:39px;
+}
+
+.member-row-info{
+    flex:1;
+    min-width:0;
+}
+
+.member-row-info strong{
+    display:block;
+}
+
+.member-row-info span{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.add-member{
+    width:35px;
+    height:35px;
+    border-radius:9px;
+    color:white;
+    background:rgba(124,92,255,.2);
+}
+
+/* ================= TOAST ================= */
+
+.toast-container{
+    position:fixed;
+    z-index:999;
+    left:20px;
+    bottom:20px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.toast{
+    min-width:260px;
+    max-width:380px;
+    padding:13px 15px;
+    border-radius:13px;
+    background:#151a30;
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
+    animation:toastIn .25s ease;
+    font-size:13px;
+}
+
+.toast.success{
+    border-color:rgba(61,220,151,.4);
+}
+
+.toast.error{
+    border-color:rgba(255,92,122,.4);
+}
+
+@keyframes toastIn{
+    from{
+        transform:translateY(15px);
+        opacity:0;
+    }
+    to{
+        transform:translateY(0);
+        opacity:1;
+    }
+}
+
+/* ================= RESPONSIVE ================= */
+
+@media(max-width:850px){
+
+    .sidebar{
+        position:fixed;
+        right:0;
+        top:0;
+        bottom:0;
+        transform:translateX(100%);
+        transition:.25s;
+        box-shadow:var(--shadow);
+    }
+
+    .sidebar.open{
+        transform:translateX(0);
+    }
+
+    .mobile-menu{
+        display:block;
+    }
+
+    .message{
+        max-width:84%;
+    }
+
+    .messages{
+        padding:15px;
+    }
+}
+
+@media(max-width:500px){
+
+    .sidebar{
+        width:100%;
+        min-width:100%;
+    }
+
+    .header-actions .icon-btn:nth-child(2){
+        display:none;
+    }
+
+    .chat-header{
+        padding:10px;
+    }
+
+    .composer{
+        padding:9px;
+    }
+
+    .modal{
+        padding:10px;
+    }
+
+    .modal-box{
+        border-radius:19px;
+        padding:18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="sidebar-header">
+
+            <div class="brand">
+                <div class="logo">✦</div>
+
+                <div class="brand-text">
+                    <strong>StarChat</strong>
+                    <span>by StarLoom</span>
+                </div>
+            </div>
+
+            <div class="search">
+                <span class="search-icon">⌕</span>
+
+                <input
+                    id="searchInput"
+                    type="text"
+                    placeholder="جستجوی کاربر، گروه یا کانال..."
+                    autocomplete="off"
+                >
+            </div>
+
+        </div>
+
+        <div class="create-buttons">
+
+            <button
+                class="create-btn"
+                id="createGroupBtn"
+            >
+                👥 گروه
+            </button>
+
+            <button
+                class="create-btn"
+                id="createChannelBtn"
+            >
+                📢 کانال
+            </button>
+
+        </div>
+
+        <div class="list" id="chatList">
+
+            <div class="list-title">
+                گفتگوها
+            </div>
+
+            <div id="items"></div>
+
+        </div>
+
+        <div class="profile-bar">
+
+            <div class="avatar" id="myAvatar">
+                S
+            </div>
+
+            <div class="profile-info">
+                <strong id="myName">StarLoom</strong>
+                <span id="myUsername">@user</span>
+            </div>
+
+            <button
+                class="lock-btn"
+                id="lockBtn"
+                title="قفل StarChat"
+            >
+                🔒
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+        <header class="chat-header">
+
+            <button
+                class="mobile-menu"
+                id="mobileMenu"
+            >
+                ☰
+            </button>
+
+            <div
+                class="avatar"
+                id="chatAvatar"
+                style="width:45px;height:45px"
+            >
+                ✦
+            </div>
+
+            <div class="header-info">
+
+                <div
+                    class="header-name"
+                    id="chatName"
+                >
+                    StarChat
+                </div>
+
+                <div
+                    class="header-status"
+                    id="chatStatus"
+                >
+                    یک گفتگو را انتخاب کنید
+                </div>
+
+            </div>
+
+            <div class="header-actions">
+
+                <button
+                    class="icon-btn"
+                    id="addMembersBtn"
+                    title="اعضا"
+                    style="display:none"
+                >
+                    👤
+                </button>
+
+                <button
+                    class="icon-btn"
+                    id="infoBtn"
+                    title="اطلاعات"
+                >
+                    ⓘ
+                </button>
+
+            </div>
+
+        </header>
+
+
+        <section
+            class="messages"
+            id="messages"
+        >
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    ✦
+                </div>
+
+                <h2>به StarChat خوش آمدی</h2>
+
+                <p style="margin-top:10px">
+                    یک کاربر، گروه یا کانال را انتخاب کن
+                    یا یک گروه جدید بساز.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <div
+            class="composer"
+            id="composer"
+            style="display:none"
+        >
+
+            <div class="composer-inner">
+
+                <textarea
+                    id="messageInput"
+                    placeholder="پیام بنویس..."
+                    rows="1"
+                ></textarea>
+
+                <button
+                    class="send-btn"
+                    id="sendBtn"
+                >
+                    ➤
+                </button>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<!-- ================= CREATE GROUP MODAL ================= -->
+
+<div
+    class="modal"
+    id="groupModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-title">
+            👥 ساخت گروه
+        </div>
+
+        <div class="modal-subtitle">
+            یک گروه جدید برای گفتگو با دوستانت بساز.
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                نام گروه
+            </label>
+
+            <input
+                class="form-input"
+                id="groupName"
+                maxlength="80"
+                placeholder="مثلاً StarLoom Gamers"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                توضیحات
+            </label>
+
+            <textarea
+                class="form-textarea"
+                id="groupDescription"
+                maxlength="500"
+                placeholder="توضیحات گروه..."
+            ></textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                لینک/آدرس تصویر گروه
+            </label>
+
+            <input
+                class="form-input"
+                id="groupAvatar"
+                placeholder="https://..."
+            >
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn cancel"
+                onclick="closeModal('groupModal')"
+            >
+                انصراف
+            </button>
+
+            <button
+                class="modal-btn primary"
+                id="saveGroupBtn"
+            >
+                ساخت گروه
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= CREATE CHANNEL MODAL ================= -->
+
+<div
+    class="modal"
+    id="channelModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-title">
+            📢 ساخت کانال
+        </div>
+
+        <div class="modal-subtitle">
+            یک کانال برای انتشار محتوا بساز.
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                نام کانال
+            </label>
+
+            <input
+                class="form-input"
+                id="channelName"
+                maxlength="80"
+                placeholder="مثلاً StarLoom News"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                توضیحات
+            </label>
+
+            <textarea
+                class="form-textarea"
+                id="channelDescription"
+                maxlength="500"
+                placeholder="توضیحات کانال..."
+            ></textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>
+                لینک/آدرس تصویر کانال
+            </label>
+
+            <input
+                class="form-input"
+                id="channelAvatar"
+                placeholder="https://..."
+            >
+
+        </div>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn cancel"
+                onclick="closeModal('channelModal')"
+            >
+                انصراف
+            </button>
+
+            <button
+                class="modal-btn primary"
+                id="saveChannelBtn"
+            >
+                ساخت کانال
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= MEMBERS MODAL ================= -->
+
+<div
+    class="modal"
+    id="membersModal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-title">
+            👥 افزودن اعضا
+        </div>
+
+        <div class="modal-subtitle">
+            کاربران StarChat را جستجو و اضافه کن.
+        </div>
+
+        <div class="member-search">
+
+            <input
+                class="form-input"
+                id="memberSearchInput"
+                placeholder="نام یا username..."
+            >
+
+        </div>
+
+        <div
+            class="member-results"
+            id="memberResults"
+        ></div>
+
+        <div class="modal-actions">
+
+            <button
+                class="modal-btn cancel"
+                onclick="closeModal('membersModal')"
+            >
+                بستن
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div
+    class="toast-container"
+    id="toastContainer"
+></div>
+
+
+<script>
+/* =========================================================
+   STARCHAT
+   SUPABASE CONFIG
+========================================================= */
+
+const SUPABASE_URL = "https://txstexjrypiowndavrtr.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_6WqGjT0eriWi9JcJWRsVvg_J358WuUz";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+            auth:{
+                persistSession:true,
+                autoRefreshToken:true,
+                detectSessionInUrl:true
+            }
+        }
+    );
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let session = null;
+let me = null;
+
+let selected = null;
+
+let profiles = [];
+let groups = [];
+let channels = [];
+
+let realtimeChannel = null;
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const items =
+    document.getElementById("items");
+
+const messages =
+    document.getElementById("messages");
+
+const composer =
+    document.getElementById("composer");
+
+const messageInput =
+    document.getElementById("messageInput");
+
+const sendBtn =
+    document.getElementById("sendBtn");
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const sidebar =
+    document.getElementById("sidebar");
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+function toast(
+    text,
+    type="success"
+){
+
+    const box =
+        document.createElement("div");
+
+    box.className =
+        "toast " + type;
+
+    box.textContent =
+        text;
+
+    document
+        .getElementById("toastContainer")
+        .appendChild(box);
+
+    setTimeout(()=>{
+        box.remove();
+    },3500);
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+function avatarHTML(
+    name,
+    avatar,
+    className="avatar"
+){
+
+    if(avatar){
+
+        return `
+            <div class="${className}">
+                <img
+                    src="${escapeHTML(avatar)}"
+                    alt=""
+                    onerror="this.style.display='none'"
+                >
+            </div>
+        `;
+    }
+
+    const first =
+        String(name || "?")
+        .trim()
+        .charAt(0)
+        .toUpperCase();
+
+    return `
+        <div class="${className}">
+            ${escapeHTML(first)}
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   TIME
+========================================================= */
+
+function formatTime(date){
+
+    try{
+
+        return new Intl.DateTimeFormat(
+            "fa-IR",
+            {
+                hour:"2-digit",
+                minute:"2-digit"
+            }
+        ).format(new Date(date));
+
+    }catch{
+
+        return "";
+    }
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+async function init(){
+
+    const result =
+        await supabaseClient.auth.getSession();
+
+    session =
+        result.data.session;
+
+    if(!session){
+
+        location.href =
+            "index.html";
+
+        return;
+    }
+
+    await loadMe();
+
+    await loadEverything();
+
+    setupRealtime();
+
+}
+
+
+/* =========================================================
+   LOAD MY PROFILE
+========================================================= */
+
+async function loadMe(){
+
+    const result =
+        await supabaseClient
+            .from("profiles")
+            .select("*")
+            .eq("id",session.user.id)
+            .maybeSingle();
+
+    if(result.error){
+
+        console.error(result.error);
+
+        toast(
+            "خطا در دریافت پروفایل",
+            "error"
+        );
+
+        return;
+    }
+
+    me = result.data;
+
+    if(!me){
+
+        const username =
+            (
+                session.user.user_metadata?.username ||
+                "user_" +
+                session.user.id
+                    .replaceAll("-","")
+                    .slice(0,8)
+            ).toLowerCase();
+
+        const displayName =
+            session.user.user_metadata?.display_name ||
+            "کاربر";
+
+        const insert =
+            await supabaseClient
+                .from("profiles")
+                .insert({
+                    id:session.user.id,
+                    username,
+                    display_name:displayName,
+                    avatar:"",
+                    bio:""
+                })
+                .select()
+                .single();
+
+        if(insert.error){
+
+            toast(
+                "پروفایل ساخته نشد: " +
+                insert.error.message,
+                "error"
+            );
+
+            return;
+        }
+
+        me = insert.data;
+    }
+
+    document.getElementById("myName")
+        .textContent =
+        me.display_name || "کاربر";
+
+    document.getElementById("myUsername")
+        .textContent =
+        "@" + (me.username || "user");
+
+    document.getElementById("myAvatar")
+        .innerHTML =
+        me.avatar
+        ? `<img src="${escapeHTML(me.avatar)}" alt="">`
+        : escapeHTML(
+            (me.display_name || "S")
+                .charAt(0)
+                .toUpperCase()
+        );
+}
+
+
+/* =========================================================
+   LOAD EVERYTHING
+========================================================= */
+
+async function loadEverything(){
+
+    await Promise.all([
+        loadProfiles(),
+        loadGroups(),
+        loadChannels()
+    ]);
+
+    renderList();
+}
+
+
+/* =========================================================
+   LOAD USERS
+========================================================= */
+
+async function loadProfiles(){
+
+    const result =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                display_name,
+                username,
+                avatar,
+                bio
+            `)
+            .neq("id",session.user.id)
+            .order("display_name");
+
+    if(result.error){
+
+        console.error(result.error);
+
+        toast(
+            "خطا در دریافت کاربران",
+            "error"
+        );
+
+        return;
+    }
+
+    profiles =
+        result.data || [];
+}
+
+
+/* =========================================================
+   LOAD GROUPS
+========================================================= */
+
+async function loadGroups(){
+
+    const result =
+        await supabaseClient
+            .from("groups")
+            .select(`
+                id,
+                name,
+                avatar,
+                description,
+                owner_id,
+                created_at
+            `)
+            .order("created_at",{ascending:false});
+
+    if(result.error){
+
+        console.error(result.error);
+
+        groups = [];
+
+        return;
+    }
+
+    groups =
+        result.data || [];
+}
+
+
+/* =========================================================
+   LOAD CHANNELS
+========================================================= */
+
+async function loadChannels(){
+
+    const result =
+        await supabaseClient
+            .from("channels")
+            .select(`
+                id,
+                name,
+                avatar,
+                description,
+                owner_id,
+                created_at
+            `)
+            .order("created_at",{ascending:false});
+
+    if(result.error){
+
+        console.error(result.error);
+
+        channels = [];
+
+        return;
+    }
+
+    channels =
+        result.data || [];
+}
+
+
+/* =========================================================
+   RENDER SIDEBAR
+========================================================= */
+
+function renderList(
+    filter=""
+){
+
+    const q =
+        filter
+            .trim()
+            .toLowerCase();
+
+    items.innerHTML = "";
+
+
+    /* USERS */
+
+    const filteredUsers =
+        profiles.filter(user => {
+
+            if(!q) return true;
+
+            return (
+                (user.display_name || "")
+                    .toLowerCase()
+                    .includes(q)
+                ||
+                (user.username || "")
+                    .toLowerCase()
+                    .includes(q)
+            );
+        });
+
+
+    if(filteredUsers.length){
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "list-title";
+
+        title.textContent =
+            "کاربران";
+
+        items.appendChild(title);
+
+
+        filteredUsers.forEach(user => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "item";
+
+            if(
+                selected &&
+                selected.kind === "user" &&
+                selected.data.id === user.id
+            ){
+
+                div.classList.add("active");
+            }
+
+            div.innerHTML = `
+
+                ${avatarHTML(
+                    user.display_name,
+                    user.avatar
+                )}
+
+                <div class="item-info">
+
+                    <div class="item-name">
+                        ${escapeHTML(
+                            user.display_name || "کاربر"
+                        )}
+                    </div>
+
+                    <div class="item-sub">
+                        @${escapeHTML(
+                            user.username || ""
+                        )}
+                    </div>
+
+                </div>
+
+                <span class="type-badge">
+                    کاربر
+                </span>
+            `;
+
+            div.onclick =
+                () => selectUser(user);
+
+            items.appendChild(div);
+        });
+    }
+
+
+    /* GROUPS */
+
+    const filteredGroups =
+        groups.filter(group => {
+
+            if(!q) return true;
+
+            return (
+                (group.name || "")
+                    .toLowerCase()
+                    .includes(q)
+                ||
+                (group.description || "")
+                    .toLowerCase()
+                    .includes(q)
+            );
+        });
+
+
+    if(filteredGroups.length){
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "list-title";
+
+        title.textContent =
+            "گروه‌ها";
+
+        items.appendChild(title);
+
+
+        filteredGroups.forEach(group => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "item";
+
+            if(
+                selected &&
+                selected.kind === "group" &&
+                selected.data.id === group.id
+            ){
+
+                div.classList.add("active");
+            }
+
+            div.innerHTML = `
+
+                ${avatarHTML(
+                    group.name,
+                    group.avatar
+                )}
+
+                <div class="item-info">
+
+                    <div class="item-name">
+                        ${escapeHTML(group.name)}
+                    </div>
+
+                    <div class="item-sub">
+                        ${escapeHTML(
+                            group.description ||
+                            "گروه StarChat"
+                        )}
+                    </div>
+
+                </div>
+
+                <span class="type-badge">
+                    گروه
+                </span>
+            `;
+
+            div.onclick =
+                () => selectGroup(group);
+
+            items.appendChild(div);
+        });
+    }
+
+
+    /* CHANNELS */
+
+    const filteredChannels =
+        channels.filter(channel => {
+
+            if(!q) return true;
+
+            return (
+                (channel.name || "")
+                    .toLowerCase()
+                    .includes(q)
+                ||
+                (channel.description || "")
+                    .toLowerCase()
+                    .includes(q)
+            );
+        });
+
+
+    if(filteredChannels.length){
+
+        const title =
+            document.createElement("div");
+
+        title.className =
+            "list-title";
+
+        title.textContent =
+            "کانال‌ها";
+
+        items.appendChild(title);
+
+
+        filteredChannels.forEach(channel => {
+
+            const div =
+                document.createElement("div");
+
+            div.className =
+                "item";
+
+            if(
+                selected &&
+                selected.kind === "channel" &&
+                selected.data.id === channel.id
+            ){
+
+                div.classList.add("active");
+            }
+
+            div.innerHTML = `
+
+                ${avatarHTML(
+                    channel.name,
+                    channel.avatar
+                )}
+
+                <div class="item-info">
+
+                    <div class="item-name">
+                        ${escapeHTML(channel.name)}
+                    </div>
+
+                    <div class="item-sub">
+                        ${escapeHTML(
+                            channel.description ||
+                            "کانال StarChat"
+                        )}
+                    </div>
+
+                </div>
+
+                <span class="type-badge">
+                    کانال
+                </span>
+            `;
+
+            div.onclick =
+                () => selectChannel(channel);
+
+            items.appendChild(div);
+        });
+    }
+
+
+    if(!items.children.length){
+
+        items.innerHTML = `
+            <div class="empty" style="padding:30px 10px">
+                نتیجه‌ای پیدا نشد.
+            </div>
+        `;
+    }
+}
+
+
+/* =========================================================
+   SELECT USER
+========================================================= */
+
+async function selectUser(user){
+
+    selected = {
+        kind:"user",
+        data:user
+    };
+
+    updateHeader();
+
+    composer.style.display =
+        "block";
+
+    document.getElementById(
+        "addMembersBtn"
+    ).style.display = "none";
+
+    renderList(searchInput.value);
+
+    sidebar.classList.remove("open");
+
+    await loadPrivateMessages();
+}
+
+
+/* =========================================================
+   SELECT GROUP
+========================================================= */
+
+async function selectGroup(group){
+
+    selected = {
+        kind:"group",
+        data:group
+    };
+
+    updateHeader();
+
+    composer.style.display =
+        "block";
+
+    document.getElementById(
+        "addMembersBtn"
+    ).style.display =
+        group.owner_id === session.user.id
+        ? "block"
+        : "none";
+
+    renderList(searchInput.value);
+
+    sidebar.classList.remove("open");
+
+    await loadGroupMessages();
+}
+
+
+/* =========================================================
+   SELECT CHANNEL
+========================================================= */
+
+async function selectChannel(channel){
+
+    selected = {
+        kind:"channel",
+        data:channel
+    };
+
+    updateHeader();
+
+    composer.style.display =
+        channel.owner_id === session.user.id
+        ? "block"
+        : "none";
+
+    document.getElementById(
+        "addMembersBtn"
+    ).style.display =
+        channel.owner_id === session.user.id
+        ? "block"
+        : "none";
+
+    renderList(searchInput.value);
+
+    sidebar.classList.remove("open");
+
+    await loadChannelMessages();
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+function updateHeader(){
+
+    if(!selected){
+
+        return;
+    }
+
+    const data =
+        selected.data;
+
+    document.getElementById("chatName")
+        .textContent =
+        selected.kind === "user"
+        ? data.display_name
+        : data.name;
+
+
+    let typeText = "";
+
+    if(selected.kind === "user")
+        typeText =
+            "@" + (data.username || "user");
+
+    if(selected.kind === "group")
+        typeText =
+            data.description || "گروه";
+
+    if(selected.kind === "channel")
+        typeText =
+            data.description || "کانال";
+
+
+    document.getElementById("chatStatus")
+        .textContent =
+        typeText;
+
+
+    document.getElementById("chatAvatar")
+        .innerHTML =
+        data.avatar
+        ? `<img src="${escapeHTML(data.avatar)}" alt="">`
+        : escapeHTML(
+            (data.display_name || data.name || "S")
+                .charAt(0)
+                .toUpperCase()
+        );
+}
+
+
+/* =========================================================
+   CLEAR MESSAGES
+========================================================= */
+
+function clearMessages(){
+
+    messages.innerHTML = "";
+}
+
+
+/* =========================================================
+   MESSAGE HTML
+========================================================= */
+
+function renderMessage(message){
+
+    const mine =
+        message.sender_id === session.user.id;
+
+    const row =
+        document.createElement("div");
+
+    row.className =
+        "message-row " +
+        (mine ? "mine" : "other");
+
+    row.dataset.messageId =
+        message.id;
+
+
+    row.innerHTML = `
+
+        <div class="message">
+
+            ${escapeHTML(message.text)
+                .replace(/\n/g,"<br>")}
+
+            <div class="message-meta">
+                ${mine ? "شما" : ""}
+                ${formatTime(message.created_at)}
+            </div>
+
+        </div>
+    `;
+
+    return row;
+}
+
+
+/* =========================================================
+   RENDER MESSAGE LIST
+========================================================= */
+
+function showMessages(data){
+
+    clearMessages();
+
+    if(!data || !data.length){
+
+        messages.innerHTML = `
+            <div class="empty">
+
+                <div class="empty-icon">
+                    💬
+                </div>
+
+                <h3>
+                    هنوز پیامی وجود ندارد
+                </h3>
+
+                <p style="margin-top:8px">
+                    اولین پیام را ارسال کن.
+                </p>
+
+            </div>
+        `;
+
+        return;
+    }
+
+    data.forEach(message => {
+
+        messages.appendChild(
+            renderMessage(message)
+        );
+
+    });
+
+    scrollMessages();
+}
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+function scrollMessages(){
+
+    requestAnimationFrame(()=>{
+
+        messages.scrollTop =
+            messages.scrollHeight;
+
+    });
+}
+
+
+/* =========================================================
+   PRIVATE MESSAGES
+========================================================= */
+
+async function loadPrivateMessages(){
+
+    clearMessages();
+
+    const otherId =
+        selected.data.id;
+
+
+    let result =
+        await supabaseClient
+            .from("messages")
+            .select(`
+                id,
+                type,
+                sender_id,
+                recipient_id,
+                target_id,
+                text,
+                created_at
+            `)
+            .eq("type","private")
+            .or(
+                `and(sender_id.eq.${session.user.id},recipient_id.eq.${otherId}),and(sender_id.eq.${otherId},recipient_id.eq.${session.user.id})`
+            )
+            .order("created_at",{ascending:true});
+
+
+    if(result.error){
+
+        toast(
+            "خطا در دریافت پیام‌ها: " +
+            result.error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    showMessages(
+        result.data || []
+    );
+}
+
+
+/* =========================================================
+   GROUP MESSAGES
+========================================================= */
+
+async function loadGroupMessages(){
+
+    const groupId =
+        selected.data.id;
+
+    const result =
+        await supabaseClient
+            .from("messages")
+            .select(`
+                id,
+                type,
+                sender_id,
+                recipient_id,
+                target_id,
+                text,
+                created_at
+            `)
+            .eq("type","group")
+            .eq("target_id",groupId)
+            .order("created_at",{ascending:true});
+
+
+    if(result.error){
+
+        toast(
+            "خطا در دریافت پیام گروه: " +
+            result.error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    showMessages(
+        result.data || []
+    );
+}
+
+
+/* =========================================================
+   CHANNEL MESSAGES
+========================================================= */
+
+async function loadChannelMessages(){
+
+    const channelId =
+        selected.data.id;
+
+    const result =
+        await supabaseClient
+            .from("messages")
+            .select(`
+                id,
+                type,
+                sender_id,
+                recipient_id,
+                target_id,
+                text,
+                created_at
+            `)
+            .eq("type","channel")
+            .eq("target_id",channelId)
+            .order("created_at",{ascending:true});
+
+
+    if(result.error){
+
+        toast(
+            "خطا در دریافت پیام کانال: " +
+            result.error.message,
+            "error"
+        );
+
+        return;
+    }
+
+    showMessages(
+        result.data || []
+    );
+}
+
+
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
+
+async function sendMessage(){
+
+    if(!selected){
+
+        toast(
+            "ابتدا یک گفتگو انتخاب کن.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const text =
+        messageInput.value.trim();
+
+    if(!text){
+
+        return;
+    }
+
+
+    let payload = {
+
+        sender_id:
+            session.user.id,
+
+        text:text
+    };
+
+
+    if(selected.kind === "user"){
+
+        payload.type =
+            "private";
+
+        payload.recipient_id =
+            selected.data.id;
+
+        payload.target_id =
+            null;
+    }
+
+
+    if(selected.kind === "group"){
+
+        payload.type =
+            "group";
+
+        payload.recipient_id =
+            null;
+
+        payload.target_id =
+            selected.data.id;
+    }
+
+
+    if(selected.kind === "channel"){
+
+        if(
+            selected.data.owner_id !==
+            session.user.id
+        ){
+
+            toast(
+                "فقط مدیر کانال می‌تواند پیام ارسال کند.",
+                "error"
+            );
+
+            return;
+        }
+
+        payload.type =
+            "channel";
+
+        payload.recipient_id =
+            null;
+
+        payload.target_id =
+            selected.data.id;
+    }
+
+
+    sendBtn.disabled = true;
+
+
+    const result =
+        await supabaseClient
+            .from("messages")
+            .insert(payload)
+            .select()
+            .single();
+
+
+    sendBtn.disabled = false;
+
+
+    if(result.error){
+
+        console.error(
+            "SEND ERROR:",
+            result.error
+        );
+
+        toast(
+            "پیام ارسال نشد: " +
+            result.error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    messageInput.value = "";
+
+    messageInput.style.height =
+        "46px";
+
+
+    addRealtimeMessage(
+        result.data
+    );
+}
+
+
+/* =========================================================
+   REALTIME MESSAGE
+========================================================= */
+
+function addRealtimeMessage(message){
+
+    if(!message){
+
+        return;
+    }
+
+
+    if(
+        document.querySelector(
+            `[data-message-id="${message.id}"]`
+        )
+    ){
+
+        return;
+    }
+
+
+    if(!selected){
+
+        return;
+    }
+
+
+    let valid = false;
+
+
+    if(
+        selected.kind === "user" &&
+        message.type === "private"
+    ){
+
+        valid =
+            (
+                message.sender_id ===
+                    session.user.id &&
+                message.recipient_id ===
+                    selected.data.id
+            )
+            ||
+            (
+                message.sender_id ===
+                    selected.data.id &&
+                message.recipient_id ===
+                    session.user.id
+            );
+    }
+
+
+    if(
+        selected.kind === "group" &&
+        message.type === "group"
+    ){
+
+        valid =
+            message.target_id ===
+            selected.data.id;
+    }
+
+
+    if(
+        selected.kind === "channel" &&
+        message.type === "channel"
+    ){
+
+        valid =
+            message.target_id ===
+            selected.data.id;
+    }
+
+
+    if(!valid){
+
+        return;
+    }
+
+
+    const empty =
+        messages.querySelector(".empty");
+
+    if(empty){
+
+        clearMessages();
+    }
+
+
+    messages.appendChild(
+        renderMessage(message)
+    );
+
+    scrollMessages();
+}
+
+
+/* =========================================================
+   REALTIME
+========================================================= */
+
+function setupRealtime(){
+
+    if(realtimeChannel){
+
+        supabaseClient
+            .removeChannel(
+                realtimeChannel
+            );
+    }
+
+
+    realtimeChannel =
+        supabaseClient
+            .channel(
+                "starchat-" +
+                session.user.id +
+                "-" +
+                Date.now()
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event:"INSERT",
+                    schema:"public",
+                    table:"messages"
+                },
+                payload => {
+
+                    addRealtimeMessage(
+                        payload.new
+                    );
+                }
+            )
+            .subscribe(
+                status => {
+
+                    console.log(
+                        "Realtime:",
+                        status
+                    );
+
+                }
+            );
+}
+
+
+/* =========================================================
+   CREATE GROUP
+========================================================= */
+
+async function createGroup(){
+
+    const name =
+        document
+            .getElementById("groupName")
+            .value
+            .trim();
+
+    const description =
+        document
+            .getElementById("groupDescription")
+            .value
+            .trim();
+
+    const avatar =
+        document
+            .getElementById("groupAvatar")
+            .value
+            .trim();
+
+
+    if(!name){
+
+        toast(
+            "نام گروه را وارد کن.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const result =
+        await supabaseClient
+            .from("groups")
+            .insert({
+
+                name:name,
+
+                description:
+                    description,
+
+                avatar:
+                    avatar,
+
+                owner_id:
+                    session.user.id
+
+            })
+            .select()
+            .single();
+
+
+    if(result.error){
+
+        console.error(result.error);
+
+        toast(
+            "گروه ساخته نشد: " +
+            result.error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* اضافه کردن سازنده به اعضای گروه */
+
+    const member =
+        await supabaseClient
+            .from("group_members")
+            .insert({
+                group_id:
+                    result.data.id,
+
+                user_id:
+                    session.user.id
+            });
+
+
+    if(member.error){
+
+        console.error(member.error);
+
+        toast(
+            "گروه ساخته شد ولی عضویت سازنده ثبت نشد.",
+            "error"
+        );
+
+    }else{
+
+        toast(
+            "گروه با موفقیت ساخته شد.",
+            "success"
+        );
+    }
+
+
+    document.getElementById("groupName")
+        .value = "";
+
+    document.getElementById("groupDescription")
+        .value = "";
+
+    document.getElementById("groupAvatar")
+        .value = "";
+
+
+    closeModal("groupModal");
+
+
+    await loadGroups();
+
+    renderList();
+
+    selectGroup(result.data);
+}
+
+
+/* =========================================================
+   CREATE CHANNEL
+========================================================= */
+
+async function createChannel(){
+
+    const name =
+        document
+            .getElementById("channelName")
+            .value
+            .trim();
+
+    const description =
+        document
+            .getElementById("channelDescription")
+            .value
+            .trim();
+
+    const avatar =
+        document
+            .getElementById("channelAvatar")
+            .value
+            .trim();
+
+
+    if(!name){
+
+        toast(
+            "نام کانال را وارد کن.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    const result =
+        await supabaseClient
+            .from("channels")
+            .insert({
+
+                name:name,
+
+                description:
+                    description,
+
+                avatar:
+                    avatar,
+
+                owner_id:
+                    session.user.id
+
+            })
+            .select()
+            .single();
+
+
+    if(result.error){
+
+        console.error(result.error);
+
+        toast(
+            "کانال ساخته نشد: " +
+            result.error.message,
+            "error"
+        );
+
+        return;
+    }
+
+
+    /* سازنده عضو کانال می‌شود */
+
+    const member =
+        await supabaseClient
+            .from("channel_members")
+            .insert({
+
+                channel_id:
+                    result.data.id,
+
+                user_id:
+                    session.user.id
+            });
+
+
+    if(member.error){
+
+        console.error(member.error);
+
+        toast(
+            "کانال ساخته شد ولی عضویت سازنده ثبت نشد.",
+            "error"
+        );
+
+    }else{
+
+        toast(
+            "کانال با موفقیت ساخته شد.",
+            "success"
+        );
+    }
+
+
+    document.getElementById("channelName")
+        .value = "";
+
+    document.getElementById("channelDescription")
+        .value = "";
+
+    document.getElementById("channelAvatar")
+        .value = "";
+
+
+    closeModal("channelModal");
+
+
+    await loadChannels();
+
+    renderList();
+
+    selectChannel(result.data);
+}
+
+
+/* =========================================================
+   MEMBERS SEARCH
+========================================================= */
+
+async function searchMembers(){
+
+    const input =
+        document.getElementById(
+            "memberSearchInput"
+        );
+
+    const q =
+        input.value.trim().toLowerCase();
+
+    const container =
+        document.getElementById(
+            "memberResults"
+        );
+
+
+    container.innerHTML = "";
+
+
+    if(!q){
+
+        container.innerHTML = `
+            <div style="
+                padding:20px;
+                text-align:center;
+                color:var(--muted)
+            ">
+                نام کاربر را جستجو کن.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    const result =
+        await supabaseClient
+            .from("profiles")
+            .select(`
+                id,
+                display_name,
+                username,
+                avatar
+            `)
+            .neq("id",session.user.id)
+            .or(
+                `display_name.ilike.%${q}%,username.ilike.%${q}%`
+            )
+            .limit(20);
+
+
+    if(result.error){
+
+        toast(
+            "خطا در جستجوی کاربران.",
+            "error"
+        );
+
+        return;
+    }
+
+
+    if(!result.data.length){
+
+        container.innerHTML = `
+            <div style="
+                padding:20px;
+                text-align:center;
+                color:var(--muted)
+            ">
+                کاربری پیدا نشد.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    result.data.forEach(user => {
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "member-row";
+
+
+        row.innerHTML = `
+
+            ${avatarHTML(
+                user.display_name,
+                user.avatar
+            )}
+
+            <div class="member-row-info">
+
+                <strong>
+                    ${escapeHTML(
+                        user.display_name
+                    )}
+                </strong>
+
+                <span>
+                    @${escapeHTML(
+                        user.username
+                    )}
+                </span>
+
+            </div>
+
+            <button
+                class="add-member"
+                title="افزودن"
+            >
+                +
+            </button>
+        `;
+
+
+        row.querySelector(
+            ".add-member"
+        ).onclick =
+            () => addMember(user);
+
+
+        container.appendChild(row);
+
+    });
+}
+
+
+/* =========================================================
+   ADD MEMBER
+========================================================= */
+
+async function addMember(user){
+
+    if(!selected){
+
+        return;
+    }
+
+
+    if(
+        selected.kind === "group"
+    ){
+
+        const result =
+            await supabaseClient
+                .from("group_members")
+                .insert({
+
+                    group_id:
+                        selected.data.id,
+
+                    user_id:
+                        user.id
+
+                });
+
+
+        if(result.error){
+
+            if(
+                result.error.code ===
+                "23505"
+            ){
+
+                toast(
+                    "این کاربر قبلاً عضو گروه است.",
+                    "error"
+                );
+
+            }else{
+
+                toast(
+                    "افزودن کاربر ناموفق بود: " +
+                    result.error.message,
+                    "error"
+                );
+            }
+
+            return;
+        }
+
+
+        toast(
+            `${user.display_name} به گروه اضافه شد.`,
+            "success"
+        );
+    }
+
+
+    if(
+        selected.kind === "channel"
+    ){
+
+        const result =
+            await supabaseClient
+                .from("channel_members")
+                .insert({
+
+                    channel_id:
+                        selected.data.id,
+
+                    user_id:
+                        user.id
+
+                });
+
+
+        if(result.error){
+
+            if(
+                result.error.code ===
+                "23505"
+            ){
+
+                toast(
+                    "این کاربر قبلاً عضو کانال است.",
+                    "error"
+                );
+
+            }else{
+
+                toast(
+                    "افزودن کاربر ناموفق بود: " +
+                    result.error.message,
+                    "error"
+                );
+            }
+
+            return;
+        }
+
+
+        toast(
+            `${user.display_name} به کانال اضافه شد.`,
+            "success"
+        );
+    }
+}
+
+
+/* =========================================================
+   OPEN MEMBERS
+========================================================= */
+
+function openMembers(){
+
+    if(!selected){
+
+        return;
+    }
+
+
+    document.getElementById(
+        "membersModal"
+    ).classList.add("show");
+
+
+    document.getElementById(
+        "memberSearchInput"
+    ).value = "";
+
+    document.getElementById(
+        "memberResults"
+    ).innerHTML = `
+        <div style="
+            padding:20px;
+            text-align:center;
+            color:var(--muted)
+        ">
+            نام کاربر را جستجو کن.
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function closeModal(id){
+
+    document
+        .getElementById(id)
+        .classList.remove("show");
+}
+
+
+document
+    .getElementById("createGroupBtn")
+    .onclick = () => {
+
+        document
+            .getElementById("groupModal")
+            .classList.add("show");
+
+    };
+
+
+document
+    .getElementById("createChannelBtn")
+    .onclick = () => {
+
+        document
+            .getElementById("channelModal")
+            .classList.add("show");
+
+    };
+
+
+document
+    .getElementById("saveGroupBtn")
+    .onclick =
+    createGroup;
+
+
+document
+    .getElementById("saveChannelBtn")
+    .onclick =
+    createChannel;
+
+
+document
+    .getElementById("addMembersBtn")
+    .onclick =
+    openMembers;
+
+
+document
+    .getElementById("memberSearchInput")
+    .addEventListener(
+        "input",
+        searchMembers
+    );
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+searchInput.addEventListener(
+    "input",
+    () => {
+
+        renderList(
+            searchInput.value
+        );
+
+    }
+);
+
+
+/* =========================================================
+   SEND
+========================================================= */
+
+sendBtn.onclick =
+    sendMessage;
+
+
+messageInput.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key === "Enter" &&
+            !event.shiftKey
+        ){
+
+            event.preventDefault();
+
+            sendMessage();
+        }
+    }
+);
+
+
+messageInput.addEventListener(
+    "input",
+    () => {
+
+        messageInput.style.height =
+            "46px";
+
+        messageInput.style.height =
+            Math.min(
+                messageInput.scrollHeight,
+                140
+            ) + "px";
+    }
+);
+
+
+/* =========================================================
+   MOBILE MENU
+========================================================= */
+
+document
+    .getElementById("mobileMenu")
+    .onclick = () => {
+
+        sidebar.classList.toggle("open");
+
+    };
+
+
+/* =========================================================
+   INFO
+========================================================= */
+
+document
+    .getElementById("infoBtn")
+    .onclick = () => {
+
+        if(!selected){
+
+            toast(
+                "ابتدا یک گفتگو را انتخاب کن.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        const data =
+            selected.data;
+
+
+        if(selected.kind === "user"){
+
+            toast(
+                "@" +
+                (data.username || "user") +
+                " — " +
+                (data.bio || "بدون توضیحات")
+            );
+
+            return;
+        }
+
+
+        toast(
+            data.description ||
+            "بدون توضیحات"
+        );
+    };
+
+
+/* =========================================================
+   LOCK
+========================================================= */
+
+document
+    .getElementById("lockBtn")
+    .onclick = async () => {
+
+        /*
+         * خروج واقعی انجام نمی‌شود.
+         * session در Supabase باقی می‌ماند.
+         * index.html قفل دستگاه را نمایش می‌دهد.
+         */
+
+        location.href =
+            "index.html";
+    };
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    async (event,newSession) => {
+
+        if(
+            event === "SIGNED_OUT"
+        ){
+
+            location.href =
+                "index.html";
+
+            return;
+        }
+
+        if(
+            newSession &&
+            !session
+        ){
+
+            session =
+                newSession;
+
+        }
+    }
+);
+
+
+/* =========================================================
+   CLOSE MODAL WITH BACKDROP
+========================================================= */
+
+document
+    .querySelectorAll(".modal")
+    .forEach(modal => {
+
+        modal.addEventListener(
+            "click",
+            event => {
+
+                if(
+                    event.target === modal
+                ){
+
+                    modal.classList.remove(
+                        "show"
+                    );
+                }
+            }
+        );
+
+    });
+
+
+/* =========================================================
+   START
+========================================================= */
+
+init();
+
+</script>
+
+</body>
+</html>
+

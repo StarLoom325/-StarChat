@@ -1,0 +1,2258 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#070b16"
+    >
+
+    <title>StarChat | ثبت نام</title>
+
+    <!-- =====================================================
+         SUPABASE
+         ===================================================== -->
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+
+        /* =====================================================
+           RESET
+           ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+        }
+
+        body {
+            font-family:
+                Tahoma,
+                Arial,
+                sans-serif;
+
+            color: #ffffff;
+
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(124, 58, 237, 0.28),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 85% 90%,
+                    rgba(6, 182, 212, 0.20),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 50% 50%,
+                    rgba(30, 41, 59, 0.18),
+                    transparent 55%
+                ),
+                #050711;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
+            overflow-x: hidden;
+        }
+
+        /* =====================================================
+           BACKGROUND STARS
+           ===================================================== */
+
+        body::before {
+            content: "";
+
+            position: fixed;
+
+            inset: 0;
+
+            pointer-events: none;
+
+            background-image:
+                radial-gradient(
+                    1px 1px at 10% 20%,
+                    rgba(255,255,255,.7),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 25% 80%,
+                    rgba(255,255,255,.5),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 70% 20%,
+                    rgba(255,255,255,.6),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 90% 70%,
+                    rgba(255,255,255,.6),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 55% 90%,
+                    rgba(255,255,255,.5),
+                    transparent
+                );
+
+            opacity: .7;
+        }
+
+        /* =====================================================
+           CARD
+           ===================================================== */
+
+        .register-card {
+
+            width: 100%;
+
+            max-width: 480px;
+
+            position: relative;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(15, 23, 42, .96),
+                    rgba(7, 11, 24, .96)
+                );
+
+            border:
+                1px solid
+                rgba(139, 92, 246, .28);
+
+            border-radius: 28px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 30px 100px rgba(0,0,0,.60),
+                0 0 60px rgba(124,58,237,.08);
+
+            backdrop-filter: blur(20px);
+
+            z-index: 1;
+        }
+
+        /* =====================================================
+           LOGO
+           ===================================================== */
+
+        .logo-area {
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+        .logo-icon {
+
+            width: 78px;
+
+            height: 78px;
+
+            margin:
+                0 auto
+                15px;
+
+            border-radius: 24px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 37px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(124,58,237,.25),
+                    rgba(8,145,178,.20)
+                );
+
+            border:
+                1px solid
+                rgba(167,139,250,.25);
+
+            box-shadow:
+                0 0 35px
+                rgba(124,58,237,.15);
+        }
+
+        .logo {
+
+            font-size: 34px;
+
+            font-weight: 900;
+
+            letter-spacing: -.5px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ddd6fe,
+                    #a78bfa,
+                    #22d3ee
+                );
+
+            -webkit-background-clip: text;
+
+            background-clip: text;
+
+            color: transparent;
+        }
+
+        .logo-subtitle {
+
+            margin-top: 7px;
+
+            color: #6f7a90;
+
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           TITLE
+           ===================================================== */
+
+        .title {
+
+            text-align: center;
+
+            font-size: 21px;
+
+            font-weight: 800;
+
+            margin-bottom: 7px;
+        }
+
+        .description {
+
+            text-align: center;
+
+            color: #8993a7;
+
+            font-size: 13px;
+
+            line-height: 1.9;
+
+            margin-bottom: 22px;
+        }
+
+        /* =====================================================
+           FORM
+           ===================================================== */
+
+        .field {
+
+            margin-bottom: 15px;
+        }
+
+        .field-label {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 7px;
+
+            color: #cbd5e1;
+
+            font-size: 12px;
+
+            font-weight: 600;
+        }
+
+        .required {
+
+            color: #a78bfa;
+
+            font-size: 10px;
+        }
+
+        .input-wrapper {
+
+            position: relative;
+        }
+
+        .input-icon {
+
+            position: absolute;
+
+            right: 14px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            color: #68748a;
+
+            font-size: 16px;
+
+            pointer-events: none;
+        }
+
+        input {
+
+            width: 100%;
+
+            height: 50px;
+
+            border-radius: 13px;
+
+            border:
+                1px solid
+                #273149;
+
+            outline: none;
+
+            background:
+                rgba(5, 9, 20, .92);
+
+            color: #ffffff;
+
+            padding:
+                0
+                45px
+                0
+                14px;
+
+            font-size: 14px;
+
+            transition:
+                border-color .2s,
+                box-shadow .2s,
+                background .2s;
+        }
+
+        input::placeholder {
+
+            color: #4f5a70;
+        }
+
+        input:focus {
+
+            border-color: #8b5cf6;
+
+            background:
+                rgba(8, 12, 25, 1);
+
+            box-shadow:
+                0 0 0 3px
+                rgba(139,92,246,.11);
+        }
+
+        input.valid {
+
+            border-color:
+                rgba(34,197,94,.55);
+        }
+
+        input.invalid {
+
+            border-color:
+                rgba(239,68,68,.60);
+        }
+
+        /* PASSWORD */
+
+        .password-toggle {
+
+            position: absolute;
+
+            left: 8px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            width: 34px;
+
+            height: 34px;
+
+            border: 0;
+
+            border-radius: 9px;
+
+            background: transparent;
+
+            color: #748096;
+
+            cursor: pointer;
+
+            font-size: 15px;
+        }
+
+        .password-toggle:hover {
+
+            background: #171d31;
+
+            color: #ffffff;
+        }
+
+        /* =====================================================
+           USERNAME STATUS
+           ===================================================== */
+
+        .username-status {
+
+            min-height: 18px;
+
+            margin-top: 5px;
+
+            font-size: 10px;
+
+            color: #68748a;
+        }
+
+        .username-status.checking {
+
+            color: #93c5fd;
+        }
+
+        .username-status.success {
+
+            color: #86efac;
+        }
+
+        .username-status.error {
+
+            color: #fca5a5;
+        }
+
+        /* =====================================================
+           PASSWORD STRENGTH
+           ===================================================== */
+
+        .password-strength {
+
+            display: flex;
+
+            gap: 5px;
+
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+
+            flex: 1;
+
+            height: 4px;
+
+            border-radius: 20px;
+
+            background: #20283b;
+
+            transition: .2s;
+        }
+
+        .strength-text {
+
+            margin-top: 5px;
+
+            font-size: 10px;
+
+            color: #657086;
+
+            min-height: 15px;
+        }
+
+        /* =====================================================
+           CHECKBOX
+           ===================================================== */
+
+        .terms {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 9px;
+
+            margin:
+                7px
+                0
+                17px;
+
+            color: #7d889c;
+
+            font-size: 11px;
+
+            line-height: 1.8;
+        }
+
+        .terms input {
+
+            width: 17px;
+
+            height: 17px;
+
+            min-width: 17px;
+
+            margin-top: 2px;
+
+            padding: 0;
+
+            accent-color: #8b5cf6;
+        }
+
+        /* =====================================================
+           REGISTER BUTTON
+           ===================================================== */
+
+        .register-button {
+
+            width: 100%;
+
+            height: 52px;
+
+            border: 0;
+
+            border-radius: 14px;
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #7c3aed,
+                    #0891b2
+                );
+
+            box-shadow:
+                0 10px 30px
+                rgba(124,58,237,.18);
+
+            transition:
+                transform .2s,
+                opacity .2s,
+                box-shadow .2s;
+        }
+
+        .register-button:hover {
+
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 14px 35px
+                rgba(124,58,237,.25);
+        }
+
+        .register-button:active {
+
+            transform:
+                translateY(0);
+        }
+
+        .register-button:disabled {
+
+            opacity: .55;
+
+            cursor: not-allowed;
+
+            transform: none;
+
+            box-shadow: none;
+        }
+
+        /* =====================================================
+           MESSAGE
+           ===================================================== */
+
+        .message {
+
+            display: none;
+
+            margin-top: 15px;
+
+            padding: 12px 14px;
+
+            border-radius: 12px;
+
+            font-size: 12px;
+
+            line-height: 1.8;
+        }
+
+        .message.show {
+
+            display: block;
+        }
+
+        .message.error {
+
+            color: #fecaca;
+
+            background:
+                rgba(239,68,68,.08);
+
+            border:
+                1px solid
+                rgba(239,68,68,.22);
+        }
+
+        .message.success {
+
+            color: #bbf7d0;
+
+            background:
+                rgba(34,197,94,.08);
+
+            border:
+                1px solid
+                rgba(34,197,94,.22);
+        }
+
+        .message.info {
+
+            color: #bfdbfe;
+
+            background:
+                rgba(59,130,246,.08);
+
+            border:
+                1px solid
+                rgba(59,130,246,.22);
+        }
+
+        /* =====================================================
+           LOGIN LINK
+           ===================================================== */
+
+        .login-link {
+
+            text-align: center;
+
+            color: #68748a;
+
+            font-size: 12px;
+
+            margin-top: 20px;
+        }
+
+        .login-link a {
+
+            color: #a78bfa;
+
+            text-decoration: none;
+
+            font-weight: 700;
+
+            margin-right: 4px;
+        }
+
+        .login-link a:hover {
+
+            color: #c4b5fd;
+        }
+
+        /* =====================================================
+           FOOTER
+           ===================================================== */
+
+        .footer {
+
+            text-align: center;
+
+            color: #424c61;
+
+            font-size: 10px;
+
+            margin-top: 20px;
+        }
+
+        /* =====================================================
+           LOADING
+           ===================================================== */
+
+        .loading-spinner {
+
+            display: inline-block;
+
+            width: 16px;
+
+            height: 16px;
+
+            border:
+                2px solid
+                rgba(255,255,255,.25);
+
+            border-top-color:
+                #ffffff;
+
+            border-radius: 50%;
+
+            animation:
+                spin .7s linear infinite;
+
+            vertical-align: -3px;
+
+            margin-left: 7px;
+        }
+
+        @keyframes spin {
+
+            to {
+                transform: rotate(360deg);
+            }
+
+        }
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media(max-width: 520px) {
+
+            body {
+
+                padding: 12px;
+
+                align-items: flex-start;
+
+                padding-top: 20px;
+            }
+
+            .register-card {
+
+                padding: 22px;
+
+                border-radius: 22px;
+            }
+
+            .logo {
+
+                font-size: 30px;
+            }
+
+            .logo-icon {
+
+                width: 68px;
+
+                height: 68px;
+
+                font-size: 31px;
+            }
+
+            .title {
+
+                font-size: 19px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <main class="register-card">
+
+        <!-- =================================================
+             LOGO
+             ================================================= -->
+
+        <div class="logo-area">
+
+            <div class="logo-icon">
+                ✦
+            </div>
+
+            <div class="logo">
+                StarChat
+            </div>
+
+            <div class="logo-subtitle">
+                پیام‌رسان StarLoom
+            </div>
+
+        </div>
+
+        <!-- =================================================
+             TITLE
+             ================================================= -->
+
+        <h1 class="title">
+            ساخت حساب جدید
+        </h1>
+
+        <p class="description">
+            حساب StarChat خودت را بساز و وارد دنیای StarLoom شو.
+        </p>
+
+        <!-- =================================================
+             FORM
+             ================================================= -->
+
+        <form
+            id="registerForm"
+            autocomplete="on"
+        >
+
+            <!-- DISPLAY NAME -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="displayName"
+                >
+
+                    <span>
+                        نام نمایشی
+                    </span>
+
+                    <span class="required">
+                        الزامی
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        👤
+                    </span>
+
+                    <input
+                        id="displayName"
+                        name="displayName"
+                        type="text"
+                        maxlength="40"
+                        autocomplete="name"
+                        placeholder="مثلاً حسن"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+            <!-- USERNAME -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="username"
+                >
+
+                    <span>
+                        نام کاربری
+                    </span>
+
+                    <span class="required">
+                        الزامی
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        @
+                    </span>
+
+                    <input
+                        id="username"
+                        name="username"
+                        type="text"
+                        maxlength="30"
+                        autocomplete="username"
+                        placeholder="مثلاً hasan123"
+                        spellcheck="false"
+                        required
+                    >
+
+                </div>
+
+                <div
+                    id="usernameStatus"
+                    class="username-status"
+                >
+                    فقط حروف انگلیسی، عدد، _ و - مجاز است.
+                </div>
+
+            </div>
+
+            <!-- EMAIL -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="email"
+                >
+
+                    <span>
+                        ایمیل
+                    </span>
+
+                    <span class="required">
+                        الزامی
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        ✉
+                    </span>
+
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        maxlength="120"
+                        autocomplete="email"
+                        placeholder="example@email.com"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+            <!-- PASSWORD -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="password"
+                >
+
+                    <span>
+                        رمز عبور
+                    </span>
+
+                    <span class="required">
+                        حداقل ۶ کاراکتر
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        🔐
+                    </span>
+
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        minlength="6"
+                        maxlength="100"
+                        autocomplete="new-password"
+                        placeholder="رمز عبور خود را وارد کنید"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="password"
+                        aria-label="نمایش رمز"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+                <div class="password-strength">
+
+                    <div
+                        id="strength1"
+                        class="strength-bar"
+                    ></div>
+
+                    <div
+                        id="strength2"
+                        class="strength-bar"
+                    ></div>
+
+                    <div
+                        id="strength3"
+                        class="strength-bar"
+                    ></div>
+
+                    <div
+                        id="strength4"
+                        class="strength-bar"
+                    ></div>
+
+                </div>
+
+                <div
+                    id="strengthText"
+                    class="strength-text"
+                ></div>
+
+            </div>
+
+            <!-- PASSWORD CONFIRM -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="passwordConfirm"
+                >
+
+                    <span>
+                        تکرار رمز عبور
+                    </span>
+
+                    <span class="required">
+                        الزامی
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+                    <input
+                        id="passwordConfirm"
+                        name="passwordConfirm"
+                        type="password"
+                        minlength="6"
+                        maxlength="100"
+                        autocomplete="new-password"
+                        placeholder="رمز را دوباره وارد کنید"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="passwordConfirm"
+                        aria-label="نمایش رمز"
+                    >
+                        👁
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- TERMS -->
+
+            <label class="terms">
+
+                <input
+                    id="terms"
+                    type="checkbox"
+                    required
+                >
+
+                <span>
+                    با ساخت حساب، قوانین استفاده از StarChat را می‌پذیرم.
+                </span>
+
+            </label>
+
+            <!-- BUTTON -->
+
+            <button
+                id="registerButton"
+                class="register-button"
+                type="submit"
+            >
+                ساخت حساب
+            </button>
+
+        </form>
+
+        <!-- =================================================
+             MESSAGE
+             ================================================= -->
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+        <!-- =================================================
+             LOGIN
+             ================================================= -->
+
+        <div class="login-link">
+
+            قبلاً حساب داری؟
+
+            <a href="index.html">
+                ورود به StarChat
+            </a>
+
+        </div>
+
+        <div class="footer">
+            ✦ StarLoom Game Studio
+        </div>
+
+    </main>
+
+<script>
+
+/* =========================================================
+   SUPABASE CONFIG
+   =========================================================
+
+   این دو مقدار را از:
+
+   Supabase
+   → Project Settings
+   → API
+
+   بردار.
+
+   فقط Publishable/Anon Key را استفاده کن.
+   Service Role Key را اینجا قرار نده.
+   ========================================================= */
+
+const SUPABASE_URL = "https://txstexjrypiowndavrtr.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_6WqGjT0eriWi9JcJWRsVvg_J358WuUz";
+
+
+/* =========================================================
+   SUPABASE CLIENT
+   ========================================================= */
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        }
+    );
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const form =
+    document.getElementById(
+        "registerForm"
+    );
+
+const displayNameInput =
+    document.getElementById(
+        "displayName"
+    );
+
+const usernameInput =
+    document.getElementById(
+        "username"
+    );
+
+const emailInput =
+    document.getElementById(
+        "email"
+    );
+
+const passwordInput =
+    document.getElementById(
+        "password"
+    );
+
+const passwordConfirmInput =
+    document.getElementById(
+        "passwordConfirm"
+    );
+
+const termsInput =
+    document.getElementById(
+        "terms"
+    );
+
+const registerButton =
+    document.getElementById(
+        "registerButton"
+    );
+
+const messageBox =
+    document.getElementById(
+        "message"
+    );
+
+const usernameStatus =
+    document.getElementById(
+        "usernameStatus"
+    );
+
+const strengthText =
+    document.getElementById(
+        "strengthText"
+    );
+
+
+/* =========================================================
+   MESSAGE
+   ========================================================= */
+
+function showMessage(
+    text,
+    type = "error"
+) {
+
+    messageBox.textContent =
+        text;
+
+    messageBox.className =
+        "message show " + type;
+
+}
+
+
+function clearMessage() {
+
+    messageBox.textContent =
+        "";
+
+    messageBox.className =
+        "message";
+
+}
+
+
+/* =========================================================
+   NORMALIZE USERNAME
+   ========================================================= */
+
+function normalizeUsername(
+    value
+) {
+
+    return value
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(
+            /[^a-z0-9_-]/g,
+            ""
+        );
+}
+
+
+/* =========================================================
+   USERNAME INPUT
+   ========================================================= */
+
+usernameInput.addEventListener(
+    "input",
+    function() {
+
+        const oldValue =
+            this.value;
+
+        const newValue =
+            normalizeUsername(
+                oldValue
+            );
+
+        if(oldValue !== newValue) {
+
+            this.value =
+                newValue;
+        }
+
+        checkUsername();
+    }
+);
+
+
+/* =========================================================
+   CHECK USERNAME
+   ========================================================= */
+
+let usernameTimer = null;
+
+
+async function checkUsername() {
+
+    clearTimeout(
+        usernameTimer
+    );
+
+    const username =
+        usernameInput
+        .value
+        .trim()
+        .toLowerCase();
+
+    usernameStatus.className =
+        "username-status";
+
+    if(!username) {
+
+        usernameStatus.textContent =
+            "فقط حروف انگلیسی، عدد، _ و - مجاز است.";
+
+        usernameInput.classList.remove(
+            "valid",
+            "invalid"
+        );
+
+        return;
+    }
+
+    if(username.length < 3) {
+
+        usernameStatus.textContent =
+            "نام کاربری حداقل باید ۳ کاراکتر باشد.";
+
+        usernameStatus.classList.add(
+            "error"
+        );
+
+        usernameInput.classList.add(
+            "invalid"
+        );
+
+        usernameInput.classList.remove(
+            "valid"
+        );
+
+        return;
+    }
+
+    if(!/^[a-z0-9_-]+$/.test(username)) {
+
+        usernameStatus.textContent =
+            "نام کاربری نامعتبر است.";
+
+        usernameStatus.classList.add(
+            "error"
+        );
+
+        usernameInput.classList.add(
+            "invalid"
+        );
+
+        usernameInput.classList.remove(
+            "valid"
+        );
+
+        return;
+    }
+
+    usernameStatus.textContent =
+        "در حال بررسی...";
+
+    usernameStatus.classList.add(
+        "checking"
+    );
+
+    usernameTimer =
+        setTimeout(
+            async function() {
+
+                try {
+
+                    const {
+                        data,
+                        error
+                    } =
+                    await supabaseClient
+                    .from("profiles")
+                    .select("id")
+                    .eq(
+                        "username",
+                        username
+                    )
+                    .maybeSingle();
+
+                    if(error) {
+
+                        console.error(
+                            "Username check:",
+                            error
+                        );
+
+                        usernameStatus.textContent =
+                            "امکان بررسی نام کاربری وجود ندارد.";
+
+                        usernameStatus.className =
+                            "username-status error";
+
+                        return;
+                    }
+
+                    if(data) {
+
+                        usernameStatus.textContent =
+                            "✕ این نام کاربری قبلاً استفاده شده است.";
+
+                        usernameStatus.className =
+                            "username-status error";
+
+                        usernameInput.classList.add(
+                            "invalid"
+                        );
+
+                        usernameInput.classList.remove(
+                            "valid"
+                        );
+
+                    } else {
+
+                        usernameStatus.textContent =
+                            "✓ این نام کاربری آزاد است.";
+
+                        usernameStatus.className =
+                            "username-status success";
+
+                        usernameInput.classList.add(
+                            "valid"
+                        );
+
+                        usernameInput.classList.remove(
+                            "invalid"
+                        );
+                    }
+
+                } catch(error) {
+
+                    console.error(
+                        error
+                    );
+
+                    usernameStatus.textContent =
+                        "خطا در بررسی نام کاربری.";
+
+                    usernameStatus.className =
+                        "username-status error";
+                }
+
+            },
+            450
+        );
+}
+
+
+/* =========================================================
+   PASSWORD STRENGTH
+   ========================================================= */
+
+function getPasswordStrength(
+    password
+) {
+
+    let score = 0;
+
+    if(password.length >= 6) {
+        score++;
+    }
+
+    if(password.length >= 10) {
+        score++;
+    }
+
+    if(/[A-Z]/.test(password)) {
+        score++;
+    }
+
+    if(/[0-9]/.test(password)) {
+        score++;
+    }
+
+    if(/[^A-Za-z0-9]/.test(password)) {
+        score++;
+    }
+
+    if(score > 4) {
+        score = 4;
+    }
+
+    return score;
+}
+
+
+function updatePasswordStrength() {
+
+    const password =
+        passwordInput.value;
+
+    const bars = [
+        document.getElementById(
+            "strength1"
+        ),
+        document.getElementById(
+            "strength2"
+        ),
+        document.getElementById(
+            "strength3"
+        ),
+        document.getElementById(
+            "strength4"
+        )
+    ];
+
+    const score =
+        getPasswordStrength(
+            password
+        );
+
+    bars.forEach(
+        bar => {
+
+            bar.style.background =
+                "#20283b";
+
+        }
+    );
+
+    if(!password) {
+
+        strengthText.textContent =
+            "";
+
+        return;
+    }
+
+    if(score === 1) {
+
+        bars[0].style.background =
+            "#ef4444";
+
+        strengthText.textContent =
+            "رمز ضعیف";
+
+    } else if(score === 2) {
+
+        bars[0].style.background =
+            "#f97316";
+
+        bars[1].style.background =
+            "#f97316";
+
+        strengthText.textContent =
+            "رمز متوسط";
+
+    } else if(score === 3) {
+
+        bars[0].style.background =
+            "#eab308";
+
+        bars[1].style.background =
+            "#eab308";
+
+        bars[2].style.background =
+            "#eab308";
+
+        strengthText.textContent =
+            "رمز خوب";
+
+    } else {
+
+        bars.forEach(
+            bar => {
+
+                bar.style.background =
+                    "#22c55e";
+
+            }
+        );
+
+        strengthText.textContent =
+            "رمز قوی";
+    }
+}
+
+
+passwordInput.addEventListener(
+    "input",
+    updatePasswordStrength
+);
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+   ========================================================= */
+
+document
+.querySelectorAll(
+    ".password-toggle"
+)
+.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                const targetId =
+                    this.dataset.target;
+
+                const input =
+                    document.getElementById(
+                        targetId
+                    );
+
+                if(
+                    input.type ===
+                    "password"
+                ) {
+
+                    input.type =
+                        "text";
+
+                    this.textContent =
+                        "🙈";
+
+                } else {
+
+                    input.type =
+                        "password";
+
+                    this.textContent =
+                        "👁";
+                }
+            }
+        );
+    }
+);
+
+
+/* =========================================================
+   VALIDATE FORM
+   ========================================================= */
+
+function validateForm() {
+
+    const displayName =
+        displayNameInput
+        .value
+        .trim();
+
+    const username =
+        normalizeUsername(
+            usernameInput.value
+        );
+
+    const email =
+        emailInput
+        .value
+        .trim();
+
+    const password =
+        passwordInput.value;
+
+    const passwordConfirm =
+        passwordConfirmInput.value;
+
+
+    if(displayName.length < 2) {
+
+        showMessage(
+            "نام نمایشی باید حداقل ۲ کاراکتر باشد."
+        );
+
+        displayNameInput.focus();
+
+        return false;
+    }
+
+
+    if(displayName.length > 40) {
+
+        showMessage(
+            "نام نمایشی بیش از حد طولانی است."
+        );
+
+        displayNameInput.focus();
+
+        return false;
+    }
+
+
+    if(username.length < 3) {
+
+        showMessage(
+            "نام کاربری باید حداقل ۳ کاراکتر باشد."
+        );
+
+        usernameInput.focus();
+
+        return false;
+    }
+
+
+    if(
+        !/^[a-z0-9_-]+$/.test(
+            username
+        )
+    ) {
+
+        showMessage(
+            "نام کاربری فقط می‌تواند شامل حروف انگلیسی، عدد، _ و - باشد."
+        );
+
+        usernameInput.focus();
+
+        return false;
+    }
+
+
+    if(!email) {
+
+        showMessage(
+            "ایمیل را وارد کنید."
+        );
+
+        emailInput.focus();
+
+        return false;
+    }
+
+
+    if(password.length < 6) {
+
+        showMessage(
+            "رمز عبور باید حداقل ۶ کاراکتر باشد."
+        );
+
+        passwordInput.focus();
+
+        return false;
+    }
+
+
+    if(password !== passwordConfirm) {
+
+        showMessage(
+            "رمز عبور و تکرار آن یکسان نیستند."
+        );
+
+        passwordConfirmInput.focus();
+
+        return false;
+    }
+
+
+    if(!termsInput.checked) {
+
+        showMessage(
+            "برای ساخت حساب باید قوانین استفاده را بپذیرید."
+        );
+
+        return false;
+    }
+
+
+    return true;
+}
+
+
+/* =========================================================
+   REGISTER
+   ========================================================= */
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        clearMessage();
+
+
+        if(!validateForm()) {
+
+            return;
+        }
+
+
+        const displayName =
+            displayNameInput
+            .value
+            .trim();
+
+        const username =
+            normalizeUsername(
+                usernameInput.value
+            );
+
+        const email =
+            emailInput
+            .value
+            .trim();
+
+        const password =
+            passwordInput.value;
+
+
+        registerButton.disabled =
+            true;
+
+        registerButton.innerHTML =
+            '<span class="loading-spinner"></span>در حال ساخت حساب...';
+
+
+        try {
+
+            /* =================================================
+               CHECK USERNAME ONE MORE TIME
+               ================================================= */
+
+            const {
+                data:existingUsername,
+                error:usernameError
+            } =
+            await supabaseClient
+            .from("profiles")
+            .select("id")
+            .eq(
+                "username",
+                username
+            )
+            .maybeSingle();
+
+
+            if(usernameError) {
+
+                throw usernameError;
+            }
+
+
+            if(existingUsername) {
+
+                throw new Error(
+                    "این نام کاربری قبلاً استفاده شده است."
+                );
+            }
+
+
+            /* =================================================
+               SUPABASE SIGN UP
+               ================================================= */
+
+            const {
+                data,
+                error
+            } =
+            await supabaseClient
+            .auth
+            .signUp({
+
+                email:
+                    email,
+
+                password:
+                    password,
+
+                options: {
+
+                    data: {
+
+                        display_name:
+                            displayName,
+
+                        username:
+                            username
+
+                    }
+
+                }
+
+            });
+
+
+            if(error) {
+
+                throw error;
+            }
+
+
+            if(!data.user) {
+
+                throw new Error(
+                    "Supabase کاربر را ایجاد نکرد."
+                );
+            }
+
+
+            /* =================================================
+               EMAIL CONFIRMATION CHECK
+               =================================================
+
+               چون کاربر می‌خواهد بدون تأیید ایمیل وارد شود،
+               باید Confirm email در Supabase خاموش باشد.
+               ================================================= */
+
+            if(!data.session) {
+
+                showMessage(
+                    "حساب ساخته شد، اما Session ایجاد نشد. در Supabase از Authentication → Providers → Email گزینه Confirm email را خاموش کن.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            /* =================================================
+               CREATE / VERIFY PROFILE
+               ================================================= */
+
+            let {
+                data:profile,
+                error:profileError
+            } =
+            await supabaseClient
+            .from("profiles")
+            .select("*")
+            .eq(
+                "id",
+                data.user.id
+            )
+            .maybeSingle();
+
+
+            /*
+             * اگر Trigger قبلاً پروفایل را ساخته باشد،
+             * همین‌جا profile داریم.
+             */
+
+            if(profileError) {
+
+                console.error(
+                    "Profile select error:",
+                    profileError
+                );
+            }
+
+
+            /*
+             * اگر Trigger پروفایل را نساخته باشد،
+             * خودمان آن را ایجاد می‌کنیم.
+             */
+
+            if(!profile) {
+
+                const {
+                    data:newProfile,
+                    error:createProfileError
+                } =
+                await supabaseClient
+                .from("profiles")
+                .insert({
+
+                    id:
+                        data.user.id,
+
+                    display_name:
+                        displayName,
+
+                    username:
+                        username,
+
+                    avatar:
+                        "",
+
+                    bio:
+                        ""
+
+                })
+                .select()
+                .single();
+
+
+                if(createProfileError) {
+
+                    console.error(
+                        "Create profile error:",
+                        createProfileError
+                    );
+
+
+                    /*
+                     * اگر خطا Duplicate باشد،
+                     * احتمالاً Trigger همزمان آن را ساخته.
+                     */
+
+                    if(
+                        createProfileError.code !==
+                        "23505"
+                    ) {
+
+                        throw new Error(
+                            "حساب ساخته شد ولی پروفایل ایجاد نشد: " +
+                            createProfileError.message
+                        );
+                    }
+
+                } else {
+
+                    profile =
+                        newProfile;
+                }
+            }
+
+
+            /* =================================================
+               SUCCESS
+               ================================================= */
+
+            showMessage(
+                "✓ حساب با موفقیت ساخته شد. در حال ورود به StarChat...",
+                "success"
+            );
+
+
+            /*
+             * برای امنیت:
+             * رمز اصلی در localStorage ذخیره نمی‌شود.
+             *
+             * index.html بعد از ورود می‌تواند
+             * قفل محلی StarChat را ایجاد کند.
+             */
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "index.html";
+
+                },
+                1000
+            );
+
+
+        } catch(error) {
+
+            console.error(
+                "REGISTER ERROR:",
+                error
+            );
+
+
+            let errorMessage =
+                error?.message ||
+                "ثبت‌نام ناموفق بود.";
+
+
+            const lower =
+                errorMessage
+                .toLowerCase();
+
+
+            if(
+                lower.includes(
+                    "user already registered"
+                )
+            ) {
+
+                errorMessage =
+                    "این ایمیل قبلاً ثبت شده است.";
+            }
+
+
+            else if(
+                lower.includes(
+                    "invalid email"
+                )
+            ) {
+
+                errorMessage =
+                    "فرمت ایمیل صحیح نیست.";
+            }
+
+
+            else if(
+                lower.includes(
+                    "password should be at least"
+                )
+            ) {
+
+                errorMessage =
+                    "رمز عبور باید حداقل ۶ کاراکتر باشد.";
+            }
+
+
+            else if(
+                lower.includes(
+                    "database error saving new user"
+                )
+            ) {
+
+                errorMessage =
+                    "Supabase هنگام ساخت کاربر خطای دیتابیس داد. Trigger مربوط به profiles را بررسی کن.";
+            }
+
+
+            else if(
+                lower.includes(
+                    "duplicate key"
+                )
+            ) {
+
+                errorMessage =
+                    "نام کاربری یا ایمیل قبلاً استفاده شده است.";
+            }
+
+
+            showMessage(
+                errorMessage,
+                "error"
+            );
+
+
+        } finally {
+
+            registerButton.disabled =
+                false;
+
+            registerButton.textContent =
+                "ساخت حساب";
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CLEAR MESSAGE WHEN TYPING
+   ========================================================= */
+
+[
+    displayNameInput,
+    usernameInput,
+    emailInput,
+    passwordInput,
+    passwordConfirmInput
+]
+.forEach(
+    input => {
+
+        input.addEventListener(
+            "input",
+            function() {
+
+                if(
+                    messageBox.classList
+                    .contains("show")
+                ) {
+
+                    clearMessage();
+                }
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CHECK IF ALREADY LOGGED IN
+   ========================================================= */
+
+async function checkExistingSession() {
+
+    try {
+
+        const {
+            data:{
+                session
+            }
+        } =
+        await supabaseClient
+        .auth
+        .getSession();
+
+
+        if(session) {
+
+            /*
+             * اگر کاربر قبلاً وارد شده،
+             * نیازی به ثبت‌نام مجدد نیست.
+             */
+
+            showMessage(
+                "شما قبلاً وارد حساب شده‌اید. در حال انتقال...",
+                "info"
+            );
+
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "index.html";
+
+                },
+                800
+            );
+        }
+
+    } catch(error) {
+
+        console.error(
+            error
+        );
+    }
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+checkExistingSession();
+
+</script>
+
+</body>
+</html>

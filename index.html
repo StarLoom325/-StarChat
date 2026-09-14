@@ -1,0 +1,1810 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>StarChat | ورود</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #050611;
+            --card: rgba(13, 16, 35, 0.88);
+            --card2: rgba(20, 24, 48, 0.72);
+            --border: rgba(139, 92, 246, 0.25);
+            --primary: #8b5cf6;
+            --primary2: #6d28d9;
+            --cyan: #22d3ee;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --danger: #ef4444;
+            --success: #22c55e;
+        }
+
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            background: var(--bg);
+            color: var(--text);
+            font-family:
+                Tahoma,
+                Arial,
+                sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ================= BACKGROUND ================= */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -2;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(124,58,237,.20), transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(34,211,238,.13), transparent 30%),
+                linear-gradient(135deg, #03040b, #090b18 50%, #04050d);
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: .25;
+            animation: float 12s ease-in-out infinite alternate;
+        }
+
+        .orb1 {
+            width: 260px;
+            height: 260px;
+            background: #7c3aed;
+            top: -80px;
+            left: -70px;
+        }
+
+        .orb2 {
+            width: 240px;
+            height: 240px;
+            background: #06b6d4;
+            right: -80px;
+            bottom: -70px;
+            animation-delay: -4s;
+        }
+
+        @keyframes float {
+            from {
+                transform: translate3d(0,0,0) scale(1);
+            }
+
+            to {
+                transform: translate3d(30px,-25px,0) scale(1.1);
+            }
+        }
+
+        /* ================= APP ================= */
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 25px;
+        }
+
+        .card {
+            width: min(440px, 100%);
+            padding: 32px;
+            border-radius: 28px;
+
+            background: var(--card);
+            border: 1px solid var(--border);
+
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+
+            box-shadow:
+                0 25px 80px rgba(0,0,0,.55),
+                inset 0 1px 0 rgba(255,255,255,.04);
+
+            animation: cardIn .45s ease;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px) scale(.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* ================= LOGO ================= */
+
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 14px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 22px;
+
+            background:
+                linear-gradient(135deg,
+                    rgba(139,92,246,.35),
+                    rgba(34,211,238,.15));
+
+            border: 1px solid rgba(139,92,246,.35);
+
+            box-shadow:
+                0 0 35px rgba(139,92,246,.22);
+        }
+
+        .logo-icon span {
+            font-size: 34px;
+        }
+
+        .logo h1 {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .logo h1 span {
+            color: var(--primary);
+        }
+
+        .logo p {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        /* ================= FORM ================= */
+
+        .title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 23px;
+            line-height: 1.8;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        input {
+            width: 100%;
+            height: 52px;
+            padding: 0 15px;
+
+            border-radius: 15px;
+            border: 1px solid rgba(148,163,184,.18);
+
+            background: rgba(3,5,15,.72);
+            color: white;
+
+            outline: none;
+            font-size: 15px;
+
+            transition:
+                border .2s,
+                box-shadow .2s,
+                background .2s;
+        }
+
+        input:focus {
+            border-color: rgba(139,92,246,.75);
+
+            box-shadow:
+                0 0 0 4px rgba(139,92,246,.10);
+
+            background: rgba(5,7,20,.95);
+        }
+
+        input::placeholder {
+            color: #64748b;
+        }
+
+        .password-input {
+            padding-left: 48px;
+        }
+
+        .show-password {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            width: 34px;
+            height: 34px;
+
+            border: 0;
+            border-radius: 10px;
+
+            background: transparent;
+            color: #94a3b8;
+
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .show-password:hover {
+            background: rgba(255,255,255,.05);
+            color: white;
+        }
+
+        /* ================= BUTTON ================= */
+
+        .btn {
+            width: 100%;
+            height: 52px;
+
+            border: 0;
+            border-radius: 15px;
+
+            cursor: pointer;
+
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary2)
+                );
+
+            box-shadow:
+                0 12px 30px rgba(109,40,217,.28);
+
+            transition:
+                transform .18s,
+                filter .18s;
+        }
+
+        .btn:hover {
+            filter: brightness(1.08);
+            transform: translateY(-1px);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            margin-top: 10px;
+
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+
+            box-shadow: none;
+        }
+
+        .btn-danger {
+            margin-top: 10px;
+
+            background: rgba(239,68,68,.10);
+            border: 1px solid rgba(239,68,68,.22);
+
+            color: #fca5a5;
+            box-shadow: none;
+        }
+
+        /* ================= MESSAGE ================= */
+
+        .message {
+            display: none;
+
+            padding: 12px 14px;
+            margin-bottom: 15px;
+
+            border-radius: 13px;
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.error {
+            background: rgba(239,68,68,.10);
+            border: 1px solid rgba(239,68,68,.20);
+            color: #fca5a5;
+        }
+
+        .message.success {
+            background: rgba(34,197,94,.10);
+            border: 1px solid rgba(34,197,94,.20);
+            color: #86efac;
+        }
+
+        /* ================= LOGIN ================= */
+
+        #loginScreen,
+        #setupScreen,
+        #lockScreen {
+            display: none;
+        }
+
+        #loginScreen.active,
+        #setupScreen.active,
+        #lockScreen.active {
+            display: block;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .register-link a {
+            color: #a78bfa;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* ================= LOCK ================= */
+
+        .lock-card {
+            text-align: center;
+        }
+
+        .lock-icon {
+            width: 86px;
+            height: 86px;
+
+            margin: 0 auto 20px;
+
+            border-radius: 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(139,92,246,.25),
+                    rgba(34,211,238,.10)
+                );
+
+            border: 1px solid rgba(139,92,246,.3);
+
+            box-shadow:
+                0 0 40px rgba(139,92,246,.15);
+        }
+
+        .lock-icon span {
+            font-size: 38px;
+        }
+
+        .lock-title {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .lock-user {
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px;
+            margin-bottom: 25px;
+        }
+
+        .pin-dots {
+            display: flex;
+            direction: ltr;
+            justify-content: center;
+            gap: 11px;
+
+            margin: 18px 0 23px;
+        }
+
+        .pin-dot {
+            width: 12px;
+            height: 12px;
+
+            border-radius: 50%;
+
+            background: rgba(148,163,184,.20);
+            border: 1px solid rgba(148,163,184,.15);
+
+            transition: .15s;
+        }
+
+        .pin-dot.active {
+            background: var(--primary);
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 15px rgba(139,92,246,.55);
+        }
+
+        .pin-input {
+            text-align: center;
+            letter-spacing: 10px;
+            font-size: 22px;
+            font-weight: 800;
+
+            padding-right: 10px;
+        }
+
+        .lock-actions {
+            margin-top: 15px;
+        }
+
+        .small-link {
+            border: 0;
+            background: transparent;
+
+            color: #94a3b8;
+
+            cursor: pointer;
+
+            font-size: 12px;
+            margin-top: 15px;
+        }
+
+        .small-link:hover {
+            color: white;
+        }
+
+        /* ================= SETUP ================= */
+
+        .security-box {
+            padding: 14px;
+            margin-bottom: 20px;
+
+            border-radius: 14px;
+
+            background: rgba(34,211,238,.06);
+            border: 1px solid rgba(34,211,238,.13);
+
+            color: #bae6fd;
+
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        /* ================= FOOTER ================= */
+
+        .footer {
+            text-align: center;
+            margin-top: 22px;
+
+            color: #475569;
+            font-size: 11px;
+        }
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 500px) {
+            .app {
+                padding: 14px;
+            }
+
+            .card {
+                padding: 24px 19px;
+                border-radius: 23px;
+            }
+
+            .logo h1 {
+                font-size: 25px;
+            }
+
+            .logo-icon {
+                width: 64px;
+                height: 64px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="background">
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+</div>
+
+<main class="app">
+
+    <section class="card">
+
+        <!-- ================= LOGO ================= -->
+
+        <div class="logo">
+            <div class="logo-icon">
+                <span>✦</span>
+            </div>
+
+            <h1>Star<span>Chat</span></h1>
+
+            <p>
+                پیام‌رسان StarLoom
+            </p>
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- LOGIN SCREEN -->
+        <!-- ========================================================= -->
+
+        <div id="loginScreen">
+
+            <div class="title">
+                ورود به حساب
+            </div>
+
+            <div class="subtitle">
+                با ایمیل و رمز عبور خود وارد StarChat شوید.
+            </div>
+
+            <div id="loginMessage" class="message"></div>
+
+            <form id="loginForm">
+
+                <div class="field">
+
+                    <label for="email">
+                        ایمیل
+                    </label>
+
+                    <input
+                        id="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="example@email.com"
+                        required
+                    >
+
+                </div>
+
+                <div class="field">
+
+                    <label for="password">
+                        رمز عبور
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="password"
+                            class="password-input"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="رمز عبور"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="show-password"
+                            id="showPassword"
+                            aria-label="نمایش رمز"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn"
+                    id="loginButton"
+                >
+                    ورود به StarChat
+                </button>
+
+            </form>
+
+            <div class="register-link">
+                حساب ندارید؟
+                <a href="register.html">
+                    ساخت حساب جدید
+                </a>
+            </div>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- PIN SETUP SCREEN -->
+        <!-- ========================================================= -->
+
+        <div id="setupScreen">
+
+            <div class="title">
+                🔐 ساخت قفل StarChat
+            </div>
+
+            <div class="subtitle">
+                برای دفعات بعد یک PIN محلی برای قفل StarChat انتخاب کنید.
+            </div>
+
+            <div class="security-box">
+                PIN شما جایگزین رمز حساب نیست.
+                رمز اصلی Supabase در مرورگر ذخیره نمی‌شود و فقط هش PIN محلی
+                روی همین دستگاه نگهداری می‌شود.
+            </div>
+
+            <div id="setupMessage" class="message"></div>
+
+            <form id="setupForm">
+
+                <div class="field">
+
+                    <label for="newPin">
+                        PIN جدید
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="newPin"
+                            class="pin-input"
+                            type="password"
+                            inputmode="numeric"
+                            autocomplete="new-password"
+                            maxlength="8"
+                            placeholder="••••"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="field">
+
+                    <label for="confirmPin">
+                        تکرار PIN
+                    </label>
+
+                    <input
+                        id="confirmPin"
+                        class="pin-input"
+                        type="password"
+                        inputmode="numeric"
+                        autocomplete="new-password"
+                        maxlength="8"
+                        placeholder="••••"
+                        required
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn"
+                    id="savePinButton"
+                >
+                    ذخیره PIN و ورود
+                </button>
+
+            </form>
+
+        </div>
+
+        <!-- ========================================================= -->
+        <!-- LOCK SCREEN -->
+        <!-- ========================================================= -->
+
+        <div id="lockScreen">
+
+            <div class="lock-card">
+
+                <div class="lock-icon">
+                    <span>🔐</span>
+                </div>
+
+                <div class="lock-title">
+                    StarChat قفل است
+                </div>
+
+                <div
+                    class="lock-user"
+                    id="lockUser"
+                >
+                    حساب شما
+                </div>
+
+                <div class="pin-dots">
+
+                    <span class="pin-dot" id="dot1"></span>
+                    <span class="pin-dot" id="dot2"></span>
+                    <span class="pin-dot" id="dot3"></span>
+                    <span class="pin-dot" id="dot4"></span>
+                    <span class="pin-dot" id="dot5"></span>
+                    <span class="pin-dot" id="dot6"></span>
+                    <span class="pin-dot" id="dot7"></span>
+                    <span class="pin-dot" id="dot8"></span>
+
+                </div>
+
+                <div id="lockMessage" class="message"></div>
+
+                <form id="unlockForm">
+
+                    <div class="field">
+
+                        <input
+                            id="unlockPin"
+                            class="pin-input"
+                            type="password"
+                            inputmode="numeric"
+                            autocomplete="current-password"
+                            maxlength="8"
+                            placeholder="PIN"
+                            required
+                        >
+
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn"
+                        id="unlockButton"
+                    >
+                        🔓 باز کردن StarChat
+                    </button>
+
+                </form>
+
+                <div class="lock-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="changePinButton"
+                    >
+                        تغییر PIN
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-danger"
+                        id="logoutButton"
+                    >
+                        خروج کامل از حساب
+                    </button>
+
+                    <button
+                        type="button"
+                        class="small-link"
+                        id="accountLoginButton"
+                    >
+                        ورود با رمز حساب
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="footer">
+            StarLoom • StarChat
+        </div>
+
+    </section>
+
+</main>
+
+<script>
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL = "https://txstexjrypiowndavrtr.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_6WqGjT0eriWi9JcJWRsVvg_J358WuUz";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
+        }
+    }
+);
+
+
+/* =========================================================
+   LOCAL STORAGE KEYS
+========================================================= */
+
+const PIN_HASH_KEY = "starchat_device_pin_hash";
+const PIN_USER_KEY = "starchat_device_user_id";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const loginScreen = document.getElementById("loginScreen");
+const setupScreen = document.getElementById("setupScreen");
+const lockScreen = document.getElementById("lockScreen");
+
+const loginForm = document.getElementById("loginForm");
+const setupForm = document.getElementById("setupForm");
+const unlockForm = document.getElementById("unlockForm");
+
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+const newPinInput = document.getElementById("newPin");
+const confirmPinInput = document.getElementById("confirmPin");
+const unlockPinInput = document.getElementById("unlockPin");
+
+const loginButton = document.getElementById("loginButton");
+const savePinButton = document.getElementById("savePinButton");
+const unlockButton = document.getElementById("unlockButton");
+
+const loginMessage = document.getElementById("loginMessage");
+const setupMessage = document.getElementById("setupMessage");
+const lockMessage = document.getElementById("lockMessage");
+
+const lockUser = document.getElementById("lockUser");
+
+const showPassword = document.getElementById("showPassword");
+
+const changePinButton =
+    document.getElementById("changePinButton");
+
+const logoutButton =
+    document.getElementById("logoutButton");
+
+const accountLoginButton =
+    document.getElementById("accountLoginButton");
+
+
+/* =========================================================
+   SCREEN CONTROL
+========================================================= */
+
+function showScreen(screen) {
+
+    loginScreen.classList.remove("active");
+    setupScreen.classList.remove("active");
+    lockScreen.classList.remove("active");
+
+    screen.classList.add("active");
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+function showMessage(element, text, type = "error") {
+
+    element.textContent = text;
+
+    element.className =
+        "message show " + type;
+}
+
+function hideMessage(element) {
+
+    element.textContent = "";
+
+    element.className =
+        "message";
+}
+
+
+/* =========================================================
+   SHA-256
+========================================================= */
+
+async function sha256(text) {
+
+    const encoder =
+        new TextEncoder();
+
+    const data =
+        encoder.encode(text);
+
+    const hashBuffer =
+        await crypto.subtle.digest(
+            "SHA-256",
+            data
+        );
+
+    const hashArray =
+        Array.from(
+            new Uint8Array(hashBuffer)
+        );
+
+    return hashArray
+        .map(
+            byte =>
+                byte.toString(16).padStart(2, "0")
+        )
+        .join("");
+}
+
+
+/* =========================================================
+   PIN VALIDATION
+========================================================= */
+
+function validPin(pin) {
+
+    /*
+       PIN فقط عدد باشد.
+       حداقل 4 رقم و حداکثر 8 رقم.
+    */
+
+    return /^\d{4,8}$/.test(pin);
+}
+
+
+/* =========================================================
+   PIN DOTS
+========================================================= */
+
+function updatePinDots(value) {
+
+    const length =
+        Math.min(value.length, 8);
+
+    for (let i = 1; i <= 8; i++) {
+
+        const dot =
+            document.getElementById("dot" + i);
+
+        if (i <= length) {
+            dot.classList.add("active");
+        } else {
+            dot.classList.remove("active");
+        }
+    }
+}
+
+unlockPinInput.addEventListener(
+    "input",
+    () => {
+        updatePinDots(
+            unlockPinInput.value
+        );
+    }
+);
+
+
+/* =========================================================
+   SHOW PASSWORD
+========================================================= */
+
+showPassword.addEventListener(
+    "click",
+    () => {
+
+        const isPassword =
+            passwordInput.type === "password";
+
+        passwordInput.type =
+            isPassword
+                ? "text"
+                : "password";
+
+        showPassword.textContent =
+            isPassword
+                ? "🙈"
+                : "👁";
+    }
+);
+
+
+/* =========================================================
+   GET SESSION
+========================================================= */
+
+async function getCurrentSession() {
+
+    const {
+        data,
+        error
+    } = await supabaseClient.auth.getSession();
+
+    if (error) {
+        console.error(error);
+        return null;
+    }
+
+    return data.session;
+}
+
+
+/* =========================================================
+   SHOW SETUP
+========================================================= */
+
+async function showPinSetup(session) {
+
+    if (!session) {
+        showScreen(loginScreen);
+        return;
+    }
+
+    hideMessage(setupMessage);
+
+    newPinInput.value = "";
+    confirmPinInput.value = "";
+
+    showScreen(setupScreen);
+
+    setTimeout(() => {
+        newPinInput.focus();
+    }, 150);
+}
+
+
+/* =========================================================
+   SHOW LOCK
+========================================================= */
+
+async function showLock(session) {
+
+    if (!session) {
+        showScreen(loginScreen);
+        return;
+    }
+
+    hideMessage(lockMessage);
+
+    unlockPinInput.value = "";
+
+    updatePinDots("");
+
+    const email =
+        session.user.email || "حساب StarChat";
+
+    lockUser.textContent =
+        email;
+
+    showScreen(lockScreen);
+
+    setTimeout(() => {
+        unlockPinInput.focus();
+    }, 200);
+}
+
+
+/* =========================================================
+   CHECK PIN
+========================================================= */
+
+async function hasLocalPin(session) {
+
+    if (!session) {
+        return false;
+    }
+
+    const savedHash =
+        localStorage.getItem(
+            PIN_HASH_KEY
+        );
+
+    const savedUserId =
+        localStorage.getItem(
+            PIN_USER_KEY
+        );
+
+    if (!savedHash || !savedUserId) {
+        return false;
+    }
+
+    if (savedUserId !== session.user.id) {
+        return false;
+    }
+
+    return true;
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+loginForm.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+        hideMessage(loginMessage);
+
+        const email =
+            emailInput.value.trim();
+
+        const password =
+            passwordInput.value;
+
+        if (!email || !password) {
+
+            showMessage(
+                loginMessage,
+                "ایمیل و رمز عبور را وارد کنید."
+            );
+
+            return;
+        }
+
+        loginButton.disabled = true;
+        loginButton.textContent =
+            "در حال ورود...";
+
+        try {
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+            if (error) {
+                throw error;
+            }
+
+            if (!data.session) {
+
+                showMessage(
+                    loginMessage,
+                    "ورود انجام شد اما Session ایجاد نشد."
+                );
+
+                return;
+            }
+
+            /*
+               اگر این دستگاه PIN ندارد،
+               صفحه ساخت PIN را نمایش می‌دهیم.
+            */
+
+            const hasPin =
+                await hasLocalPin(
+                    data.session
+                );
+
+            if (hasPin) {
+
+                /*
+                   چون کاربر با رمز اصلی وارد شده،
+                   مستقیماً وارد چت می‌شود.
+                */
+
+                window.location.href =
+                    "chat.html";
+
+            } else {
+
+                await showPinSetup(
+                    data.session
+                );
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            let message =
+                "ورود ناموفق بود.";
+
+            if (error.message) {
+
+                if (
+                    error.message
+                        .toLowerCase()
+                        .includes("invalid login credentials")
+                ) {
+
+                    message =
+                        "ایمیل یا رمز عبور اشتباه است.";
+
+                } else {
+
+                    message =
+                        error.message;
+                }
+            }
+
+            showMessage(
+                loginMessage,
+                message
+            );
+
+        } finally {
+
+            loginButton.disabled = false;
+
+            loginButton.textContent =
+                "ورود به StarChat";
+        }
+    }
+);
+
+
+/* =========================================================
+   CREATE PIN
+========================================================= */
+
+setupForm.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+        hideMessage(setupMessage);
+
+        const pin =
+            newPinInput.value.trim();
+
+        const confirmPin =
+            confirmPinInput.value.trim();
+
+        if (!validPin(pin)) {
+
+            showMessage(
+                setupMessage,
+                "PIN باید فقط شامل عدد و بین ۴ تا ۸ رقم باشد."
+            );
+
+            return;
+        }
+
+        if (pin !== confirmPin) {
+
+            showMessage(
+                setupMessage,
+                "PIN و تکرار PIN یکسان نیستند."
+            );
+
+            return;
+        }
+
+        savePinButton.disabled = true;
+        savePinButton.textContent =
+            "در حال ذخیره...";
+
+        try {
+
+            const session =
+                await getCurrentSession();
+
+            if (!session) {
+
+                showMessage(
+                    setupMessage,
+                    "Session پیدا نشد. دوباره وارد حساب شوید."
+                );
+
+                showScreen(loginScreen);
+
+                return;
+            }
+
+            const hash =
+                await sha256(pin);
+
+            /*
+               فقط هش PIN ذخیره می‌شود.
+               خود PIN یا رمز Supabase ذخیره نمی‌شود.
+            */
+
+            localStorage.setItem(
+                PIN_HASH_KEY,
+                hash
+            );
+
+            localStorage.setItem(
+                PIN_USER_KEY,
+                session.user.id
+            );
+
+            showMessage(
+                setupMessage,
+                "PIN با موفقیت ساخته شد. در حال ورود...",
+                "success"
+            );
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "chat.html";
+
+            }, 500);
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                setupMessage,
+                "ساخت PIN انجام نشد."
+            );
+
+        } finally {
+
+            savePinButton.disabled = false;
+
+            savePinButton.textContent =
+                "ذخیره PIN و ورود";
+        }
+    }
+);
+
+
+/* =========================================================
+   UNLOCK
+========================================================= */
+
+unlockForm.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+        hideMessage(lockMessage);
+
+        const pin =
+            unlockPinInput.value.trim();
+
+        if (!validPin(pin)) {
+
+            showMessage(
+                lockMessage,
+                "PIN باید بین ۴ تا ۸ رقم باشد."
+            );
+
+            return;
+        }
+
+        unlockButton.disabled = true;
+        unlockButton.textContent =
+            "در حال بررسی...";
+
+        try {
+
+            const session =
+                await getCurrentSession();
+
+            if (!session) {
+
+                /*
+                   Session دیگر وجود ندارد.
+                   کاربر باید با حساب وارد شود.
+                */
+
+                localStorage.removeItem(
+                    PIN_HASH_KEY
+                );
+
+                localStorage.removeItem(
+                    PIN_USER_KEY
+                );
+
+                showScreen(loginScreen);
+
+                showMessage(
+                    loginMessage,
+                    "Session منقضی شده است. دوباره وارد حساب شوید."
+                );
+
+                return;
+            }
+
+            const savedHash =
+                localStorage.getItem(
+                    PIN_HASH_KEY
+                );
+
+            const savedUserId =
+                localStorage.getItem(
+                    PIN_USER_KEY
+                );
+
+            if (
+                !savedHash ||
+                savedUserId !== session.user.id
+            ) {
+
+                await showPinSetup(
+                    session
+                );
+
+                return;
+            }
+
+            const enteredHash =
+                await sha256(pin);
+
+            if (
+                enteredHash !== savedHash
+            ) {
+
+                unlockPinInput.value = "";
+
+                updatePinDots("");
+
+                showMessage(
+                    lockMessage,
+                    "PIN اشتباه است."
+                );
+
+                unlockPinInput.focus();
+
+                return;
+            }
+
+            /*
+               PIN صحیح است.
+               Session قبلاً حفظ شده.
+            */
+
+            showMessage(
+                lockMessage,
+                "قفل باز شد. در حال ورود...",
+                "success"
+            );
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "chat.html";
+
+            }, 350);
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                lockMessage,
+                "خطایی هنگام باز کردن قفل رخ داد."
+            );
+
+        } finally {
+
+            unlockButton.disabled = false;
+
+            unlockButton.textContent =
+                "🔓 باز کردن StarChat";
+        }
+    }
+);
+
+
+/* =========================================================
+   CHANGE PIN
+========================================================= */
+
+changePinButton.addEventListener(
+    "click",
+    async () => {
+
+        const session =
+            await getCurrentSession();
+
+        if (!session) {
+
+            showScreen(loginScreen);
+
+            return;
+        }
+
+        newPinInput.value = "";
+        confirmPinInput.value = "";
+
+        hideMessage(setupMessage);
+
+        showScreen(setupScreen);
+
+        setTimeout(() => {
+            newPinInput.focus();
+        }, 150);
+    }
+);
+
+
+/* =========================================================
+   COMPLETE LOGOUT
+========================================================= */
+
+logoutButton.addEventListener(
+    "click",
+    async () => {
+
+        const confirmed =
+            confirm(
+                "آیا می‌خواهید کاملاً از حساب StarChat خارج شوید؟"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        logoutButton.disabled = true;
+        logoutButton.textContent =
+            "در حال خروج...";
+
+        try {
+
+            /*
+               ابتدا PIN محلی حذف می‌شود.
+            */
+
+            localStorage.removeItem(
+                PIN_HASH_KEY
+            );
+
+            localStorage.removeItem(
+                PIN_USER_KEY
+            );
+
+            /*
+               سپس Session Supabase
+               کاملاً حذف می‌شود.
+            */
+
+            const {
+                error
+            } =
+                await supabaseClient.auth.signOut();
+
+            if (error) {
+                throw error;
+            }
+
+            /*
+               فرم ورود را تمیز می‌کنیم.
+            */
+
+            loginForm.reset();
+
+            showScreen(loginScreen);
+
+            showMessage(
+                loginMessage,
+                "با موفقیت از حساب خارج شدید.",
+                "success"
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+            showMessage(
+                lockMessage,
+                "خروج از حساب انجام نشد."
+            );
+
+        } finally {
+
+            logoutButton.disabled = false;
+
+            logoutButton.textContent =
+                "خروج کامل از حساب";
+        }
+    }
+);
+
+
+/* =========================================================
+   ACCOUNT PASSWORD LOGIN
+========================================================= */
+
+accountLoginButton.addEventListener(
+    "click",
+    async () => {
+
+        const confirmed =
+            confirm(
+                "با این کار قفل PIN این دستگاه حذف می‌شود و برای ورود بعدی باید با ایمیل و رمز حساب وارد شوید. ادامه می‌دهید؟"
+            );
+
+        if (!confirmed) {
+            return;
+        }
+
+        localStorage.removeItem(
+            PIN_HASH_KEY
+        );
+
+        localStorage.removeItem(
+            PIN_USER_KEY
+        );
+
+        /*
+           Session را حذف نمی‌کنیم.
+           فقط PIN محلی حذف می‌شود.
+
+           برای امنیت بیشتر، کاربر به صفحه ورود
+           برمی‌گردد و Session فعلی را هم خارج می‌کنیم.
+        */
+
+        try {
+
+            await supabaseClient.auth.signOut();
+
+        } catch (error) {
+
+            console.error(error);
+        }
+
+        loginForm.reset();
+
+        showScreen(loginScreen);
+
+        showMessage(
+            loginMessage,
+            "قفل PIN حذف شد. با ایمیل و رمز حساب وارد شوید.",
+            "success"
+        );
+    }
+);
+
+
+/* =========================================================
+   INITIAL APP
+========================================================= */
+
+async function initializeApp() {
+
+    try {
+
+        const session =
+            await getCurrentSession();
+
+        if (!session) {
+
+            /*
+               هیچ Session وجود ندارد.
+               صفحه ورود.
+            */
+
+            showScreen(loginScreen);
+
+            return;
+        }
+
+        /*
+           Session وجود دارد.
+        */
+
+        const hasPin =
+            await hasLocalPin(
+                session
+            );
+
+        if (hasPin) {
+
+            /*
+               کاربر قبلاً روی این دستگاه PIN ساخته.
+               پس صفحه قفل.
+            */
+
+            await showLock(
+                session
+            );
+
+        } else {
+
+            /*
+               Session هست ولی PIN نیست.
+               PIN بساز.
+            */
+
+            await showPinSetup(
+                session
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Initialization error:",
+            error
+        );
+
+        showScreen(loginScreen);
+    }
+}
+
+
+/* =========================================================
+   AUTH STATE
+========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    (event, session) => {
+
+        console.log(
+            "Auth event:",
+            event
+        );
+
+        /*
+           اینجا عمداً redirect خودکار برای
+           SIGNED_IN انجام نمی‌دهیم؛ چون initializeApp
+           جریان PIN را مدیریت می‌کند.
+        */
+    }
+);
+
+
+/* =========================================================
+   START
+========================================================= */
+
+initializeApp();
+
+</script>
+
+</body>
+</html>
+
