@@ -1,9 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ثبت‌نام | StarChat</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
+
+    <title>StarChat | ثبت‌نام</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -16,117 +21,121 @@
 
         :root {
             --bg: #060913;
-            --panel: rgba(14, 18, 35, 0.88);
-            --panel2: rgba(20, 25, 47, 0.78);
-            --border: rgba(255, 255, 255, 0.09);
+            --panel: rgba(15, 20, 38, 0.92);
+            --panel-light: rgba(255,255,255,0.045);
+            --border: rgba(255,255,255,0.09);
             --text: #ffffff;
-            --muted: #9aa3bd;
+            --muted: #9aa5c0;
             --purple: #8668ff;
+            --purple-2: #6e57ff;
             --cyan: #31d9ff;
-            --danger: #ff5f7a;
-            --success: #43e7a6;
+            --green: #43e7a6;
+            --red: #ff5d78;
         }
 
         html,
         body {
             width: 100%;
             min-height: 100%;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Tahoma, Arial, sans-serif;
         }
 
         body {
+            min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
-        }
-
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            width: 450px;
-            height: 450px;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.15;
-            pointer-events: none;
-            z-index: 0;
+            color: var(--text);
+            background:
+                radial-gradient(
+                    circle at 15% 15%,
+                    rgba(118, 82, 255, 0.18),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 85% 85%,
+                    rgba(26, 207, 255, 0.12),
+                    transparent 30%
+                ),
+                var(--bg);
+            font-family:
+                Tahoma,
+                Arial,
+                sans-serif;
         }
 
         body::before {
-            top: -180px;
-            left: -120px;
-            background: #6d4cff;
-        }
-
-        body::after {
-            bottom: -180px;
-            right: -120px;
-            background: #00cfff;
-        }
-
-        .stars {
+            content: "";
             position: fixed;
             inset: 0;
             pointer-events: none;
-            opacity: 0.35;
             background-image:
-                radial-gradient(circle at 10% 20%, white 1px, transparent 1.5px),
-                radial-gradient(circle at 80% 15%, white 1px, transparent 1.5px),
-                radial-gradient(circle at 30% 75%, white 1px, transparent 1.5px),
-                radial-gradient(circle at 90% 80%, white 1px, transparent 1.5px),
-                radial-gradient(circle at 60% 55%, white 1px, transparent 1.5px);
-            background-size: 220px 220px, 280px 280px, 340px 340px, 260px 260px, 300px 300px;
+                radial-gradient(circle at 10% 20%, rgba(255,255,255,.7) 1px, transparent 1.5px),
+                radial-gradient(circle at 80% 15%, rgba(255,255,255,.5) 1px, transparent 1.5px),
+                radial-gradient(circle at 33% 72%, rgba(255,255,255,.6) 1px, transparent 1.5px),
+                radial-gradient(circle at 90% 60%, rgba(255,255,255,.45) 1px, transparent 1.5px),
+                radial-gradient(circle at 58% 45%, rgba(255,255,255,.45) 1px, transparent 1.5px);
+            background-size:
+                220px 220px,
+                290px 290px,
+                350px 350px,
+                270px 270px,
+                320px 320px;
+            opacity: .28;
+            z-index: 0;
         }
 
         .page {
             position: relative;
             z-index: 1;
             min-height: 100vh;
+            width: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 30px 16px;
+            padding: 28px 16px;
         }
 
         .card {
             width: 100%;
-            max-width: 460px;
+            max-width: 470px;
             padding: 30px;
             border: 1px solid var(--border);
             border-radius: 28px;
-            background: linear-gradient(
-                180deg,
-                rgba(20, 25, 48, 0.9),
-                rgba(8, 11, 24, 0.94)
-            );
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(23, 29, 53, .95),
+                    rgba(8, 12, 25, .96)
+                );
             box-shadow:
-                0 30px 80px rgba(0, 0, 0, 0.45),
-                inset 0 1px 0 rgba(255, 255, 255, 0.03);
+                0 30px 90px rgba(0,0,0,.48),
+                inset 0 1px 0 rgba(255,255,255,.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .brand {
             text-align: center;
-            margin-bottom: 26px;
+            margin-bottom: 28px;
         }
 
         .logo {
-            width: 78px;
-            height: 78px;
+            width: 82px;
+            height: 82px;
             margin: 0 auto 16px;
+            border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 24px;
-            background:
-                linear-gradient(135deg, var(--purple), var(--cyan));
-            box-shadow:
-                0 0 30px rgba(105, 89, 255, 0.35);
-            font-size: 34px;
+            font-size: 37px;
             font-weight: 900;
+            color: #fff;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--purple),
+                    var(--cyan)
+                );
+            box-shadow:
+                0 0 36px rgba(110,87,255,.32);
         }
 
         .brand h1 {
@@ -135,19 +144,20 @@
         }
 
         .brand p {
-            color: var(--muted);
             font-size: 14px;
+            color: var(--muted);
         }
 
         .field {
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
         .field label {
             display: block;
             margin-bottom: 8px;
-            color: #dbe1f5;
+            color: #dce2f3;
             font-size: 13px;
+            font-weight: 600;
         }
 
         .input-wrap {
@@ -156,60 +166,66 @@
 
         .input {
             width: 100%;
-            height: 52px;
-            border: 1px solid rgba(255,255,255,0.08);
-            outline: none;
+            height: 53px;
+            border: 1px solid rgba(255,255,255,.08);
             border-radius: 15px;
+            outline: none;
+            color: #fff;
+            background: rgba(255,255,255,.045);
             padding: 0 15px;
-            background: rgba(255,255,255,0.045);
-            color: white;
+            font-family: inherit;
             font-size: 14px;
-            transition: 0.2s;
+            transition:
+                border-color .2s ease,
+                background .2s ease,
+                box-shadow .2s ease;
         }
 
         .input:focus {
-            border-color: rgba(134,104,255,0.65);
-            background: rgba(255,255,255,0.06);
-            box-shadow: 0 0 0 4px rgba(134,104,255,0.08);
+            border-color: rgba(134,104,255,.7);
+            background: rgba(255,255,255,.06);
+            box-shadow:
+                0 0 0 4px rgba(134,104,255,.08);
         }
 
         .password-input {
-            padding-left: 50px;
+            padding-left: 52px;
         }
 
         .toggle {
             position: absolute;
-            left: 10px;
+            left: 9px;
             top: 50%;
             transform: translateY(-50%);
-            width: 34px;
-            height: 34px;
+            width: 35px;
+            height: 35px;
             border: 0;
             border-radius: 10px;
             background: transparent;
-            color: #a7b0c8;
+            color: #aeb6ce;
             cursor: pointer;
+            font-family: inherit;
             font-size: 16px;
         }
 
         .hint {
+            color: #74809b;
             margin-top: 6px;
-            color: #7e89a3;
             font-size: 11px;
         }
 
         .status {
             min-height: 18px;
-            margin-top: 5px;
+            margin-top: 6px;
             font-size: 11px;
         }
 
         .status.ok {
-            color: var(--success);
+            color: var(--green);
         }
 
         .status.error {
-            color: var(--danger);
+            color: var(--red);
         }
 
         .strength {
@@ -221,8 +237,9 @@
         .bar {
             flex: 1;
             height: 4px;
-            border-radius: 100px;
-            background: rgba(255,255,255,0.08);
+            border-radius: 999px;
+            background: rgba(255,255,255,.08);
+            transition: .2s ease;
         }
 
         .terms {
@@ -230,30 +247,35 @@
             align-items: flex-start;
             gap: 9px;
             margin: 18px 0;
-            color: #aeb6ca;
+            color: #9fa9c1;
+            line-height: 1.8;
             font-size: 12px;
-            line-height: 1.7;
         }
 
         .terms input {
-            margin-top: 3px;
+            margin-top: 4px;
             accent-color: var(--purple);
         }
 
         .submit {
             width: 100%;
-            height: 54px;
+            height: 55px;
             border: 0;
             border-radius: 16px;
             cursor: pointer;
-            color: white;
+            color: #fff;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--purple),
+                    #587cff
+                );
+            box-shadow:
+                0 13px 30px rgba(95,78,255,.24);
+            font-family: inherit;
             font-size: 15px;
             font-weight: 700;
-            background:
-                linear-gradient(135deg, var(--purple), #557fff);
-            box-shadow:
-                0 12px 30px rgba(108, 80, 255, 0.22);
-            transition: 0.2s;
+            transition: transform .2s ease, opacity .2s ease;
         }
 
         .submit:hover {
@@ -261,7 +283,7 @@
         }
 
         .submit:disabled {
-            opacity: 0.6;
+            opacity: .6;
             cursor: not-allowed;
             transform: none;
         }
@@ -274,27 +296,47 @@
         }
 
         .bottom a {
-            color: #b19eff;
+            color: #b5a5ff;
             text-decoration: none;
+        }
+
+        .bottom a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            min-height: 20px;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .message.error {
+            color: var(--red);
+        }
+
+        .message.success {
+            color: var(--green);
         }
 
         .toast {
             position: fixed;
-            left: 20px;
-            bottom: 20px;
-            max-width: min(390px, calc(100vw - 40px));
+            left: 18px;
+            bottom: 18px;
+            z-index: 100;
+            width: min(400px, calc(100vw - 36px));
             padding: 13px 15px;
-            border-radius: 14px;
-            background: rgba(16, 21, 39, 0.96);
             border: 1px solid var(--border);
-            color: white;
+            border-radius: 14px;
+            background: rgba(14,18,34,.97);
+            color: #fff;
             font-size: 12px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+            box-shadow: 0 20px 55px rgba(0,0,0,.38);
             opacity: 0;
-            transform: translateY(15px);
+            transform: translateY(14px);
             pointer-events: none;
-            transition: 0.25s;
-            z-index: 20;
+            transition: .25s ease;
         }
 
         .toast.show {
@@ -303,21 +345,32 @@
         }
 
         .toast.error {
-            border-color: rgba(255,95,122,0.35);
+            border-color: rgba(255,93,120,.28);
         }
 
         .toast.success {
-            border-color: rgba(67,231,166,0.35);
+            border-color: rgba(67,231,166,.28);
         }
 
         @media (max-width: 520px) {
+            .page {
+                padding: 18px 12px;
+            }
+
             .card {
                 padding: 22px;
-                border-radius: 22px;
+                border-radius: 23px;
             }
 
             .brand h1 {
                 font-size: 26px;
+            }
+
+            .logo {
+                width: 72px;
+                height: 72px;
+                border-radius: 22px;
+                font-size: 32px;
             }
         }
     </style>
@@ -325,21 +378,27 @@
 
 <body>
 
-<div class="stars"></div>
+<div class="page">
 
-<main class="page">
     <section class="card">
 
         <div class="brand">
             <div class="logo">✦</div>
+
             <h1>StarChat</h1>
-            <p>پیام‌رسان StarLoom</p>
+
+            <p>
+                ساخت حساب در پیام‌رسان StarLoom
+            </p>
         </div>
 
         <form id="registerForm">
 
             <div class="field">
-                <label for="displayName">نام نمایشی</label>
+                <label for="displayName">
+                    نام نمایشی
+                </label>
+
                 <input
                     id="displayName"
                     class="input"
@@ -352,7 +411,9 @@
             </div>
 
             <div class="field">
-                <label for="username">نام کاربری</label>
+                <label for="username">
+                    نام کاربری
+                </label>
 
                 <input
                     id="username"
@@ -365,14 +426,19 @@
                 >
 
                 <div class="hint">
-                    فقط حروف انگلیسی، عدد، _ و -
+                    فقط a-z، عدد، _ و -
                 </div>
 
-                <div id="usernameStatus" class="status"></div>
+                <div
+                    id="usernameStatus"
+                    class="status"
+                ></div>
             </div>
 
             <div class="field">
-                <label for="email">ایمیل</label>
+                <label for="email">
+                    ایمیل
+                </label>
 
                 <input
                     id="email"
@@ -385,9 +451,13 @@
             </div>
 
             <div class="field">
-                <label for="password">رمز عبور</label>
+
+                <label for="password">
+                    رمز عبور
+                </label>
 
                 <div class="input-wrap">
+
                     <input
                         id="password"
                         class="input password-input"
@@ -399,10 +469,11 @@
                     >
 
                     <button
-                        type="button"
                         class="toggle"
-                        data-target="password"
+                        type="button"
+                        id="togglePassword"
                     >◉</button>
+
                 </div>
 
                 <div class="strength">
@@ -414,9 +485,13 @@
             </div>
 
             <div class="field">
-                <label for="confirmPassword">تکرار رمز عبور</label>
+
+                <label for="confirmPassword">
+                    تکرار رمز عبور
+                </label>
 
                 <div class="input-wrap">
+
                     <input
                         id="confirmPassword"
                         class="input password-input"
@@ -427,21 +502,31 @@
                     >
 
                     <button
-                        type="button"
                         class="toggle"
-                        data-target="confirmPassword"
+                        type="button"
+                        id="toggleConfirm"
                     >◉</button>
+
                 </div>
 
-                <div id="passwordStatus" class="status"></div>
+                <div
+                    id="passwordStatus"
+                    class="status"
+                ></div>
             </div>
 
             <label class="terms">
-                <input id="terms" type="checkbox" required>
+
+                <input
+                    id="terms"
+                    type="checkbox"
+                    required
+                >
 
                 <span>
                     با ساخت حساب، قوانین استفاده از StarChat را می‌پذیرم.
                 </span>
+
             </label>
 
             <button
@@ -452,53 +537,93 @@
                 ساخت حساب
             </button>
 
+            <div
+                id="formMessage"
+                class="message"
+            ></div>
+
         </form>
 
         <div class="bottom">
-            قبلاً حساب ساخته‌ای؟
-            <a href="./register.html">ورود</a>
+            قبلاً حساب داری؟
+            <a href="./register.html">
+                ورود به حساب
+            </a>
         </div>
 
     </section>
-</main>
 
-<div id="toast" class="toast"></div>
+</div>
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
 
 <script>
 /* =========================================================
-   SUPABASE
+   SUPABASE CONFIG
    ========================================================= */
 
-const SUPABASE_URL = "https://txstexjrypiowndavrtr.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_6WqGjT0eriWi9JcJWRsVvg_J358WuUz";
+const SUPABASE_URL =
+    "https://txstexjrypiowndavrtr.supabase.co";
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY,
-    {
-        auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
+const SUPABASE_ANON_KEY =
+    "sb_publishable_6WqGjT0eriWi9JcJWRsVvg_J358WuUz";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
         }
-    }
-);
+    );
 
 
 /* =========================================================
    ELEMENTS
    ========================================================= */
 
-const form = document.getElementById("registerForm");
-const displayNameInput = document.getElementById("displayName");
-const usernameInput = document.getElementById("username");
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
-const confirmPasswordInput = document.getElementById("confirmPassword");
-const usernameStatus = document.getElementById("usernameStatus");
-const passwordStatus = document.getElementById("passwordStatus");
-const submitBtn = document.getElementById("submitBtn");
-const toast = document.getElementById("toast");
+const registerForm =
+    document.getElementById("registerForm");
+
+const displayNameInput =
+    document.getElementById("displayName");
+
+const usernameInput =
+    document.getElementById("username");
+
+const emailInput =
+    document.getElementById("email");
+
+const passwordInput =
+    document.getElementById("password");
+
+const confirmPasswordInput =
+    document.getElementById("confirmPassword");
+
+const usernameStatus =
+    document.getElementById("usernameStatus");
+
+const passwordStatus =
+    document.getElementById("passwordStatus");
+
+const formMessage =
+    document.getElementById("formMessage");
+
+const submitBtn =
+    document.getElementById("submitBtn");
+
+const toast =
+    document.getElementById("toast");
+
 
 const bars = [
     document.getElementById("bar1"),
@@ -507,8 +632,8 @@ const bars = [
     document.getElementById("bar4")
 ];
 
-let usernameCheckTimer = null;
-let usernameAvailable = false;
+
+let usernameTimer = null;
 
 
 /* =========================================================
@@ -517,15 +642,21 @@ let usernameAvailable = false;
 
 let toastTimer = null;
 
-function showToast(message, type = "error") {
+function showToast(
+    message,
+    type = "error"
+) {
     clearTimeout(toastTimer);
 
     toast.textContent = message;
-    toast.className = "toast show " + type;
 
-    toastTimer = setTimeout(() => {
-        toast.className = "toast";
-    }, 4000);
+    toast.className =
+        "toast show " + type;
+
+    toastTimer =
+        setTimeout(() => {
+            toast.className = "toast";
+        }, 4000);
 }
 
 
@@ -533,102 +664,109 @@ function showToast(message, type = "error") {
    PASSWORD VISIBILITY
    ========================================================= */
 
-document.querySelectorAll(".toggle").forEach(button => {
+document
+    .getElementById("togglePassword")
+    .addEventListener(
+        "click",
+        () => {
 
-    button.addEventListener("click", () => {
-
-        const input = document.getElementById(button.dataset.target);
-
-        if (!input) return;
-
-        input.type = input.type === "password"
-            ? "text"
-            : "password";
-    });
-
-});
-
-
-/* =========================================================
-   USERNAME NORMALIZATION
-   ========================================================= */
-
-usernameInput.addEventListener("input", () => {
-
-    let value = usernameInput.value
-        .toLowerCase()
-        .replace(/[^a-z0-9_-]/g, "");
-
-    usernameInput.value = value;
-
-    usernameAvailable = false;
-
-    clearTimeout(usernameCheckTimer);
-
-    if (value.length < 3) {
-        usernameStatus.textContent = "";
-        usernameStatus.className = "status";
-        return;
-    }
-
-    usernameStatus.textContent = "در حال بررسی...";
-    usernameStatus.className = "status";
-
-    usernameCheckTimer = setTimeout(
-        checkUsername,
-        450
+            passwordInput.type =
+                passwordInput.type === "password"
+                    ? "text"
+                    : "password";
+        }
     );
-});
+
+
+document
+    .getElementById("toggleConfirm")
+    .addEventListener(
+        "click",
+        () => {
+
+            confirmPasswordInput.type =
+                confirmPasswordInput.type === "password"
+                    ? "text"
+                    : "password";
+        }
+    );
 
 
 /* =========================================================
-   CHECK USERNAME
+   USERNAME
    ========================================================= */
 
-async function checkUsername() {
+usernameInput.addEventListener(
+    "input",
+    () => {
 
-    const username = usernameInput.value.trim();
+        usernameInput.value =
+            usernameInput.value
+                .toLowerCase()
+                .replace(/[^a-z0-9_-]/g, "");
 
-    if (username.length < 3) return;
+        usernameStatus.textContent = "";
 
-    try {
+        clearTimeout(usernameTimer);
 
-        const { data, error } = await supabaseClient
-            .from("profiles")
-            .select("id")
-            .eq("username", username)
-            .limit(1);
-
-        if (error) {
-            console.error("Username check:", error);
-
-            usernameStatus.textContent =
-                "بررسی نام کاربری انجام نشد";
-
-            usernameStatus.className =
-                "status error";
-
-            usernameAvailable = false;
-
+        if (
+            usernameInput.value.length < 3
+        ) {
             return;
         }
 
-        if (data && data.length > 0) {
+        usernameStatus.textContent =
+            "در حال بررسی...";
 
-            usernameAvailable = false;
+        usernameTimer =
+            setTimeout(
+                checkUsername,
+                500
+            );
+    }
+);
+
+
+async function checkUsername() {
+
+    const username =
+        usernameInput.value.trim();
+
+    if (username.length < 3) {
+        return;
+    }
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient
+                .from("profiles")
+                .select("id")
+                .eq("username", username)
+                .limit(1);
+
+        if (error) {
+            throw error;
+        }
+
+        if (
+            Array.isArray(data) &&
+            data.length > 0
+        ) {
 
             usernameStatus.textContent =
-                "این نام کاربری قبلاً استفاده شده است";
+                "این نام کاربری قبلاً استفاده شده است.";
 
             usernameStatus.className =
                 "status error";
 
         } else {
 
-            usernameAvailable = true;
-
             usernameStatus.textContent =
-                "نام کاربری آزاد است ✓";
+                "این نام کاربری آزاد است ✓";
 
             usernameStatus.className =
                 "status ok";
@@ -636,12 +774,13 @@ async function checkUsername() {
 
     } catch (error) {
 
-        console.error(error);
-
-        usernameAvailable = false;
+        console.error(
+            "USERNAME CHECK:",
+            error
+        );
 
         usernameStatus.textContent =
-            "خطا در بررسی نام کاربری";
+            "بررسی نام کاربری ناموفق بود.";
 
         usernameStatus.className =
             "status error";
@@ -653,25 +792,56 @@ async function checkUsername() {
    PASSWORD STRENGTH
    ========================================================= */
 
-passwordInput.addEventListener("input", updatePasswordStrength);
+passwordInput.addEventListener(
+    "input",
+    updatePasswordStrength
+);
+
 
 function updatePasswordStrength() {
 
-    const value = passwordInput.value;
+    const value =
+        passwordInput.value;
 
     let score = 0;
 
-    if (value.length >= 6) score++;
-    if (value.length >= 10) score++;
-    if (/[A-Z]/.test(value) && /[a-z]/.test(value)) score++;
-    if (/\d/.test(value) || /[^A-Za-z0-9]/.test(value)) score++;
+    if (value.length >= 6) {
+        score++;
+    }
 
-    bars.forEach((bar, index) => {
-        bar.style.background =
-            index < score
-                ? "linear-gradient(90deg,#8668ff,#31d9ff)"
-                : "rgba(255,255,255,0.08)";
-    });
+    if (value.length >= 10) {
+        score++;
+    }
+
+    if (
+        /[a-z]/.test(value) &&
+        /[A-Z]/.test(value)
+    ) {
+        score++;
+    }
+
+    if (
+        /\d/.test(value) ||
+        /[^A-Za-z0-9]/.test(value)
+    ) {
+        score++;
+    }
+
+    bars.forEach(
+        (bar, index) => {
+
+            if (index < score) {
+
+                bar.style.background =
+                    "linear-gradient(90deg,#8668ff,#31d9ff)";
+
+            } else {
+
+                bar.style.background =
+                    "rgba(255,255,255,.08)";
+            }
+        }
+    );
 }
 
 
@@ -679,28 +849,36 @@ function updatePasswordStrength() {
    PASSWORD MATCH
    ========================================================= */
 
-confirmPasswordInput.addEventListener(
-    "input",
-    checkPasswordMatch
-);
-
 passwordInput.addEventListener(
     "input",
     checkPasswordMatch
 );
 
+confirmPasswordInput.addEventListener(
+    "input",
+    checkPasswordMatch
+);
+
+
 function checkPasswordMatch() {
 
-    if (!confirmPasswordInput.value) {
+    if (
+        !confirmPasswordInput.value
+    ) {
+
         passwordStatus.textContent = "";
         passwordStatus.className = "status";
+
         return;
     }
 
-    if (passwordInput.value !== confirmPasswordInput.value) {
+    if (
+        passwordInput.value !==
+        confirmPasswordInput.value
+    ) {
 
         passwordStatus.textContent =
-            "رمزهای عبور یکسان نیستند";
+            "رمزها یکسان نیستند.";
 
         passwordStatus.className =
             "status error";
@@ -717,258 +895,280 @@ function checkPasswordMatch() {
 
 
 /* =========================================================
-   SUBMIT
+   REGISTER
    ========================================================= */
 
-form.addEventListener("submit", async event => {
+registerForm.addEventListener(
+    "submit",
+    async event => {
 
-    event.preventDefault();
+        event.preventDefault();
 
-    const displayName =
-        displayNameInput.value.trim();
+        formMessage.textContent = "";
+        formMessage.className =
+            "message";
 
-    const username =
-        usernameInput.value.trim()
-            .toLowerCase();
+        const displayName =
+            displayNameInput.value.trim();
 
-    const email =
-        emailInput.value.trim();
+        const username =
+            usernameInput.value
+                .trim()
+                .toLowerCase();
 
-    const password =
-        passwordInput.value;
+        const email =
+            emailInput.value.trim();
 
-    const confirmPassword =
-        confirmPasswordInput.value;
+        const password =
+            passwordInput.value;
 
-    const terms =
-        document.getElementById("terms").checked;
+        const confirmPassword =
+            confirmPasswordInput.value;
+
+        const terms =
+            document.getElementById("terms").checked;
 
 
-    if (displayName.length < 2) {
-        showToast("نام نمایشی را کامل وارد کن.");
-        return;
-    }
+        /* VALIDATION */
 
-    if (!/^[a-z0-9_-]{3,24}$/.test(username)) {
-        showToast(
-            "نام کاربری باید ۳ تا ۲۴ کاراکتر باشد."
-        );
-        return;
-    }
+        if (displayName.length < 2) {
 
-    if (password.length < 6) {
-        showToast(
-            "رمز عبور باید حداقل ۶ کاراکتر باشد."
-        );
-        return;
-    }
-
-    if (password !== confirmPassword) {
-        showToast(
-            "رمزهای عبور یکسان نیستند."
-        );
-        return;
-    }
-
-    if (!terms) {
-        showToast(
-            "لطفاً قوانین استفاده را تأیید کن."
-        );
-        return;
-    }
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = "در حال ساخت حساب...";
-
-    try {
-
-        /* آخرین بررسی username */
-
-        const { data: existingUsername, error: usernameError } =
-            await supabaseClient
-                .from("profiles")
-                .select("id")
-                .eq("username", username)
-                .limit(1);
-
-        if (usernameError) {
-            throw usernameError;
-        }
-
-        if (existingUsername && existingUsername.length > 0) {
-
-            usernameStatus.textContent =
-                "این نام کاربری قبلاً استفاده شده است";
-
-            usernameStatus.className =
-                "status error";
-
-            showToast("نام کاربری دیگری انتخاب کن.");
+            showToast(
+                "نام نمایشی را کامل وارد کن."
+            );
 
             return;
         }
 
 
-        /* ایجاد حساب */
+        if (
+            !/^[a-z0-9_-]{3,24}$/
+                .test(username)
+        ) {
 
-        const { data, error } =
-            await supabaseClient.auth.signUp({
+            showToast(
+                "نام کاربری باید ۳ تا ۲۴ کاراکتر باشد."
+            );
 
-                email,
-                password,
-
-                options: {
-                    data: {
-                        display_name: displayName,
-                        username: username
-                    }
-                }
-            });
-
-        if (error) {
-            throw error;
+            return;
         }
 
 
-        /* اگر session ساخته شد */
-        if (data.session) {
+        if (password.length < 6) {
 
-            /*
-             * در بعضی تنظیمات trigger پروفایل را می‌سازد.
-             * این fallback فقط در صورتی اجرا می‌شود که
-             * پروفایل موجود نباشد.
-             */
+            showToast(
+                "رمز عبور باید حداقل ۶ کاراکتر باشد."
+            );
 
-            const userId = data.user.id;
+            return;
+        }
 
-            const { data: existingProfile } =
+
+        if (
+            password !== confirmPassword
+        ) {
+
+            showToast(
+                "رمزهای عبور یکسان نیستند."
+            );
+
+            return;
+        }
+
+
+        if (!terms) {
+
+            showToast(
+                "لطفاً قوانین استفاده را تأیید کن."
+            );
+
+            return;
+        }
+
+
+        submitBtn.disabled = true;
+        submitBtn.textContent =
+            "در حال ساخت حساب...";
+
+
+        try {
+
+            /* آخرین بررسی username */
+
+            const {
+                data: existing,
+                error: existingError
+            } =
                 await supabaseClient
                     .from("profiles")
                     .select("id")
-                    .eq("id", userId)
-                    .maybeSingle();
+                    .eq("username", username)
+                    .limit(1);
 
-            if (!existingProfile) {
-
-                const { error: profileError } =
-                    await supabaseClient
-                        .from("profiles")
-                        .insert({
-                            id: userId,
-                            display_name: displayName,
-                            username: username,
-                            avatar: "",
-                            bio: ""
-                        });
-
-                if (profileError) {
-                    console.warn(
-                        "Fallback profile insert failed:",
-                        profileError
-                    );
-                }
+            if (existingError) {
+                throw existingError;
             }
 
+            if (
+                existing &&
+                existing.length > 0
+            ) {
+
+                usernameStatus.textContent =
+                    "این نام کاربری قبلاً استفاده شده است.";
+
+                usernameStatus.className =
+                    "status error";
+
+                return;
+            }
+
+
+            /* CREATE ACCOUNT */
+
+            const {
+                data,
+                error
+            } =
+                await supabaseClient.auth.signUp({
+
+                    email,
+                    password,
+
+                    options: {
+                        data: {
+                            display_name:
+                                displayName,
+
+                            username:
+                                username
+                        }
+                    }
+                });
+
+
+            if (error) {
+                throw error;
+            }
+
+
+            /* SESSION CREATED */
+
+            if (data.session) {
+
+                formMessage.textContent =
+                    "حساب با موفقیت ساخته شد.";
+
+                formMessage.className =
+                    "message success";
+
+
+                /*
+                 * در صورت وجود Session،
+                 * کاربر مستقیم به صفحه ورود می‌رود.
+                 */
+
+                setTimeout(
+                    () => {
+                        window.location.href =
+                            "./register.html";
+                    },
+                    900
+                );
+
+                return;
+            }
+
+
+            /*
+             * اگر Confirm Email فعال باشد،
+             * Supabase session ایجاد نمی‌کند.
+             */
+
+            formMessage.textContent =
+                "حساب ساخته شد. برای ورود، تنظیم Confirm Email را در Supabase بررسی کن.";
+
+            formMessage.className =
+                "message success";
+
+
+            setTimeout(
+                () => {
+                    window.location.href =
+                        "./register.html";
+                },
+                1800
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "REGISTER ERROR:",
+                error
+            );
+
+            let message =
+                error?.message ||
+                "ثبت‌نام انجام نشد.";
+
+
+            const lower =
+                message.toLowerCase();
+
+
+            if (
+                lower.includes(
+                    "already registered"
+                )
+            ) {
+
+                message =
+                    "این ایمیل قبلاً ثبت شده است.";
+            }
+
+
+            if (
+                lower.includes("duplicate")
+            ) {
+
+                message =
+                    "این نام کاربری قبلاً استفاده شده است.";
+            }
+
+
+            if (
+                lower.includes(
+                    "database error"
+                )
+            ) {
+
+                message =
+                    "خطای پایگاه داده. Trigger و جدول profiles را بررسی کن.";
+            }
+
+
+            formMessage.textContent =
+                message;
+
+            formMessage.className =
+                "message error";
+
             showToast(
-                "حساب ساخته شد. در حال ورود...",
-                "success"
+                message
             );
 
-            setTimeout(() => {
-                window.location.href = "./register.html";
-            }, 800);
+        } finally {
 
-            return;
+            submitBtn.disabled = false;
+            submitBtn.textContent =
+                "ساخت حساب";
         }
 
-
-        /*
-         * اگر Confirm Email در Supabase فعال باشد،
-         * session ساخته نمی‌شود.
-         */
-
-        showToast(
-            "حساب ساخته شد. اگر وارد نشدی، Confirm email را در Supabase خاموش کن.",
-            "success"
-        );
-
-        setTimeout(() => {
-            window.location.href = "./register.html";
-        }, 1600);
-
-    } catch (error) {
-
-        console.error("SIGNUP ERROR:", error);
-
-        let message =
-            error?.message ||
-            "ثبت‌نام انجام نشد.";
-
-        if (
-            message.toLowerCase().includes("already registered")
-        ) {
-            message =
-                "این ایمیل قبلاً ثبت شده است.";
-        }
-
-        if (
-            message.toLowerCase().includes("duplicate")
-        ) {
-            message =
-                "این نام کاربری قبلاً استفاده شده است.";
-        }
-
-        if (
-            message.toLowerCase().includes("database error")
-        ) {
-            message =
-                "خطای پایگاه داده رخ داد. تنظیمات profiles و trigger را بررسی کن.";
-        }
-
-        showToast(message);
-
-    } finally {
-
-        submitBtn.disabled = false;
-        submitBtn.textContent = "ساخت حساب";
     }
-
-});
-
-
-/* =========================================================
-   SESSION CHECK
-   ========================================================= */
-
-(async function sessionCheck() {
-
-    try {
-
-        const { data } =
-            await supabaseClient.auth.getSession();
-
-        /*
-         * اگر قبلاً session وجود داشت،
-         * ثبت‌نام اجباری نیست.
-         * کاربر می‌تواند از لینک ورود وارد شود.
-         */
-
-        if (data.session) {
-            console.log(
-                "Existing session:",
-                data.session.user.id
-            );
-        }
-
-    } catch (error) {
-        console.error(
-            "Session check error:",
-            error
-        );
-    }
-
-})();
+);
 </script>
 
 </body>
 </html>
+
