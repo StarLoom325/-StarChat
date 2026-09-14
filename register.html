@@ -1,820 +1,997 @@
-
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>StarChat | ورود</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>ورود | StarChat</title>
 
-<style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-html,body{
-    width:100%;
-    min-height:100%;
-}
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-body{
-    font-family:Tahoma,Arial,sans-serif;
-    background:
-        radial-gradient(circle at 15% 15%,rgba(124,58,237,.25),transparent 35%),
-        radial-gradient(circle at 85% 85%,rgba(6,182,212,.18),transparent 35%),
-        #050711;
-    color:#fff;
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:20px;
-}
+        :root {
+            --bg: #060913;
+            --panel: rgba(14, 18, 35, 0.9);
+            --border: rgba(255,255,255,0.09);
+            --text: #fff;
+            --muted: #9aa3bd;
+            --purple: #8668ff;
+            --cyan: #31d9ff;
+            --danger: #ff5f7a;
+            --success: #43e7a6;
+        }
 
-.card{
-    width:100%;
-    max-width:440px;
-    background:rgba(13,17,32,.92);
-    border:1px solid rgba(139,92,246,.28);
-    border-radius:28px;
-    padding:30px;
-    box-shadow:
-        0 30px 100px rgba(0,0,0,.55),
-        0 0 50px rgba(124,58,237,.08);
-    backdrop-filter:blur(20px);
-}
+        html,
+        body {
+            width: 100%;
+            min-height: 100%;
+            background: var(--bg);
+            color: white;
+            font-family: Tahoma, Arial, sans-serif;
+        }
 
-.logo{
-    text-align:center;
-    font-size:36px;
-    font-weight:900;
-    background:linear-gradient(90deg,#c4b5fd,#22d3ee);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-}
+        body {
+            overflow-x: hidden;
+        }
 
-.logoSub{
-    text-align:center;
-    color:#6b7280;
-    font-size:12px;
-    margin-top:5px;
-    margin-bottom:25px;
-}
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.15;
+            pointer-events: none;
+        }
 
-.lockIcon{
-    width:90px;
-    height:90px;
-    border-radius:50%;
-    margin:0 auto 18px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    font-size:40px;
-    background:rgba(124,58,237,.13);
-    border:1px solid rgba(167,139,250,.25);
-}
+        body::before {
+            top: -180px;
+            left: -120px;
+            background: #6949ff;
+        }
 
-h2{
-    text-align:center;
-    font-size:20px;
-    margin-bottom:8px;
-}
+        body::after {
+            right: -150px;
+            bottom: -180px;
+            background: #00d5ff;
+        }
 
-.subtitle{
-    text-align:center;
-    color:#8b93a7;
-    font-size:13px;
-    line-height:1.8;
-    margin-bottom:23px;
-}
+        .page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
 
-.userName{
-    text-align:center;
-    color:#c4b5fd;
-    font-size:14px;
-    margin-bottom:17px;
-}
+        .card {
+            width: 100%;
+            max-width: 430px;
+            padding: 30px;
+            border-radius: 28px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 30px 80px rgba(0,0,0,.45);
+        }
 
-label{
-    display:block;
-    color:#cbd5e1;
-    font-size:13px;
-    margin:15px 0 7px;
-}
+        .brand {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-input{
-    width:100%;
-    padding:14px 15px;
-    border-radius:13px;
-    border:1px solid #29314c;
-    background:#080c18;
-    color:#fff;
-    outline:none;
-    font-size:15px;
-    transition:.2s;
-}
+        .logo {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 24px;
+            background: linear-gradient(
+                135deg,
+                var(--purple),
+                var(--cyan)
+            );
+            font-size: 32px;
+            font-weight: 900;
+            box-shadow: 0 0 35px rgba(104,85,255,.3);
+        }
 
-input:focus{
-    border-color:#8b5cf6;
-    box-shadow:0 0 0 3px rgba(139,92,246,.12);
-}
+        h1 {
+            font-size: 29px;
+            margin-bottom: 8px;
+        }
 
-button{
-    width:100%;
-    border:0;
-    border-radius:14px;
-    padding:15px;
-    margin-top:20px;
-    color:white;
-    font-size:15px;
-    font-weight:800;
-    cursor:pointer;
-    background:linear-gradient(135deg,#7c3aed,#0891b2);
-    transition:.2s;
-}
+        .sub {
+            color: var(--muted);
+            font-size: 13px;
+        }
 
-button:hover{
-    transform:translateY(-1px);
-}
+        .lock {
+            display: none;
+        }
 
-button:disabled{
-    opacity:.5;
-    cursor:not-allowed;
-    transform:none;
-}
+        .login {
+            display: block;
+        }
 
-.secondary{
-    background:#151b2e;
-    border:1px solid #303952;
-}
+        .field {
+            margin-bottom: 15px;
+        }
 
-.danger{
-    background:rgba(239,68,68,.1);
-    border:1px solid rgba(239,68,68,.25);
-    color:#fca5a5;
-}
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #d7dcef;
+        }
 
-.link{
-    text-align:center;
-    margin-top:20px;
-    color:#7f889c;
-    font-size:13px;
-}
+        .input-wrap {
+            position: relative;
+        }
 
-.link a{
-    color:#a78bfa;
-    text-decoration:none;
-    font-weight:bold;
-}
+        input {
+            width: 100%;
+            height: 52px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,.08);
+            background: rgba(255,255,255,.045);
+            color: white;
+            outline: none;
+            padding: 0 15px;
+            font-size: 14px;
+        }
 
-.message{
-    display:none;
-    margin-top:16px;
-    padding:12px 14px;
-    border-radius:12px;
-    line-height:1.8;
-    font-size:13px;
-}
+        input:focus {
+            border-color: rgba(134,104,255,.65);
+            box-shadow: 0 0 0 4px rgba(134,104,255,.08);
+        }
 
-.message.show{
-    display:block;
-}
+        .pass {
+            padding-left: 50px;
+        }
 
-.message.error{
-    color:#fecaca;
-    background:rgba(239,68,68,.1);
-    border:1px solid rgba(239,68,68,.25);
-}
+        .toggle {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 34px;
+            height: 34px;
+            border: 0;
+            border-radius: 10px;
+            background: transparent;
+            color: #aeb7cf;
+            cursor: pointer;
+        }
 
-.message.success{
-    color:#bbf7d0;
-    background:rgba(34,197,94,.1);
-    border:1px solid rgba(34,197,94,.25);
-}
+        .btn {
+            width: 100%;
+            height: 54px;
+            border: 0;
+            border-radius: 16px;
+            cursor: pointer;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            background: linear-gradient(
+                135deg,
+                var(--purple),
+                #557fff
+            );
+            margin-top: 4px;
+        }
 
-.hidden{
-    display:none!important;
-}
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
 
-.small{
-    color:#6b7280;
-    font-size:11px;
-    text-align:center;
-    margin-top:13px;
-    line-height:1.8;
-}
+        .secondary {
+            background: rgba(255,255,255,.06);
+            border: 1px solid var(--border);
+            margin-top: 10px;
+        }
 
-@media(max-width:480px){
-    body{
-        padding:12px;
-    }
+        .info {
+            color: var(--muted);
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.8;
+            margin-top: 15px;
+        }
 
-    .card{
-        padding:23px;
-        border-radius:22px;
-    }
+        .error {
+            min-height: 20px;
+            margin-top: 10px;
+            text-align: center;
+            color: var(--danger);
+            font-size: 12px;
+        }
 
-    .logo{
-        font-size:31px;
-    }
-}
-</style>
+        .success {
+            min-height: 20px;
+            margin-top: 10px;
+            text-align: center;
+            color: var(--success);
+            font-size: 12px;
+        }
+
+        .center-icon {
+            width: 85px;
+            height: 85px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(
+                135deg,
+                rgba(134,104,255,.25),
+                rgba(49,217,255,.18)
+            );
+            border: 1px solid rgba(255,255,255,.08);
+            font-size: 36px;
+        }
+
+        .user-label {
+            text-align: center;
+            color: #c0c8db;
+            margin-bottom: 18px;
+            font-size: 13px;
+        }
+
+        .links {
+            display: flex;
+            justify-content: center;
+            margin-top: 18px;
+        }
+
+        .links a {
+            color: #b3a4ff;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            max-width: calc(100vw - 40px);
+            padding: 13px 15px;
+            border-radius: 14px;
+            background: rgba(13,17,31,.96);
+            border: 1px solid var(--border);
+            color: white;
+            font-size: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(15px);
+            transition: .25s;
+            z-index: 100;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="card">
+<main class="page">
 
-    <div class="logo">✦ StarChat</div>
+    <section class="card">
 
-    <div class="logoSub">
-        پیام‌رسان StarLoom
-    </div>
+        <!-- LOGIN -->
+        <div id="loginBox" class="login">
 
-    <!-- ================= LOCK VIEW ================= -->
+            <div class="brand">
+                <div class="logo">✦</div>
+                <h1>StarChat</h1>
+                <div class="sub">
+                    ورود به پیام‌رسان StarLoom
+                </div>
+            </div>
 
-    <section id="lockView" class="hidden">
+            <form id="loginForm">
 
-        <div class="lockIcon">🔐</div>
+                <div class="field">
+                    <label for="email">
+                        ایمیل
+                    </label>
 
-        <h2>
-            StarChat قفل است
-        </h2>
+                    <input
+                        id="email"
+                        type="email"
+                        autocomplete="email"
+                        placeholder="example@email.com"
+                        required
+                    >
+                </div>
 
-        <div id="userName" class="userName">
-            در حال بارگذاری...
+                <div class="field">
+
+                    <label for="password">
+                        رمز عبور
+                    </label>
+
+                    <div class="input-wrap">
+
+                        <input
+                            id="password"
+                            class="pass"
+                            type="password"
+                            autocomplete="current-password"
+                            placeholder="رمز عبور"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="toggle"
+                            id="togglePassword"
+                        >◉</button>
+
+                    </div>
+                </div>
+
+                <button
+                    id="loginBtn"
+                    class="btn"
+                    type="submit"
+                >
+                    ورود
+                </button>
+
+            </form>
+
+            <div id="loginMessage" class="error"></div>
+
+            <div class="links">
+                <a href="./index.html">
+                    ساخت حساب جدید
+                </a>
+            </div>
+
         </div>
 
-        <div class="subtitle">
-            برای ورود، رمز StarChat را وارد کنید.
-        </div>
 
-        <label>
-            رمز ورود
-        </label>
+        <!-- LOCK -->
+        <div id="lockBox" class="lock">
 
-        <input
-            id="pinInput"
-            type="password"
-            autocomplete="off"
-            inputmode="numeric"
-            placeholder="رمز StarChat"
-        >
+            <div class="brand">
+                <div class="center-icon">
+                    🔐
+                </div>
 
-        <button id="unlockButton">
-            🔓 ورود
-        </button>
+                <h1>StarChat</h1>
 
-        <button
-            id="forgetDeviceButton"
-            class="secondary"
-        >
-            ورود با حساب اصلی
-        </button>
+                <div class="sub">
+                    حساب شما روی این دستگاه فعال است
+                </div>
+            </div>
 
-    </section>
+            <div
+                id="lockUser"
+                class="user-label"
+            ></div>
 
-    <!-- ================= LOGIN VIEW ================= -->
+            <form id="pinForm">
 
-    <section id="loginView">
+                <div class="field">
 
-        <h2>
-            ورود به StarChat
-        </h2>
+                    <label for="pin">
+                        رمز ورود دستگاه
+                    </label>
 
-        <div class="subtitle">
-            ایمیل و رمز حساب خود را وارد کنید.
-        </div>
+                    <div class="input-wrap">
 
-        <form id="loginForm">
+                        <input
+                            id="pin"
+                            class="pass"
+                            type="password"
+                            inputmode="numeric"
+                            autocomplete="off"
+                            minlength="4"
+                            maxlength="32"
+                            placeholder="رمز یا PIN"
+                            required
+                        >
 
-            <label>
-                ایمیل
-            </label>
+                        <button
+                            type="button"
+                            class="toggle"
+                            id="togglePin"
+                        >◉</button>
 
-            <input
-                id="email"
-                type="email"
-                autocomplete="email"
-                placeholder="example@email.com"
-                required
-            >
+                    </div>
+                </div>
 
-            <label>
-                رمز عبور
-            </label>
+                <button
+                    class="btn"
+                    type="submit"
+                >
+                    باز کردن StarChat
+                </button>
 
-            <input
-                id="password"
-                type="password"
-                autocomplete="current-password"
-                placeholder="رمز عبور"
-                required
-            >
+            </form>
+
+            <div
+                id="pinMessage"
+                class="error"
+            ></div>
 
             <button
-                id="loginButton"
-                type="submit"
+                id="changePinBtn"
+                class="btn secondary"
+                type="button"
             >
-                ورود
+                تغییر رمز دستگاه
             </button>
 
-        </form>
+            <button
+                id="logoutBtn"
+                class="btn secondary"
+                type="button"
+            >
+                خروج کامل از حساب
+            </button>
 
-        <div class="link">
-            حساب نداری؟
-            <a href="register.html">
-                ساخت حساب
-            </a>
         </div>
 
     </section>
 
-    <div id="message" class="message"></div>
+</main>
 
-    <div class="small">
-        StarChat توسط StarLoom
-    </div>
-
-</div>
+<div id="toast" class="toast"></div>
 
 <script>
 /* =========================================================
-   SUPABASE CONFIG
+   SUPABASE
    ========================================================= */
 
-const SUPABASE_URL =
-    "YOUR_SUPABASE_URL";
+const SUPABASE_URL = "https://xxxxx.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_PUBLISHABLE_KEY";
 
-const SUPABASE_ANON_KEY =
-    "YOUR_SUPABASE_ANON_KEY";
-
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
-        {
-            auth:{
-                persistSession:true,
-                autoRefreshToken:true,
-                detectSessionInUrl:true
-            }
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY,
+    {
+        auth: {
+            persistSession: true,
+            autoRefreshToken: true,
+            detectSessionInUrl: true
         }
-    );
+    }
+);
+
+
+/* =========================================================
+   STORAGE KEYS
+   ========================================================= */
+
+const PIN_HASH_KEY = "starchat_device_pin_hash";
+const PIN_USER_KEY = "starchat_device_user_id";
+
 
 /* =========================================================
    ELEMENTS
    ========================================================= */
 
-const lockView =
-    document.getElementById("lockView");
+const loginBox = document.getElementById("loginBox");
+const lockBox = document.getElementById("lockBox");
 
-const loginView =
-    document.getElementById("loginView");
+const loginForm = document.getElementById("loginForm");
+const pinForm = document.getElementById("pinForm");
 
-const message =
-    document.getElementById("message");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const pinInput = document.getElementById("pin");
 
-const pinInput =
-    document.getElementById("pinInput");
+const loginBtn = document.getElementById("loginBtn");
 
-const unlockButton =
-    document.getElementById("unlockButton");
+const loginMessage =
+    document.getElementById("loginMessage");
 
-const userName =
-    document.getElementById("userName");
+const pinMessage =
+    document.getElementById("pinMessage");
 
-/* =========================================================
-   MESSAGE
-   ========================================================= */
+const lockUser =
+    document.getElementById("lockUser");
 
-function showMessage(text,type="error"){
+const toast =
+    document.getElementById("toast");
 
-    message.textContent = text;
-
-    message.className =
-        "message show " + type;
-}
-
-function clearMessage(){
-
-    message.textContent = "";
-
-    message.className =
-        "message";
-}
 
 /* =========================================================
-   HASH PIN
+   TOAST
    ========================================================= */
 
-async function hashText(text){
+let toastTimer = null;
 
-    const bytes =
+function showToast(message) {
+
+    clearTimeout(toastTimer);
+
+    toast.textContent = message;
+    toast.className = "toast show";
+
+    toastTimer = setTimeout(() => {
+        toast.className = "toast";
+    }, 3500);
+}
+
+
+/* =========================================================
+   SHA-256
+   ========================================================= */
+
+async function sha256(text) {
+
+    const data =
         new TextEncoder().encode(text);
 
-    const hash =
+    const hashBuffer =
         await crypto.subtle.digest(
             "SHA-256",
-            bytes
+            data
         );
 
-    return Array
-        .from(new Uint8Array(hash))
+    const hashArray =
+        Array.from(new Uint8Array(hashBuffer));
+
+    return hashArray
         .map(
             byte =>
-                byte
-                .toString(16)
-                .padStart(2,"0")
+                byte.toString(16).padStart(2, "0")
         )
         .join("");
 }
 
-/* =========================================================
-   PROFILE
-   ========================================================= */
-
-async function getProfile(userId){
-
-    const {data,error} =
-        await supabaseClient
-        .from("profiles")
-        .select("*")
-        .eq("id",userId)
-        .maybeSingle();
-
-    if(error){
-        throw error;
-    }
-
-    return data;
-}
 
 /* =========================================================
-   CHECK SCREEN
+   PASSWORD TOGGLE
    ========================================================= */
 
-async function checkScreen(){
+document
+    .getElementById("togglePassword")
+    .addEventListener("click", () => {
 
-    try{
+        passwordInput.type =
+            passwordInput.type === "password"
+                ? "text"
+                : "password";
+    });
 
-        const {
-            data:{
-                session
-            }
-        } =
-        await supabaseClient.auth.getSession();
 
-        if(!session){
+document
+    .getElementById("togglePin")
+    .addEventListener("click", () => {
 
-            loginView.classList.remove("hidden");
-            lockView.classList.add("hidden");
+        pinInput.type =
+            pinInput.type === "password"
+                ? "text"
+                : "password";
+    });
 
-            return;
-        }
 
-        const pinHash =
-            localStorage.getItem(
-                "starchat_pin_hash"
-            );
+/* =========================================================
+   SHOW LOGIN
+   ========================================================= */
 
-        /*
-         * اگر PIN قبلاً ساخته شده باشد،
-         * صفحه قفل نمایش داده می‌شود.
-         */
+function showLogin() {
 
-        if(pinHash){
+    loginBox.style.display = "block";
+    lockBox.style.display = "none";
 
-            loginView.classList.add("hidden");
-            lockView.classList.remove("hidden");
-
-            try{
-
-                const profile =
-                    await getProfile(
-                        session.user.id
-                    );
-
-                if(profile){
-
-                    userName.textContent =
-                        profile.display_name ||
-                        profile.username ||
-                        "کاربر";
-                }
-
-            }catch(error){
-
-                userName.textContent =
-                    "کاربر StarChat";
-            }
-
-            return;
-        }
-
-        /*
-         * اگر Session وجود دارد اما PIN وجود ندارد،
-         * مستقیماً وارد چت می‌شویم.
-         */
-
-        window.location.href =
-            "chat.html";
-
-    }catch(error){
-
-        console.error(error);
-
-        showMessage(
-            "خطا در بررسی ورود: " +
-            error.message,
-            "error"
-        );
-    }
+    loginMessage.textContent = "";
+    pinMessage.textContent = "";
 }
+
+
+/* =========================================================
+   SHOW LOCK
+   ========================================================= */
+
+function showLock(session) {
+
+    loginBox.style.display = "none";
+    lockBox.style.display = "block";
+
+    const user =
+        session.user;
+
+    const email =
+        user.email || "کاربر StarChat";
+
+    lockUser.textContent =
+        email;
+
+    pinInput.value = "";
+
+    pinMessage.textContent = "";
+}
+
 
 /* =========================================================
    LOGIN
    ========================================================= */
 
-document
-.getElementById("loginForm")
-.addEventListener(
+loginForm.addEventListener(
     "submit",
-    async function(event){
+    async event => {
 
         event.preventDefault();
 
-        clearMessage();
-
-        const button =
-            document.getElementById(
-                "loginButton"
-            );
-
         const email =
-            document
-            .getElementById("email")
-            .value
-            .trim();
+            emailInput.value.trim();
 
         const password =
-            document
-            .getElementById("password")
-            .value;
+            passwordInput.value;
 
-        if(!email || !password){
-
-            showMessage(
-                "ایمیل و رمز عبور را وارد کنید.",
-                "error"
-            );
-
-            return;
-        }
-
-        button.disabled = true;
-        button.textContent =
+        loginBtn.disabled = true;
+        loginBtn.textContent =
             "در حال ورود...";
 
-        try{
+        loginMessage.textContent = "";
 
-            const {
-                data,
-                error
-            } =
-            await supabaseClient.auth
-            .signInWithPassword({
-                email,
-                password
-            });
+        try {
 
-            if(error){
+            const { data, error } =
+                await supabaseClient.auth.signInWithPassword({
+                    email,
+                    password
+                });
+
+            if (error) {
                 throw error;
             }
 
-            /*
-             * اولین ورود با حساب اصلی.
-             * PIN دستگاه را می‌سازیم.
-             */
+            const session =
+                data.session;
 
-            const existingPin =
+            if (!session) {
+                throw new Error(
+                    "جلسه ورود ساخته نشد."
+                );
+            }
+
+            const userId =
+                session.user.id;
+
+            const savedPinHash =
                 localStorage.getItem(
-                    "starchat_pin_hash"
+                    PIN_HASH_KEY
                 );
 
-            if(!existingPin){
+            const savedPinUser =
+                localStorage.getItem(
+                    PIN_USER_KEY
+                );
 
-                let pin =
+            if (
+                savedPinHash &&
+                savedPinUser === userId
+            ) {
+
+                showLock(session);
+
+            } else {
+
+                /*
+                 * حساب جدید روی این دستگاه
+                 * باید رمز دستگاه تعیین کند.
+                 */
+
+                const pin =
                     prompt(
-                        "برای ورودهای بعدی یک رمز StarChat انتخاب کنید:"
+                        "برای قفل دستگاه یک رمز یا PIN انتخاب کن:"
                     );
 
-                if(pin === null){
+                if (!pin || pin.length < 4) {
 
                     await supabaseClient.auth.signOut();
 
-                    showMessage(
-                        "ورود لغو شد.",
-                        "error"
-                    );
+                    showLogin();
+
+                    loginMessage.textContent =
+                        "رمز دستگاه باید حداقل ۴ کاراکتر باشد.";
 
                     return;
                 }
 
-                pin =
-                    String(pin).trim();
-
-                if(pin.length < 4){
-
-                    await supabaseClient.auth.signOut();
-
-                    showMessage(
-                        "رمز StarChat باید حداقل ۴ کاراکتر باشد.",
-                        "error"
-                    );
-
-                    return;
-                }
-
-                const pinHash =
-                    await hashText(pin);
+                const hash =
+                    await sha256(pin);
 
                 localStorage.setItem(
-                    "starchat_pin_hash",
-                    pinHash
+                    PIN_HASH_KEY,
+                    hash
                 );
 
                 localStorage.setItem(
-                    "starchat_device_user",
-                    data.user.id
+                    PIN_USER_KEY,
+                    userId
                 );
+
+                window.location.href =
+                    "./chat.html";
             }
 
-            window.location.href =
-                "chat.html";
+        } catch (error) {
 
-        }catch(error){
-
-            console.error(error);
-
-            let text =
-                error.message ||
-                "ورود ناموفق بود.";
-
-            if(
-                text
-                .toLowerCase()
-                .includes("invalid login")
-            ){
-
-                text =
-                    "ایمیل یا رمز عبور اشتباه است.";
-            }
-
-            showMessage(
-                text,
-                "error"
+            console.error(
+                "LOGIN ERROR:",
+                error
             );
 
-        }finally{
+            loginMessage.textContent =
+                error?.message ||
+                "ورود انجام نشد.";
 
-            button.disabled = false;
-            button.textContent = "ورود";
+        } finally {
+
+            loginBtn.disabled = false;
+            loginBtn.textContent =
+                "ورود";
         }
     }
 );
 
+
 /* =========================================================
-   UNLOCK
+   PIN UNLOCK
    ========================================================= */
 
-unlockButton.addEventListener(
-    "click",
-    async function(){
+pinForm.addEventListener(
+    "submit",
+    async event => {
 
-        clearMessage();
+        event.preventDefault();
 
         const pin =
-            pinInput.value.trim();
+            pinInput.value;
 
-        if(!pin){
-
-            showMessage(
-                "رمز StarChat را وارد کنید.",
-                "error"
+        const savedHash =
+            localStorage.getItem(
+                PIN_HASH_KEY
             );
+
+        if (!savedHash) {
+
+            pinMessage.textContent =
+                "رمز دستگاه پیدا نشد.";
 
             return;
         }
 
-        unlockButton.disabled = true;
-        unlockButton.textContent =
-            "در حال بررسی...";
-
-        try{
+        try {
 
             const hash =
-                await hashText(pin);
+                await sha256(pin);
 
-            const savedHash =
-                localStorage.getItem(
-                    "starchat_pin_hash"
-                );
+            if (hash !== savedHash) {
 
-            if(!savedHash){
-
-                loginView.classList.remove(
-                    "hidden"
-                );
-
-                lockView.classList.add(
-                    "hidden"
-                );
-
-                return;
-            }
-
-            if(hash !== savedHash){
+                pinMessage.textContent =
+                    "رمز دستگاه اشتباه است.";
 
                 pinInput.value = "";
 
-                showMessage(
-                    "رمز StarChat اشتباه است.",
-                    "error"
-                );
-
                 return;
             }
 
+            pinMessage.textContent =
+                "";
+
             window.location.href =
-                "chat.html";
+                "./chat.html";
 
-        }finally{
+        } catch (error) {
 
-            unlockButton.disabled = false;
-            unlockButton.textContent =
-                "🔓 ورود";
+            console.error(error);
+
+            pinMessage.textContent =
+                "خطا در باز کردن StarChat.";
         }
     }
 );
 
-/* =========================================================
-   ENTER KEY
-   ========================================================= */
-
-pinInput.addEventListener(
-    "keydown",
-    function(event){
-
-        if(event.key === "Enter"){
-
-            unlockButton.click();
-        }
-    }
-);
 
 /* =========================================================
-   USE MAIN ACCOUNT
+   CHANGE DEVICE PIN
    ========================================================= */
 
 document
-.getElementById("forgetDeviceButton")
-.addEventListener(
-    "click",
-    async function(){
+    .getElementById("changePinBtn")
+    .addEventListener("click", async () => {
 
-        const answer =
-            confirm(
-                "قفل این دستگاه حذف شود؟\n\nبعد از آن برای ورود باید ایمیل و رمز اصلی حساب را وارد کنید."
+        const oldPin =
+            prompt(
+                "رمز فعلی دستگاه را وارد کن:"
             );
 
-        if(!answer){
+        if (!oldPin) return;
+
+        const oldHash =
+            await sha256(oldPin);
+
+        const savedHash =
+            localStorage.getItem(
+                PIN_HASH_KEY
+            );
+
+        if (oldHash !== savedHash) {
+
+            showToast(
+                "رمز فعلی اشتباه است."
+            );
+
             return;
         }
 
+        const newPin =
+            prompt(
+                "رمز جدید را وارد کن:"
+            );
+
+        if (!newPin || newPin.length < 4) {
+
+            showToast(
+                "رمز جدید باید حداقل ۴ کاراکتر باشد."
+            );
+
+            return;
+        }
+
+        const newHash =
+            await sha256(newPin);
+
+        localStorage.setItem(
+            PIN_HASH_KEY,
+            newHash
+        );
+
+        showToast(
+            "رمز دستگاه با موفقیت تغییر کرد."
+        );
+    });
+
+
+/* =========================================================
+   COMPLETE LOGOUT
+   ========================================================= */
+
+document
+    .getElementById("logoutBtn")
+    .addEventListener("click", async () => {
+
+        try {
+
+            await supabaseClient.auth.signOut();
+
+        } catch (error) {
+
+            console.error(error);
+        }
+
         localStorage.removeItem(
-            "starchat_pin_hash"
+            PIN_HASH_KEY
         );
 
         localStorage.removeItem(
-            "starchat_device_user"
+            PIN_USER_KEY
         );
 
-        await supabaseClient.auth.signOut();
+        showLogin();
 
-        location.reload();
+        emailInput.value = "";
+        passwordInput.value = "";
+        pinInput.value = "";
+
+        showToast(
+            "از حساب خارج شدی."
+        );
+    });
+
+
+/* =========================================================
+   INITIAL SESSION
+   ========================================================= */
+
+async function initialize() {
+
+    try {
+
+        const { data } =
+            await supabaseClient.auth.getSession();
+
+        const session =
+            data.session;
+
+        if (!session) {
+
+            showLogin();
+            return;
+        }
+
+        const userId =
+            session.user.id;
+
+        const savedPinHash =
+            localStorage.getItem(
+                PIN_HASH_KEY
+            );
+
+        const savedPinUser =
+            localStorage.getItem(
+                PIN_USER_KEY
+            );
+
+        if (
+            savedPinHash &&
+            savedPinUser === userId
+        ) {
+
+            showLock(session);
+
+        } else {
+
+            /*
+             * Session دارد ولی روی این دستگاه
+             * هنوز PIN ساخته نشده است.
+             */
+
+            showLogin();
+
+            loginMessage.textContent =
+                "لطفاً یک‌بار با ایمیل و رمز عبور وارد شو تا رمز دستگاه ساخته شود.";
+        }
+
+    } catch (error) {
+
+        console.error(
+            "SESSION ERROR:",
+            error
+        );
+
+        showLogin();
+    }
+}
+
+
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
+
+supabaseClient.auth.onAuthStateChange(
+    (event, session) => {
+
+        console.log(
+            "Auth event:",
+            event
+        );
+
     }
 );
+
 
 /* =========================================================
    START
    ========================================================= */
 
-checkScreen();
+initialize();
 </script>
 
 </body>
