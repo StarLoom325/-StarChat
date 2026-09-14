@@ -1,615 +1,949 @@
 
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <title>StarChat | ورود</title>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#070b16"
+    >
+
+    <title>StarChat | ثبت نام</title>
+
+    <!-- =====================================================
+         SUPABASE
+         ===================================================== -->
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
+
+        /* =====================================================
+           RESET
+           ===================================================== */
+
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-        }
-
-        :root {
-            --bg: #050611;
-            --card: rgba(13, 16, 35, 0.88);
-            --card2: rgba(20, 24, 48, 0.72);
-            --border: rgba(139, 92, 246, 0.25);
-            --primary: #8b5cf6;
-            --primary2: #6d28d9;
-            --cyan: #22d3ee;
-            --text: #f8fafc;
-            --muted: #94a3b8;
-            --danger: #ef4444;
-            --success: #22c55e;
+            box-sizing: border-box;
         }
 
         html,
         body {
             width: 100%;
             min-height: 100%;
-            background: var(--bg);
-            color: var(--text);
+        }
+
+        body {
             font-family:
                 Tahoma,
                 Arial,
                 sans-serif;
-        }
 
-        body {
+            color: #ffffff;
+
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(124, 58, 237, 0.28),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 85% 90%,
+                    rgba(6, 182, 212, 0.20),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 50% 50%,
+                    rgba(30, 41, 59, 0.18),
+                    transparent 55%
+                ),
+                #050711;
+
             min-height: 100vh;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+
             overflow-x: hidden;
         }
 
-        /* ================= BACKGROUND ================= */
+        /* =====================================================
+           BACKGROUND STARS
+           ===================================================== */
 
-        .background {
+        body::before {
+            content: "";
+
             position: fixed;
+
             inset: 0;
-            overflow: hidden;
-            z-index: -2;
+
+            pointer-events: none;
+
+            background-image:
+                radial-gradient(
+                    1px 1px at 10% 20%,
+                    rgba(255,255,255,.7),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 25% 80%,
+                    rgba(255,255,255,.5),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 70% 20%,
+                    rgba(255,255,255,.6),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 90% 70%,
+                    rgba(255,255,255,.6),
+                    transparent
+                ),
+                radial-gradient(
+                    1px 1px at 55% 90%,
+                    rgba(255,255,255,.5),
+                    transparent
+                );
+
+            opacity: .7;
+        }
+
+        /* =====================================================
+           CARD
+           ===================================================== */
+
+        .register-card {
+
+            width: 100%;
+
+            max-width: 480px;
+
+            position: relative;
+
             background:
-                radial-gradient(circle at 20% 20%, rgba(124,58,237,.20), transparent 30%),
-                radial-gradient(circle at 80% 70%, rgba(34,211,238,.13), transparent 30%),
-                linear-gradient(135deg, #03040b, #090b18 50%, #04050d);
-        }
+                linear-gradient(
+                    145deg,
+                    rgba(15, 23, 42, .96),
+                    rgba(7, 11, 24, .96)
+                );
 
-        .orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(70px);
-            opacity: .25;
-            animation: float 12s ease-in-out infinite alternate;
-        }
+            border:
+                1px solid
+                rgba(139, 92, 246, .28);
 
-        .orb1 {
-            width: 260px;
-            height: 260px;
-            background: #7c3aed;
-            top: -80px;
-            left: -70px;
-        }
-
-        .orb2 {
-            width: 240px;
-            height: 240px;
-            background: #06b6d4;
-            right: -80px;
-            bottom: -70px;
-            animation-delay: -4s;
-        }
-
-        @keyframes float {
-            from {
-                transform: translate3d(0,0,0) scale(1);
-            }
-
-            to {
-                transform: translate3d(30px,-25px,0) scale(1.1);
-            }
-        }
-
-        /* ================= APP ================= */
-
-        .app {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 25px;
-        }
-
-        .card {
-            width: min(440px, 100%);
-            padding: 32px;
             border-radius: 28px;
 
-            background: var(--card);
-            border: 1px solid var(--border);
-
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
+            padding: 30px;
 
             box-shadow:
-                0 25px 80px rgba(0,0,0,.55),
-                inset 0 1px 0 rgba(255,255,255,.04);
+                0 30px 100px rgba(0,0,0,.60),
+                0 0 60px rgba(124,58,237,.08);
 
-            animation: cardIn .45s ease;
+            backdrop-filter: blur(20px);
+
+            z-index: 1;
         }
 
-        @keyframes cardIn {
-            from {
-                opacity: 0;
-                transform: translateY(15px) scale(.98);
-            }
+        /* =====================================================
+           LOGO
+           ===================================================== */
 
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        /* ================= LOGO ================= */
-
-        .logo {
+        .logo-area {
             text-align: center;
-            margin-bottom: 28px;
+
+            margin-bottom: 25px;
         }
 
         .logo-icon {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 14px;
+
+            width: 78px;
+
+            height: 78px;
+
+            margin:
+                0 auto
+                15px;
+
+            border-radius: 24px;
 
             display: flex;
+
             align-items: center;
+
             justify-content: center;
 
-            border-radius: 22px;
+            font-size: 37px;
 
             background:
-                linear-gradient(135deg,
-                    rgba(139,92,246,.35),
-                    rgba(34,211,238,.15));
+                linear-gradient(
+                    135deg,
+                    rgba(124,58,237,.25),
+                    rgba(8,145,178,.20)
+                );
 
-            border: 1px solid rgba(139,92,246,.35);
+            border:
+                1px solid
+                rgba(167,139,250,.25);
 
             box-shadow:
-                0 0 35px rgba(139,92,246,.22);
+                0 0 35px
+                rgba(124,58,237,.15);
         }
 
-        .logo-icon span {
+        .logo {
+
             font-size: 34px;
-        }
 
-        .logo h1 {
-            font-size: 28px;
-            font-weight: 800;
+            font-weight: 900;
+
             letter-spacing: -.5px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #ddd6fe,
+                    #a78bfa,
+                    #22d3ee
+                );
+
+            -webkit-background-clip: text;
+
+            background-clip: text;
+
+            color: transparent;
         }
 
-        .logo h1 span {
-            color: var(--primary);
-        }
+        .logo-subtitle {
 
-        .logo p {
-            color: var(--muted);
-            font-size: 13px;
             margin-top: 7px;
+
+            color: #6f7a90;
+
+            font-size: 12px;
         }
 
-        /* ================= FORM ================= */
+        /* =====================================================
+           TITLE
+           ===================================================== */
 
         .title {
-            font-size: 22px;
+
+            text-align: center;
+
+            font-size: 21px;
+
             font-weight: 800;
+
             margin-bottom: 7px;
         }
 
-        .subtitle {
-            color: var(--muted);
+        .description {
+
+            text-align: center;
+
+            color: #8993a7;
+
             font-size: 13px;
-            margin-bottom: 23px;
-            line-height: 1.8;
+
+            line-height: 1.9;
+
+            margin-bottom: 22px;
         }
+
+        /* =====================================================
+           FORM
+           ===================================================== */
 
         .field {
-            margin-bottom: 16px;
+
+            margin-bottom: 15px;
         }
 
-        .field label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 13px;
+        .field-label {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 7px;
+
             color: #cbd5e1;
+
+            font-size: 12px;
+
+            font-weight: 600;
         }
 
-        .input-wrap {
+        .required {
+
+            color: #a78bfa;
+
+            font-size: 10px;
+        }
+
+        .input-wrapper {
+
             position: relative;
         }
 
+        .input-icon {
+
+            position: absolute;
+
+            right: 14px;
+
+            top: 50%;
+
+            transform:
+                translateY(-50%);
+
+            color: #68748a;
+
+            font-size: 16px;
+
+            pointer-events: none;
+        }
+
         input {
+
             width: 100%;
-            height: 52px;
-            padding: 0 15px;
 
-            border-radius: 15px;
-            border: 1px solid rgba(148,163,184,.18);
+            height: 50px;
 
-            background: rgba(3,5,15,.72);
-            color: white;
+            border-radius: 13px;
+
+            border:
+                1px solid
+                #273149;
 
             outline: none;
-            font-size: 15px;
+
+            background:
+                rgba(5, 9, 20, .92);
+
+            color: #ffffff;
+
+            padding:
+                0
+                45px
+                0
+                14px;
+
+            font-size: 14px;
 
             transition:
-                border .2s,
+                border-color .2s,
                 box-shadow .2s,
                 background .2s;
         }
 
+        input::placeholder {
+
+            color: #4f5a70;
+        }
+
         input:focus {
-            border-color: rgba(139,92,246,.75);
+
+            border-color: #8b5cf6;
+
+            background:
+                rgba(8, 12, 25, 1);
 
             box-shadow:
-                0 0 0 4px rgba(139,92,246,.10);
-
-            background: rgba(5,7,20,.95);
+                0 0 0 3px
+                rgba(139,92,246,.11);
         }
 
-        input::placeholder {
-            color: #64748b;
+        input.valid {
+
+            border-color:
+                rgba(34,197,94,.55);
         }
 
-        .password-input {
-            padding-left: 48px;
+        input.invalid {
+
+            border-color:
+                rgba(239,68,68,.60);
         }
 
-        .show-password {
+        /* PASSWORD */
+
+        .password-toggle {
+
             position: absolute;
-            left: 10px;
+
+            left: 8px;
+
             top: 50%;
-            transform: translateY(-50%);
+
+            transform:
+                translateY(-50%);
 
             width: 34px;
+
             height: 34px;
 
             border: 0;
-            border-radius: 10px;
+
+            border-radius: 9px;
 
             background: transparent;
-            color: #94a3b8;
+
+            color: #748096;
 
             cursor: pointer;
-            font-size: 16px;
+
+            font-size: 15px;
         }
 
-        .show-password:hover {
-            background: rgba(255,255,255,.05);
-            color: white;
+        .password-toggle:hover {
+
+            background: #171d31;
+
+            color: #ffffff;
         }
 
-        /* ================= BUTTON ================= */
+        /* =====================================================
+           USERNAME STATUS
+           ===================================================== */
 
-        .btn {
+        .username-status {
+
+            min-height: 18px;
+
+            margin-top: 5px;
+
+            font-size: 10px;
+
+            color: #68748a;
+        }
+
+        .username-status.checking {
+
+            color: #93c5fd;
+        }
+
+        .username-status.success {
+
+            color: #86efac;
+        }
+
+        .username-status.error {
+
+            color: #fca5a5;
+        }
+
+        /* =====================================================
+           PASSWORD STRENGTH
+           ===================================================== */
+
+        .password-strength {
+
+            display: flex;
+
+            gap: 5px;
+
+            margin-top: 8px;
+        }
+
+        .strength-bar {
+
+            flex: 1;
+
+            height: 4px;
+
+            border-radius: 20px;
+
+            background: #20283b;
+
+            transition: .2s;
+        }
+
+        .strength-text {
+
+            margin-top: 5px;
+
+            font-size: 10px;
+
+            color: #657086;
+
+            min-height: 15px;
+        }
+
+        /* =====================================================
+           CHECKBOX
+           ===================================================== */
+
+        .terms {
+
+            display: flex;
+
+            align-items: flex-start;
+
+            gap: 9px;
+
+            margin:
+                7px
+                0
+                17px;
+
+            color: #7d889c;
+
+            font-size: 11px;
+
+            line-height: 1.8;
+        }
+
+        .terms input {
+
+            width: 17px;
+
+            height: 17px;
+
+            min-width: 17px;
+
+            margin-top: 2px;
+
+            padding: 0;
+
+            accent-color: #8b5cf6;
+        }
+
+        /* =====================================================
+           REGISTER BUTTON
+           ===================================================== */
+
+        .register-button {
+
             width: 100%;
+
             height: 52px;
 
             border: 0;
-            border-radius: 15px;
+
+            border-radius: 14px;
+
+            color: #ffffff;
+
+            font-size: 15px;
+
+            font-weight: 800;
 
             cursor: pointer;
-
-            color: white;
-            font-size: 15px;
-            font-weight: 800;
 
             background:
                 linear-gradient(
                     135deg,
-                    var(--primary),
-                    var(--primary2)
+                    #7c3aed,
+                    #0891b2
                 );
 
             box-shadow:
-                0 12px 30px rgba(109,40,217,.28);
+                0 10px 30px
+                rgba(124,58,237,.18);
 
             transition:
-                transform .18s,
-                filter .18s;
+                transform .2s,
+                opacity .2s,
+                box-shadow .2s;
         }
 
-        .btn:hover {
-            filter: brightness(1.08);
-            transform: translateY(-1px);
+        .register-button:hover {
+
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 14px 35px
+                rgba(124,58,237,.25);
         }
 
-        .btn:active {
-            transform: translateY(1px);
+        .register-button:active {
+
+            transform:
+                translateY(0);
         }
 
-        .btn:disabled {
-            opacity: .6;
+        .register-button:disabled {
+
+            opacity: .55;
+
             cursor: not-allowed;
+
             transform: none;
-        }
-
-        .btn-secondary {
-            margin-top: 10px;
-
-            background: rgba(255,255,255,.05);
-            border: 1px solid rgba(255,255,255,.08);
 
             box-shadow: none;
         }
 
-        .btn-danger {
-            margin-top: 10px;
-
-            background: rgba(239,68,68,.10);
-            border: 1px solid rgba(239,68,68,.22);
-
-            color: #fca5a5;
-            box-shadow: none;
-        }
-
-        /* ================= MESSAGE ================= */
+        /* =====================================================
+           MESSAGE
+           ===================================================== */
 
         .message {
+
             display: none;
 
+            margin-top: 15px;
+
             padding: 12px 14px;
-            margin-bottom: 15px;
 
-            border-radius: 13px;
+            border-radius: 12px;
 
-            font-size: 13px;
-            line-height: 1.7;
+            font-size: 12px;
+
+            line-height: 1.8;
         }
 
         .message.show {
+
             display: block;
         }
 
         .message.error {
-            background: rgba(239,68,68,.10);
-            border: 1px solid rgba(239,68,68,.20);
-            color: #fca5a5;
+
+            color: #fecaca;
+
+            background:
+                rgba(239,68,68,.08);
+
+            border:
+                1px solid
+                rgba(239,68,68,.22);
         }
 
         .message.success {
-            background: rgba(34,197,94,.10);
-            border: 1px solid rgba(34,197,94,.20);
-            color: #86efac;
-        }
 
-        /* ================= LOGIN ================= */
-
-        #loginScreen,
-        #setupScreen,
-        #lockScreen {
-            display: none;
-        }
-
-        #loginScreen.active,
-        #setupScreen.active,
-        #lockScreen.active {
-            display: block;
-        }
-
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .register-link a {
-            color: #a78bfa;
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-
-        /* ================= LOCK ================= */
-
-        .lock-card {
-            text-align: center;
-        }
-
-        .lock-icon {
-            width: 86px;
-            height: 86px;
-
-            margin: 0 auto 20px;
-
-            border-radius: 28px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #bbf7d0;
 
             background:
-                linear-gradient(
-                    135deg,
-                    rgba(139,92,246,.25),
-                    rgba(34,211,238,.10)
-                );
+                rgba(34,197,94,.08);
 
-            border: 1px solid rgba(139,92,246,.3);
-
-            box-shadow:
-                0 0 40px rgba(139,92,246,.15);
+            border:
+                1px solid
+                rgba(34,197,94,.22);
         }
 
-        .lock-icon span {
-            font-size: 38px;
+        .message.info {
+
+            color: #bfdbfe;
+
+            background:
+                rgba(59,130,246,.08);
+
+            border:
+                1px solid
+                rgba(59,130,246,.22);
         }
 
-        .lock-title {
-            font-size: 24px;
-            font-weight: 800;
+        /* =====================================================
+           LOGIN LINK
+           ===================================================== */
+
+        .login-link {
+
+            text-align: center;
+
+            color: #68748a;
+
+            font-size: 12px;
+
+            margin-top: 20px;
         }
 
-        .lock-user {
-            color: var(--muted);
-            font-size: 13px;
-            margin-top: 8px;
-            margin-bottom: 25px;
+        .login-link a {
+
+            color: #a78bfa;
+
+            text-decoration: none;
+
+            font-weight: 700;
+
+            margin-right: 4px;
         }
 
-        .pin-dots {
-            display: flex;
-            direction: ltr;
-            justify-content: center;
-            gap: 11px;
+        .login-link a:hover {
 
-            margin: 18px 0 23px;
+            color: #c4b5fd;
         }
 
-        .pin-dot {
-            width: 12px;
-            height: 12px;
+        /* =====================================================
+           FOOTER
+           ===================================================== */
+
+        .footer {
+
+            text-align: center;
+
+            color: #424c61;
+
+            font-size: 10px;
+
+            margin-top: 20px;
+        }
+
+        /* =====================================================
+           LOADING
+           ===================================================== */
+
+        .loading-spinner {
+
+            display: inline-block;
+
+            width: 16px;
+
+            height: 16px;
+
+            border:
+                2px solid
+                rgba(255,255,255,.25);
+
+            border-top-color:
+                #ffffff;
 
             border-radius: 50%;
 
-            background: rgba(148,163,184,.20);
-            border: 1px solid rgba(148,163,184,.15);
+            animation:
+                spin .7s linear infinite;
 
-            transition: .15s;
+            vertical-align: -3px;
+
+            margin-left: 7px;
         }
 
-        .pin-dot.active {
-            background: var(--primary);
-            border-color: var(--primary);
+        @keyframes spin {
 
-            box-shadow:
-                0 0 15px rgba(139,92,246,.55);
-        }
-
-        .pin-input {
-            text-align: center;
-            letter-spacing: 10px;
-            font-size: 22px;
-            font-weight: 800;
-
-            padding-right: 10px;
-        }
-
-        .lock-actions {
-            margin-top: 15px;
-        }
-
-        .small-link {
-            border: 0;
-            background: transparent;
-
-            color: #94a3b8;
-
-            cursor: pointer;
-
-            font-size: 12px;
-            margin-top: 15px;
-        }
-
-        .small-link:hover {
-            color: white;
-        }
-
-        /* ================= SETUP ================= */
-
-        .security-box {
-            padding: 14px;
-            margin-bottom: 20px;
-
-            border-radius: 14px;
-
-            background: rgba(34,211,238,.06);
-            border: 1px solid rgba(34,211,238,.13);
-
-            color: #bae6fd;
-
-            font-size: 12px;
-            line-height: 1.8;
-        }
-
-        /* ================= FOOTER ================= */
-
-        .footer {
-            text-align: center;
-            margin-top: 22px;
-
-            color: #475569;
-            font-size: 11px;
-        }
-
-        /* ================= MOBILE ================= */
-
-        @media (max-width: 500px) {
-            .app {
-                padding: 14px;
+            to {
+                transform: rotate(360deg);
             }
 
-            .card {
-                padding: 24px 19px;
-                border-radius: 23px;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media(max-width: 520px) {
+
+            body {
+
+                padding: 12px;
+
+                align-items: flex-start;
+
+                padding-top: 20px;
             }
 
-            .logo h1 {
-                font-size: 25px;
+            .register-card {
+
+                padding: 22px;
+
+                border-radius: 22px;
+            }
+
+            .logo {
+
+                font-size: 30px;
             }
 
             .logo-icon {
-                width: 64px;
-                height: 64px;
+
+                width: 68px;
+
+                height: 68px;
+
+                font-size: 31px;
             }
+
+            .title {
+
+                font-size: 19px;
+            }
+
         }
+
     </style>
+
 </head>
 
 <body>
 
-<div class="background">
-    <div class="orb orb1"></div>
-    <div class="orb orb2"></div>
-</div>
+    <main class="register-card">
 
-<main class="app">
+        <!-- =================================================
+             LOGO
+             ================================================= -->
 
-    <section class="card">
+        <div class="logo-area">
 
-        <!-- ================= LOGO ================= -->
-
-        <div class="logo">
             <div class="logo-icon">
-                <span>✦</span>
+                ✦
             </div>
 
-            <h1>Star<span>Chat</span></h1>
+            <div class="logo">
+                StarChat
+            </div>
 
-            <p>
+            <div class="logo-subtitle">
                 پیام‌رسان StarLoom
-            </p>
+            </div>
+
         </div>
 
-        <!-- ========================================================= -->
-        <!-- LOGIN SCREEN -->
-        <!-- ========================================================= -->
+        <!-- =================================================
+             TITLE
+             ================================================= -->
 
-        <div id="loginScreen">
+        <h1 class="title">
+            ساخت حساب جدید
+        </h1>
 
-            <div class="title">
-                ورود به حساب
+        <p class="description">
+            حساب StarChat خودت را بساز و وارد دنیای StarLoom شو.
+        </p>
+
+        <!-- =================================================
+             FORM
+             ================================================= -->
+
+        <form
+            id="registerForm"
+            autocomplete="on"
+        >
+
+            <!-- DISPLAY NAME -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="displayName"
+                >
+
+                    <span>
+                        نام نمایشی
+                    </span>
+
+                    <span class="required">
+                        الزامی
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        👤
+                    </span>
+
+                    <input
+                        id="displayName"
+                        name="displayName"
+                        type="text"
+                        maxlength="40"
+                        autocomplete="name"
+                        placeholder="مثلاً حسن"
+                        required
+                    >
+
+                </div>
+
             </div>
 
-            <div class="subtitle">
-                با ایمیل و رمز عبور خود وارد StarChat شوید.
+            <!-- USERNAME -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="username"
+                >
+
+                    <span>
+                        نام کاربری
+                    </span>
+
+                    <span class="required">
+                        الزامی
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        @
+                    </span>
+
+                    <input
+                        id="username"
+                        name="username"
+                        type="text"
+                        maxlength="30"
+                        autocomplete="username"
+                        placeholder="مثلاً hasan123"
+                        spellcheck="false"
+                        required
+                    >
+
+                </div>
+
+                <div
+                    id="usernameStatus"
+                    class="username-status"
+                >
+                    فقط حروف انگلیسی، عدد، _ و - مجاز است.
+                </div>
+
             </div>
 
-            <div id="loginMessage" class="message"></div>
+            <!-- EMAIL -->
 
-            <form id="loginForm">
+            <div class="field">
 
-                <div class="field">
+                <label
+                    class="field-label"
+                    for="email"
+                >
 
-                    <label for="email">
+                    <span>
                         ایمیل
-                    </label>
+                    </span>
+
+                    <span class="required">
+                        الزامی
+                    </span>
+
+                </label>
+
+                <div class="input-wrapper">
+
+                    <span class="input-icon">
+                        ✉
+                    </span>
 
                     <input
                         id="email"
+                        name="email"
                         type="email"
+                        maxlength="120"
                         autocomplete="email"
                         placeholder="example@email.com"
                         required
@@ -617,1194 +951,1308 @@
 
                 </div>
 
-                <div class="field">
+            </div>
 
-                    <label for="password">
-                        رمز عبور
-                    </label>
+            <!-- PASSWORD -->
 
-                    <div class="input-wrap">
+            <div class="field">
 
-                        <input
-                            id="password"
-                            class="password-input"
-                            type="password"
-                            autocomplete="current-password"
-                            placeholder="رمز عبور"
-                            required
-                        >
-
-                        <button
-                            type="button"
-                            class="show-password"
-                            id="showPassword"
-                            aria-label="نمایش رمز"
-                        >
-                            👁
-                        </button>
-
-                    </div>
-
-                </div>
-
-                <button
-                    type="submit"
-                    class="btn"
-                    id="loginButton"
+                <label
+                    class="field-label"
+                    for="password"
                 >
-                    ورود به StarChat
-                </button>
 
-            </form>
+                    <span>
+                        رمز عبور
+                    </span>
 
-            <div class="register-link">
-                حساب ندارید؟
-                <a href="register.html">
-                    ساخت حساب جدید
-                </a>
-            </div>
+                    <span class="required">
+                        حداقل ۶ کاراکتر
+                    </span>
 
-        </div>
+                </label>
 
-        <!-- ========================================================= -->
-        <!-- PIN SETUP SCREEN -->
-        <!-- ========================================================= -->
+                <div class="input-wrapper">
 
-        <div id="setupScreen">
-
-            <div class="title">
-                🔐 ساخت قفل StarChat
-            </div>
-
-            <div class="subtitle">
-                برای دفعات بعد یک PIN محلی برای قفل StarChat انتخاب کنید.
-            </div>
-
-            <div class="security-box">
-                PIN شما جایگزین رمز حساب نیست.
-                رمز اصلی Supabase در مرورگر ذخیره نمی‌شود و فقط هش PIN محلی
-                روی همین دستگاه نگهداری می‌شود.
-            </div>
-
-            <div id="setupMessage" class="message"></div>
-
-            <form id="setupForm">
-
-                <div class="field">
-
-                    <label for="newPin">
-                        PIN جدید
-                    </label>
-
-                    <div class="input-wrap">
-
-                        <input
-                            id="newPin"
-                            class="pin-input"
-                            type="password"
-                            inputmode="numeric"
-                            autocomplete="new-password"
-                            maxlength="8"
-                            placeholder="••••"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-                <div class="field">
-
-                    <label for="confirmPin">
-                        تکرار PIN
-                    </label>
+                    <span class="input-icon">
+                        🔐
+                    </span>
 
                     <input
-                        id="confirmPin"
-                        class="pin-input"
+                        id="password"
+                        name="password"
                         type="password"
-                        inputmode="numeric"
+                        minlength="6"
+                        maxlength="100"
                         autocomplete="new-password"
-                        maxlength="8"
-                        placeholder="••••"
+                        placeholder="رمز عبور خود را وارد کنید"
                         required
                     >
 
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-target="password"
+                        aria-label="نمایش رمز"
+                    >
+                        👁
+                    </button>
+
                 </div>
 
-                <button
-                    type="submit"
-                    class="btn"
-                    id="savePinButton"
-                >
-                    ذخیره PIN و ورود
-                </button>
+                <div class="password-strength">
 
-            </form>
+                    <div
+                        id="strength1"
+                        class="strength-bar"
+                    ></div>
 
-        </div>
+                    <div
+                        id="strength2"
+                        class="strength-bar"
+                    ></div>
 
-        <!-- ========================================================= -->
-        <!-- LOCK SCREEN -->
-        <!-- ========================================================= -->
+                    <div
+                        id="strength3"
+                        class="strength-bar"
+                    ></div>
 
-        <div id="lockScreen">
+                    <div
+                        id="strength4"
+                        class="strength-bar"
+                    ></div>
 
-            <div class="lock-card">
-
-                <div class="lock-icon">
-                    <span>🔐</span>
-                </div>
-
-                <div class="lock-title">
-                    StarChat قفل است
                 </div>
 
                 <div
-                    class="lock-user"
-                    id="lockUser"
+                    id="strengthText"
+                    class="strength-text"
+                ></div>
+
+            </div>
+
+            <!-- PASSWORD CONFIRM -->
+
+            <div class="field">
+
+                <label
+                    class="field-label"
+                    for="passwordConfirm"
                 >
-                    حساب شما
-                </div>
 
-                <div class="pin-dots">
+                    <span>
+                        تکرار رمز عبور
+                    </span>
 
-                    <span class="pin-dot" id="dot1"></span>
-                    <span class="pin-dot" id="dot2"></span>
-                    <span class="pin-dot" id="dot3"></span>
-                    <span class="pin-dot" id="dot4"></span>
-                    <span class="pin-dot" id="dot5"></span>
-                    <span class="pin-dot" id="dot6"></span>
-                    <span class="pin-dot" id="dot7"></span>
-                    <span class="pin-dot" id="dot8"></span>
+                    <span class="required">
+                        الزامی
+                    </span>
 
-                </div>
+                </label>
 
-                <div id="lockMessage" class="message"></div>
+                <div class="input-wrapper">
 
-                <form id="unlockForm">
+                    <span class="input-icon">
+                        🔒
+                    </span>
 
-                    <div class="field">
-
-                        <input
-                            id="unlockPin"
-                            class="pin-input"
-                            type="password"
-                            inputmode="numeric"
-                            autocomplete="current-password"
-                            maxlength="8"
-                            placeholder="PIN"
-                            required
-                        >
-
-                    </div>
-
-                    <button
-                        type="submit"
-                        class="btn"
-                        id="unlockButton"
+                    <input
+                        id="passwordConfirm"
+                        name="passwordConfirm"
+                        type="password"
+                        minlength="6"
+                        maxlength="100"
+                        autocomplete="new-password"
+                        placeholder="رمز را دوباره وارد کنید"
+                        required
                     >
-                        🔓 باز کردن StarChat
-                    </button>
-
-                </form>
-
-                <div class="lock-actions">
 
                     <button
                         type="button"
-                        class="btn btn-secondary"
-                        id="changePinButton"
+                        class="password-toggle"
+                        data-target="passwordConfirm"
+                        aria-label="نمایش رمز"
                     >
-                        تغییر PIN
-                    </button>
-
-                    <button
-                        type="button"
-                        class="btn btn-danger"
-                        id="logoutButton"
-                    >
-                        خروج کامل از حساب
-                    </button>
-
-                    <button
-                        type="button"
-                        class="small-link"
-                        id="accountLoginButton"
-                    >
-                        ورود با رمز حساب
+                        👁
                     </button>
 
                 </div>
 
             </div>
+
+            <!-- TERMS -->
+
+            <label class="terms">
+
+                <input
+                    id="terms"
+                    type="checkbox"
+                    required
+                >
+
+                <span>
+                    با ساخت حساب، قوانین استفاده از StarChat را می‌پذیرم.
+                </span>
+
+            </label>
+
+            <!-- BUTTON -->
+
+            <button
+                id="registerButton"
+                class="register-button"
+                type="submit"
+            >
+                ساخت حساب
+            </button>
+
+        </form>
+
+        <!-- =================================================
+             MESSAGE
+             ================================================= -->
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
+        <!-- =================================================
+             LOGIN
+             ================================================= -->
+
+        <div class="login-link">
+
+            قبلاً حساب داری؟
+
+            <a href="index.html">
+                ورود به StarChat
+            </a>
 
         </div>
 
         <div class="footer">
-            StarLoom • StarChat
+            ✦ StarLoom Game Studio
         </div>
 
-    </section>
-
-</main>
+    </main>
 
 <script>
+
 /* =========================================================
-   SUPABASE
-========================================================= */
+   SUPABASE CONFIG
+   =========================================================
+
+   این دو مقدار را از:
+
+   Supabase
+   → Project Settings
+   → API
+
+   بردار.
+
+   فقط Publishable/Anon Key را استفاده کن.
+   Service Role Key را اینجا قرار نده.
+   ========================================================= */
 
 const SUPABASE_URL = "https://txstexjrypiowndavrtr.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_6WqGjT0eriWi9JcJWRsVvg_J358WuUz";
 
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY,
-    {
-        auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
-        }
-    }
-);
-
 
 /* =========================================================
-   LOCAL STORAGE KEYS
-========================================================= */
+   SUPABASE CLIENT
+   ========================================================= */
 
-const PIN_HASH_KEY = "starchat_device_pin_hash";
-const PIN_USER_KEY = "starchat_device_user_id";
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+            auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true
+            }
+        }
+    );
 
 
 /* =========================================================
    ELEMENTS
-========================================================= */
+   ========================================================= */
 
-const loginScreen = document.getElementById("loginScreen");
-const setupScreen = document.getElementById("setupScreen");
-const lockScreen = document.getElementById("lockScreen");
+const form =
+    document.getElementById(
+        "registerForm"
+    );
 
-const loginForm = document.getElementById("loginForm");
-const setupForm = document.getElementById("setupForm");
-const unlockForm = document.getElementById("unlockForm");
+const displayNameInput =
+    document.getElementById(
+        "displayName"
+    );
 
-const emailInput = document.getElementById("email");
-const passwordInput = document.getElementById("password");
+const usernameInput =
+    document.getElementById(
+        "username"
+    );
 
-const newPinInput = document.getElementById("newPin");
-const confirmPinInput = document.getElementById("confirmPin");
-const unlockPinInput = document.getElementById("unlockPin");
+const emailInput =
+    document.getElementById(
+        "email"
+    );
 
-const loginButton = document.getElementById("loginButton");
-const savePinButton = document.getElementById("savePinButton");
-const unlockButton = document.getElementById("unlockButton");
+const passwordInput =
+    document.getElementById(
+        "password"
+    );
 
-const loginMessage = document.getElementById("loginMessage");
-const setupMessage = document.getElementById("setupMessage");
-const lockMessage = document.getElementById("lockMessage");
+const passwordConfirmInput =
+    document.getElementById(
+        "passwordConfirm"
+    );
 
-const lockUser = document.getElementById("lockUser");
+const termsInput =
+    document.getElementById(
+        "terms"
+    );
 
-const showPassword = document.getElementById("showPassword");
+const registerButton =
+    document.getElementById(
+        "registerButton"
+    );
 
-const changePinButton =
-    document.getElementById("changePinButton");
+const messageBox =
+    document.getElementById(
+        "message"
+    );
 
-const logoutButton =
-    document.getElementById("logoutButton");
+const usernameStatus =
+    document.getElementById(
+        "usernameStatus"
+    );
 
-const accountLoginButton =
-    document.getElementById("accountLoginButton");
-
-
-/* =========================================================
-   SCREEN CONTROL
-========================================================= */
-
-function showScreen(screen) {
-
-    loginScreen.classList.remove("active");
-    setupScreen.classList.remove("active");
-    lockScreen.classList.remove("active");
-
-    screen.classList.add("active");
-}
+const strengthText =
+    document.getElementById(
+        "strengthText"
+    );
 
 
 /* =========================================================
    MESSAGE
-========================================================= */
+   ========================================================= */
 
-function showMessage(element, text, type = "error") {
+function showMessage(
+    text,
+    type = "error"
+) {
 
-    element.textContent = text;
+    messageBox.textContent =
+        text;
 
-    element.className =
+    messageBox.className =
         "message show " + type;
+
 }
 
-function hideMessage(element) {
 
-    element.textContent = "";
+function clearMessage() {
 
-    element.className =
+    messageBox.textContent =
+        "";
+
+    messageBox.className =
         "message";
+
 }
 
 
 /* =========================================================
-   SHA-256
-========================================================= */
+   NORMALIZE USERNAME
+   ========================================================= */
 
-async function sha256(text) {
+function normalizeUsername(
+    value
+) {
 
-    const encoder =
-        new TextEncoder();
-
-    const data =
-        encoder.encode(text);
-
-    const hashBuffer =
-        await crypto.subtle.digest(
-            "SHA-256",
-            data
+    return value
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "")
+        .replace(
+            /[^a-z0-9_-]/g,
+            ""
         );
-
-    const hashArray =
-        Array.from(
-            new Uint8Array(hashBuffer)
-        );
-
-    return hashArray
-        .map(
-            byte =>
-                byte.toString(16).padStart(2, "0")
-        )
-        .join("");
 }
 
 
 /* =========================================================
-   PIN VALIDATION
-========================================================= */
+   USERNAME INPUT
+   ========================================================= */
 
-function validPin(pin) {
-
-    /*
-       PIN فقط عدد باشد.
-       حداقل 4 رقم و حداکثر 8 رقم.
-    */
-
-    return /^\d{4,8}$/.test(pin);
-}
-
-
-/* =========================================================
-   PIN DOTS
-========================================================= */
-
-function updatePinDots(value) {
-
-    const length =
-        Math.min(value.length, 8);
-
-    for (let i = 1; i <= 8; i++) {
-
-        const dot =
-            document.getElementById("dot" + i);
-
-        if (i <= length) {
-            dot.classList.add("active");
-        } else {
-            dot.classList.remove("active");
-        }
-    }
-}
-
-unlockPinInput.addEventListener(
+usernameInput.addEventListener(
     "input",
-    () => {
-        updatePinDots(
-            unlockPinInput.value
+    function() {
+
+        const oldValue =
+            this.value;
+
+        const newValue =
+            normalizeUsername(
+                oldValue
+            );
+
+        if(oldValue !== newValue) {
+
+            this.value =
+                newValue;
+        }
+
+        checkUsername();
+    }
+);
+
+
+/* =========================================================
+   CHECK USERNAME
+   ========================================================= */
+
+let usernameTimer = null;
+
+
+async function checkUsername() {
+
+    clearTimeout(
+        usernameTimer
+    );
+
+    const username =
+        usernameInput
+        .value
+        .trim()
+        .toLowerCase();
+
+    usernameStatus.className =
+        "username-status";
+
+    if(!username) {
+
+        usernameStatus.textContent =
+            "فقط حروف انگلیسی، عدد، _ و - مجاز است.";
+
+        usernameInput.classList.remove(
+            "valid",
+            "invalid"
+        );
+
+        return;
+    }
+
+    if(username.length < 3) {
+
+        usernameStatus.textContent =
+            "نام کاربری حداقل باید ۳ کاراکتر باشد.";
+
+        usernameStatus.classList.add(
+            "error"
+        );
+
+        usernameInput.classList.add(
+            "invalid"
+        );
+
+        usernameInput.classList.remove(
+            "valid"
+        );
+
+        return;
+    }
+
+    if(!/^[a-z0-9_-]+$/.test(username)) {
+
+        usernameStatus.textContent =
+            "نام کاربری نامعتبر است.";
+
+        usernameStatus.classList.add(
+            "error"
+        );
+
+        usernameInput.classList.add(
+            "invalid"
+        );
+
+        usernameInput.classList.remove(
+            "valid"
+        );
+
+        return;
+    }
+
+    usernameStatus.textContent =
+        "در حال بررسی...";
+
+    usernameStatus.classList.add(
+        "checking"
+    );
+
+    usernameTimer =
+        setTimeout(
+            async function() {
+
+                try {
+
+                    const {
+                        data,
+                        error
+                    } =
+                    await supabaseClient
+                    .from("profiles")
+                    .select("id")
+                    .eq(
+                        "username",
+                        username
+                    )
+                    .maybeSingle();
+
+                    if(error) {
+
+                        console.error(
+                            "Username check:",
+                            error
+                        );
+
+                        usernameStatus.textContent =
+                            "امکان بررسی نام کاربری وجود ندارد.";
+
+                        usernameStatus.className =
+                            "username-status error";
+
+                        return;
+                    }
+
+                    if(data) {
+
+                        usernameStatus.textContent =
+                            "✕ این نام کاربری قبلاً استفاده شده است.";
+
+                        usernameStatus.className =
+                            "username-status error";
+
+                        usernameInput.classList.add(
+                            "invalid"
+                        );
+
+                        usernameInput.classList.remove(
+                            "valid"
+                        );
+
+                    } else {
+
+                        usernameStatus.textContent =
+                            "✓ این نام کاربری آزاد است.";
+
+                        usernameStatus.className =
+                            "username-status success";
+
+                        usernameInput.classList.add(
+                            "valid"
+                        );
+
+                        usernameInput.classList.remove(
+                            "invalid"
+                        );
+                    }
+
+                } catch(error) {
+
+                    console.error(
+                        error
+                    );
+
+                    usernameStatus.textContent =
+                        "خطا در بررسی نام کاربری.";
+
+                    usernameStatus.className =
+                        "username-status error";
+                }
+
+            },
+            450
+        );
+}
+
+
+/* =========================================================
+   PASSWORD STRENGTH
+   ========================================================= */
+
+function getPasswordStrength(
+    password
+) {
+
+    let score = 0;
+
+    if(password.length >= 6) {
+        score++;
+    }
+
+    if(password.length >= 10) {
+        score++;
+    }
+
+    if(/[A-Z]/.test(password)) {
+        score++;
+    }
+
+    if(/[0-9]/.test(password)) {
+        score++;
+    }
+
+    if(/[^A-Za-z0-9]/.test(password)) {
+        score++;
+    }
+
+    if(score > 4) {
+        score = 4;
+    }
+
+    return score;
+}
+
+
+function updatePasswordStrength() {
+
+    const password =
+        passwordInput.value;
+
+    const bars = [
+        document.getElementById(
+            "strength1"
+        ),
+        document.getElementById(
+            "strength2"
+        ),
+        document.getElementById(
+            "strength3"
+        ),
+        document.getElementById(
+            "strength4"
+        )
+    ];
+
+    const score =
+        getPasswordStrength(
+            password
+        );
+
+    bars.forEach(
+        bar => {
+
+            bar.style.background =
+                "#20283b";
+
+        }
+    );
+
+    if(!password) {
+
+        strengthText.textContent =
+            "";
+
+        return;
+    }
+
+    if(score === 1) {
+
+        bars[0].style.background =
+            "#ef4444";
+
+        strengthText.textContent =
+            "رمز ضعیف";
+
+    } else if(score === 2) {
+
+        bars[0].style.background =
+            "#f97316";
+
+        bars[1].style.background =
+            "#f97316";
+
+        strengthText.textContent =
+            "رمز متوسط";
+
+    } else if(score === 3) {
+
+        bars[0].style.background =
+            "#eab308";
+
+        bars[1].style.background =
+            "#eab308";
+
+        bars[2].style.background =
+            "#eab308";
+
+        strengthText.textContent =
+            "رمز خوب";
+
+    } else {
+
+        bars.forEach(
+            bar => {
+
+                bar.style.background =
+                    "#22c55e";
+
+            }
+        );
+
+        strengthText.textContent =
+            "رمز قوی";
+    }
+}
+
+
+passwordInput.addEventListener(
+    "input",
+    updatePasswordStrength
+);
+
+
+/* =========================================================
+   PASSWORD TOGGLE
+   ========================================================= */
+
+document
+.querySelectorAll(
+    ".password-toggle"
+)
+.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            function() {
+
+                const targetId =
+                    this.dataset.target;
+
+                const input =
+                    document.getElementById(
+                        targetId
+                    );
+
+                if(
+                    input.type ===
+                    "password"
+                ) {
+
+                    input.type =
+                        "text";
+
+                    this.textContent =
+                        "🙈";
+
+                } else {
+
+                    input.type =
+                        "password";
+
+                    this.textContent =
+                        "👁";
+                }
+            }
         );
     }
 );
 
 
 /* =========================================================
-   SHOW PASSWORD
-========================================================= */
+   VALIDATE FORM
+   ========================================================= */
 
-showPassword.addEventListener(
-    "click",
-    () => {
+function validateForm() {
 
-        const isPassword =
-            passwordInput.type === "password";
+    const displayName =
+        displayNameInput
+        .value
+        .trim();
 
-        passwordInput.type =
-            isPassword
-                ? "text"
-                : "password";
-
-        showPassword.textContent =
-            isPassword
-                ? "🙈"
-                : "👁";
-    }
-);
-
-
-/* =========================================================
-   GET SESSION
-========================================================= */
-
-async function getCurrentSession() {
-
-    const {
-        data,
-        error
-    } = await supabaseClient.auth.getSession();
-
-    if (error) {
-        console.error(error);
-        return null;
-    }
-
-    return data.session;
-}
-
-
-/* =========================================================
-   SHOW SETUP
-========================================================= */
-
-async function showPinSetup(session) {
-
-    if (!session) {
-        showScreen(loginScreen);
-        return;
-    }
-
-    hideMessage(setupMessage);
-
-    newPinInput.value = "";
-    confirmPinInput.value = "";
-
-    showScreen(setupScreen);
-
-    setTimeout(() => {
-        newPinInput.focus();
-    }, 150);
-}
-
-
-/* =========================================================
-   SHOW LOCK
-========================================================= */
-
-async function showLock(session) {
-
-    if (!session) {
-        showScreen(loginScreen);
-        return;
-    }
-
-    hideMessage(lockMessage);
-
-    unlockPinInput.value = "";
-
-    updatePinDots("");
+    const username =
+        normalizeUsername(
+            usernameInput.value
+        );
 
     const email =
-        session.user.email || "حساب StarChat";
+        emailInput
+        .value
+        .trim();
 
-    lockUser.textContent =
-        email;
+    const password =
+        passwordInput.value;
 
-    showScreen(lockScreen);
-
-    setTimeout(() => {
-        unlockPinInput.focus();
-    }, 200);
-}
+    const passwordConfirm =
+        passwordConfirmInput.value;
 
 
-/* =========================================================
-   CHECK PIN
-========================================================= */
+    if(displayName.length < 2) {
 
-async function hasLocalPin(session) {
-
-    if (!session) {
-        return false;
-    }
-
-    const savedHash =
-        localStorage.getItem(
-            PIN_HASH_KEY
+        showMessage(
+            "نام نمایشی باید حداقل ۲ کاراکتر باشد."
         );
 
-    const savedUserId =
-        localStorage.getItem(
-            PIN_USER_KEY
+        displayNameInput.focus();
+
+        return false;
+    }
+
+
+    if(displayName.length > 40) {
+
+        showMessage(
+            "نام نمایشی بیش از حد طولانی است."
         );
 
-    if (!savedHash || !savedUserId) {
+        displayNameInput.focus();
+
         return false;
     }
 
-    if (savedUserId !== session.user.id) {
+
+    if(username.length < 3) {
+
+        showMessage(
+            "نام کاربری باید حداقل ۳ کاراکتر باشد."
+        );
+
+        usernameInput.focus();
+
         return false;
     }
+
+
+    if(
+        !/^[a-z0-9_-]+$/.test(
+            username
+        )
+    ) {
+
+        showMessage(
+            "نام کاربری فقط می‌تواند شامل حروف انگلیسی، عدد، _ و - باشد."
+        );
+
+        usernameInput.focus();
+
+        return false;
+    }
+
+
+    if(!email) {
+
+        showMessage(
+            "ایمیل را وارد کنید."
+        );
+
+        emailInput.focus();
+
+        return false;
+    }
+
+
+    if(password.length < 6) {
+
+        showMessage(
+            "رمز عبور باید حداقل ۶ کاراکتر باشد."
+        );
+
+        passwordInput.focus();
+
+        return false;
+    }
+
+
+    if(password !== passwordConfirm) {
+
+        showMessage(
+            "رمز عبور و تکرار آن یکسان نیستند."
+        );
+
+        passwordConfirmInput.focus();
+
+        return false;
+    }
+
+
+    if(!termsInput.checked) {
+
+        showMessage(
+            "برای ساخت حساب باید قوانین استفاده را بپذیرید."
+        );
+
+        return false;
+    }
+
 
     return true;
 }
 
 
 /* =========================================================
-   LOGIN
-========================================================= */
+   REGISTER
+   ========================================================= */
 
-loginForm.addEventListener(
+form.addEventListener(
     "submit",
-    async event => {
+    async function(event) {
 
         event.preventDefault();
 
-        hideMessage(loginMessage);
+        clearMessage();
 
-        const email =
-            emailInput.value.trim();
 
-        const password =
-            passwordInput.value;
-
-        if (!email || !password) {
-
-            showMessage(
-                loginMessage,
-                "ایمیل و رمز عبور را وارد کنید."
-            );
+        if(!validateForm()) {
 
             return;
         }
 
-        loginButton.disabled = true;
-        loginButton.textContent =
-            "در حال ورود...";
+
+        const displayName =
+            displayNameInput
+            .value
+            .trim();
+
+        const username =
+            normalizeUsername(
+                usernameInput.value
+            );
+
+        const email =
+            emailInput
+            .value
+            .trim();
+
+        const password =
+            passwordInput.value;
+
+
+        registerButton.disabled =
+            true;
+
+        registerButton.innerHTML =
+            '<span class="loading-spinner"></span>در حال ساخت حساب...';
+
 
         try {
+
+            /* =================================================
+               CHECK USERNAME ONE MORE TIME
+               ================================================= */
+
+            const {
+                data:existingUsername,
+                error:usernameError
+            } =
+            await supabaseClient
+            .from("profiles")
+            .select("id")
+            .eq(
+                "username",
+                username
+            )
+            .maybeSingle();
+
+
+            if(usernameError) {
+
+                throw usernameError;
+            }
+
+
+            if(existingUsername) {
+
+                throw new Error(
+                    "این نام کاربری قبلاً استفاده شده است."
+                );
+            }
+
+
+            /* =================================================
+               SUPABASE SIGN UP
+               ================================================= */
 
             const {
                 data,
                 error
             } =
-                await supabaseClient.auth.signInWithPassword({
-                    email,
-                    password
-                });
+            await supabaseClient
+            .auth
+            .signUp({
 
-            if (error) {
+                email:
+                    email,
+
+                password:
+                    password,
+
+                options: {
+
+                    data: {
+
+                        display_name:
+                            displayName,
+
+                        username:
+                            username
+
+                    }
+
+                }
+
+            });
+
+
+            if(error) {
+
                 throw error;
             }
 
-            if (!data.session) {
+
+            if(!data.user) {
+
+                throw new Error(
+                    "Supabase کاربر را ایجاد نکرد."
+                );
+            }
+
+
+            /* =================================================
+               EMAIL CONFIRMATION CHECK
+               =================================================
+
+               چون کاربر می‌خواهد بدون تأیید ایمیل وارد شود،
+               باید Confirm email در Supabase خاموش باشد.
+               ================================================= */
+
+            if(!data.session) {
 
                 showMessage(
-                    loginMessage,
-                    "ورود انجام شد اما Session ایجاد نشد."
+                    "حساب ساخته شد، اما Session ایجاد نشد. در Supabase از Authentication → Providers → Email گزینه Confirm email را خاموش کن.",
+                    "error"
                 );
 
                 return;
             }
 
+
+            /* =================================================
+               CREATE / VERIFY PROFILE
+               ================================================= */
+
+            let {
+                data:profile,
+                error:profileError
+            } =
+            await supabaseClient
+            .from("profiles")
+            .select("*")
+            .eq(
+                "id",
+                data.user.id
+            )
+            .maybeSingle();
+
+
             /*
-               اگر این دستگاه PIN ندارد،
-               صفحه ساخت PIN را نمایش می‌دهیم.
-            */
+             * اگر Trigger قبلاً پروفایل را ساخته باشد،
+             * همین‌جا profile داریم.
+             */
 
-            const hasPin =
-                await hasLocalPin(
-                    data.session
-                );
+            if(profileError) {
 
-            if (hasPin) {
-
-                /*
-                   چون کاربر با رمز اصلی وارد شده،
-                   مستقیماً وارد چت می‌شود.
-                */
-
-                window.location.href =
-                    "chat.html";
-
-            } else {
-
-                await showPinSetup(
-                    data.session
+                console.error(
+                    "Profile select error:",
+                    profileError
                 );
             }
 
-        } catch (error) {
 
-            console.error(error);
+            /*
+             * اگر Trigger پروفایل را نساخته باشد،
+             * خودمان آن را ایجاد می‌کنیم.
+             */
 
-            let message =
-                "ورود ناموفق بود.";
+            if(!profile) {
 
-            if (error.message) {
+                const {
+                    data:newProfile,
+                    error:createProfileError
+                } =
+                await supabaseClient
+                .from("profiles")
+                .insert({
 
-                if (
-                    error.message
-                        .toLowerCase()
-                        .includes("invalid login credentials")
-                ) {
+                    id:
+                        data.user.id,
 
-                    message =
-                        "ایمیل یا رمز عبور اشتباه است.";
+                    display_name:
+                        displayName,
+
+                    username:
+                        username,
+
+                    avatar:
+                        "",
+
+                    bio:
+                        ""
+
+                })
+                .select()
+                .single();
+
+
+                if(createProfileError) {
+
+                    console.error(
+                        "Create profile error:",
+                        createProfileError
+                    );
+
+
+                    /*
+                     * اگر خطا Duplicate باشد،
+                     * احتمالاً Trigger همزمان آن را ساخته.
+                     */
+
+                    if(
+                        createProfileError.code !==
+                        "23505"
+                    ) {
+
+                        throw new Error(
+                            "حساب ساخته شد ولی پروفایل ایجاد نشد: " +
+                            createProfileError.message
+                        );
+                    }
 
                 } else {
 
-                    message =
-                        error.message;
+                    profile =
+                        newProfile;
                 }
             }
 
-            showMessage(
-                loginMessage,
-                message
-            );
 
-        } finally {
-
-            loginButton.disabled = false;
-
-            loginButton.textContent =
-                "ورود به StarChat";
-        }
-    }
-);
-
-
-/* =========================================================
-   CREATE PIN
-========================================================= */
-
-setupForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-        hideMessage(setupMessage);
-
-        const pin =
-            newPinInput.value.trim();
-
-        const confirmPin =
-            confirmPinInput.value.trim();
-
-        if (!validPin(pin)) {
+            /* =================================================
+               SUCCESS
+               ================================================= */
 
             showMessage(
-                setupMessage,
-                "PIN باید فقط شامل عدد و بین ۴ تا ۸ رقم باشد."
-            );
-
-            return;
-        }
-
-        if (pin !== confirmPin) {
-
-            showMessage(
-                setupMessage,
-                "PIN و تکرار PIN یکسان نیستند."
-            );
-
-            return;
-        }
-
-        savePinButton.disabled = true;
-        savePinButton.textContent =
-            "در حال ذخیره...";
-
-        try {
-
-            const session =
-                await getCurrentSession();
-
-            if (!session) {
-
-                showMessage(
-                    setupMessage,
-                    "Session پیدا نشد. دوباره وارد حساب شوید."
-                );
-
-                showScreen(loginScreen);
-
-                return;
-            }
-
-            const hash =
-                await sha256(pin);
-
-            /*
-               فقط هش PIN ذخیره می‌شود.
-               خود PIN یا رمز Supabase ذخیره نمی‌شود.
-            */
-
-            localStorage.setItem(
-                PIN_HASH_KEY,
-                hash
-            );
-
-            localStorage.setItem(
-                PIN_USER_KEY,
-                session.user.id
-            );
-
-            showMessage(
-                setupMessage,
-                "PIN با موفقیت ساخته شد. در حال ورود...",
+                "✓ حساب با موفقیت ساخته شد. در حال ورود به StarChat...",
                 "success"
             );
 
-            setTimeout(() => {
-
-                window.location.href =
-                    "chat.html";
-
-            }, 500);
-
-        } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-                setupMessage,
-                "ساخت PIN انجام نشد."
-            );
-
-        } finally {
-
-            savePinButton.disabled = false;
-
-            savePinButton.textContent =
-                "ذخیره PIN و ورود";
-        }
-    }
-);
-
-
-/* =========================================================
-   UNLOCK
-========================================================= */
-
-unlockForm.addEventListener(
-    "submit",
-    async event => {
-
-        event.preventDefault();
-
-        hideMessage(lockMessage);
-
-        const pin =
-            unlockPinInput.value.trim();
-
-        if (!validPin(pin)) {
-
-            showMessage(
-                lockMessage,
-                "PIN باید بین ۴ تا ۸ رقم باشد."
-            );
-
-            return;
-        }
-
-        unlockButton.disabled = true;
-        unlockButton.textContent =
-            "در حال بررسی...";
-
-        try {
-
-            const session =
-                await getCurrentSession();
-
-            if (!session) {
-
-                /*
-                   Session دیگر وجود ندارد.
-                   کاربر باید با حساب وارد شود.
-                */
-
-                localStorage.removeItem(
-                    PIN_HASH_KEY
-                );
-
-                localStorage.removeItem(
-                    PIN_USER_KEY
-                );
-
-                showScreen(loginScreen);
-
-                showMessage(
-                    loginMessage,
-                    "Session منقضی شده است. دوباره وارد حساب شوید."
-                );
-
-                return;
-            }
-
-            const savedHash =
-                localStorage.getItem(
-                    PIN_HASH_KEY
-                );
-
-            const savedUserId =
-                localStorage.getItem(
-                    PIN_USER_KEY
-                );
-
-            if (
-                !savedHash ||
-                savedUserId !== session.user.id
-            ) {
-
-                await showPinSetup(
-                    session
-                );
-
-                return;
-            }
-
-            const enteredHash =
-                await sha256(pin);
-
-            if (
-                enteredHash !== savedHash
-            ) {
-
-                unlockPinInput.value = "";
-
-                updatePinDots("");
-
-                showMessage(
-                    lockMessage,
-                    "PIN اشتباه است."
-                );
-
-                unlockPinInput.focus();
-
-                return;
-            }
 
             /*
-               PIN صحیح است.
-               Session قبلاً حفظ شده.
-            */
+             * برای امنیت:
+             * رمز اصلی در localStorage ذخیره نمی‌شود.
+             *
+             * index.html بعد از ورود می‌تواند
+             * قفل محلی StarChat را ایجاد کند.
+             */
 
-            showMessage(
-                lockMessage,
-                "قفل باز شد. در حال ورود...",
-                "success"
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "index.html";
+
+                },
+                1000
             );
 
-            setTimeout(() => {
 
-                window.location.href =
-                    "chat.html";
+        } catch(error) {
 
-            }, 350);
-
-        } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-                lockMessage,
-                "خطایی هنگام باز کردن قفل رخ داد."
-            );
-
-        } finally {
-
-            unlockButton.disabled = false;
-
-            unlockButton.textContent =
-                "🔓 باز کردن StarChat";
-        }
-    }
-);
-
-
-/* =========================================================
-   CHANGE PIN
-========================================================= */
-
-changePinButton.addEventListener(
-    "click",
-    async () => {
-
-        const session =
-            await getCurrentSession();
-
-        if (!session) {
-
-            showScreen(loginScreen);
-
-            return;
-        }
-
-        newPinInput.value = "";
-        confirmPinInput.value = "";
-
-        hideMessage(setupMessage);
-
-        showScreen(setupScreen);
-
-        setTimeout(() => {
-            newPinInput.focus();
-        }, 150);
-    }
-);
-
-
-/* =========================================================
-   COMPLETE LOGOUT
-========================================================= */
-
-logoutButton.addEventListener(
-    "click",
-    async () => {
-
-        const confirmed =
-            confirm(
-                "آیا می‌خواهید کاملاً از حساب StarChat خارج شوید؟"
-            );
-
-        if (!confirmed) {
-            return;
-        }
-
-        logoutButton.disabled = true;
-        logoutButton.textContent =
-            "در حال خروج...";
-
-        try {
-
-            /*
-               ابتدا PIN محلی حذف می‌شود.
-            */
-
-            localStorage.removeItem(
-                PIN_HASH_KEY
-            );
-
-            localStorage.removeItem(
-                PIN_USER_KEY
-            );
-
-            /*
-               سپس Session Supabase
-               کاملاً حذف می‌شود.
-            */
-
-            const {
+            console.error(
+                "REGISTER ERROR:",
                 error
-            } =
-                await supabaseClient.auth.signOut();
+            );
 
-            if (error) {
-                throw error;
+
+            let errorMessage =
+                error?.message ||
+                "ثبت‌نام ناموفق بود.";
+
+
+            const lower =
+                errorMessage
+                .toLowerCase();
+
+
+            if(
+                lower.includes(
+                    "user already registered"
+                )
+            ) {
+
+                errorMessage =
+                    "این ایمیل قبلاً ثبت شده است.";
             }
 
-            /*
-               فرم ورود را تمیز می‌کنیم.
-            */
 
-            loginForm.reset();
+            else if(
+                lower.includes(
+                    "invalid email"
+                )
+            ) {
 
-            showScreen(loginScreen);
+                errorMessage =
+                    "فرمت ایمیل صحیح نیست.";
+            }
+
+
+            else if(
+                lower.includes(
+                    "password should be at least"
+                )
+            ) {
+
+                errorMessage =
+                    "رمز عبور باید حداقل ۶ کاراکتر باشد.";
+            }
+
+
+            else if(
+                lower.includes(
+                    "database error saving new user"
+                )
+            ) {
+
+                errorMessage =
+                    "Supabase هنگام ساخت کاربر خطای دیتابیس داد. Trigger مربوط به profiles را بررسی کن.";
+            }
+
+
+            else if(
+                lower.includes(
+                    "duplicate key"
+                )
+            ) {
+
+                errorMessage =
+                    "نام کاربری یا ایمیل قبلاً استفاده شده است.";
+            }
+
 
             showMessage(
-                loginMessage,
-                "با موفقیت از حساب خارج شدید.",
-                "success"
+                errorMessage,
+                "error"
             );
 
-        } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-                lockMessage,
-                "خروج از حساب انجام نشد."
-            );
 
         } finally {
 
-            logoutButton.disabled = false;
+            registerButton.disabled =
+                false;
 
-            logoutButton.textContent =
-                "خروج کامل از حساب";
+            registerButton.textContent =
+                "ساخت حساب";
         }
+
     }
 );
 
 
 /* =========================================================
-   ACCOUNT PASSWORD LOGIN
-========================================================= */
+   CLEAR MESSAGE WHEN TYPING
+   ========================================================= */
 
-accountLoginButton.addEventListener(
-    "click",
-    async () => {
+[
+    displayNameInput,
+    usernameInput,
+    emailInput,
+    passwordInput,
+    passwordConfirmInput
+]
+.forEach(
+    input => {
 
-        const confirmed =
-            confirm(
-                "با این کار قفل PIN این دستگاه حذف می‌شود و برای ورود بعدی باید با ایمیل و رمز حساب وارد شوید. ادامه می‌دهید؟"
-            );
+        input.addEventListener(
+            "input",
+            function() {
 
-        if (!confirmed) {
-            return;
-        }
+                if(
+                    messageBox.classList
+                    .contains("show")
+                ) {
 
-        localStorage.removeItem(
-            PIN_HASH_KEY
+                    clearMessage();
+                }
+
+            }
         );
 
-        localStorage.removeItem(
-            PIN_USER_KEY
-        );
-
-        /*
-           Session را حذف نمی‌کنیم.
-           فقط PIN محلی حذف می‌شود.
-
-           برای امنیت بیشتر، کاربر به صفحه ورود
-           برمی‌گردد و Session فعلی را هم خارج می‌کنیم.
-        */
-
-        try {
-
-            await supabaseClient.auth.signOut();
-
-        } catch (error) {
-
-            console.error(error);
-        }
-
-        loginForm.reset();
-
-        showScreen(loginScreen);
-
-        showMessage(
-            loginMessage,
-            "قفل PIN حذف شد. با ایمیل و رمز حساب وارد شوید.",
-            "success"
-        );
     }
 );
 
 
 /* =========================================================
-   INITIAL APP
-========================================================= */
+   CHECK IF ALREADY LOGGED IN
+   ========================================================= */
 
-async function initializeApp() {
+async function checkExistingSession() {
 
     try {
 
-        const session =
-            await getCurrentSession();
+        const {
+            data:{
+                session
+            }
+        } =
+        await supabaseClient
+        .auth
+        .getSession();
 
-        if (!session) {
+
+        if(session) {
 
             /*
-               هیچ Session وجود ندارد.
-               صفحه ورود.
-            */
+             * اگر کاربر قبلاً وارد شده،
+             * نیازی به ثبت‌نام مجدد نیست.
+             */
 
-            showScreen(loginScreen);
-
-            return;
-        }
-
-        /*
-           Session وجود دارد.
-        */
-
-        const hasPin =
-            await hasLocalPin(
-                session
+            showMessage(
+                "شما قبلاً وارد حساب شده‌اید. در حال انتقال...",
+                "info"
             );
 
-        if (hasPin) {
 
-            /*
-               کاربر قبلاً روی این دستگاه PIN ساخته.
-               پس صفحه قفل.
-            */
+            setTimeout(
+                function() {
 
-            await showLock(
-                session
-            );
+                    window.location.href =
+                        "index.html";
 
-        } else {
-
-            /*
-               Session هست ولی PIN نیست.
-               PIN بساز.
-            */
-
-            await showPinSetup(
-                session
+                },
+                800
             );
         }
 
-    } catch (error) {
+    } catch(error) {
 
         console.error(
-            "Initialization error:",
             error
         );
-
-        showScreen(loginScreen);
     }
 }
 
 
 /* =========================================================
-   AUTH STATE
-========================================================= */
-
-supabaseClient.auth.onAuthStateChange(
-    (event, session) => {
-
-        console.log(
-            "Auth event:",
-            event
-        );
-
-        /*
-           اینجا عمداً redirect خودکار برای
-           SIGNED_IN انجام نمی‌دهیم؛ چون initializeApp
-           جریان PIN را مدیریت می‌کند.
-        */
-    }
-);
-
-
-/* =========================================================
    START
-========================================================= */
+   ========================================================= */
 
-initializeApp();
+checkExistingSession();
 
 </script>
 
 </body>
 </html>
-
