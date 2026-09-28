@@ -1,10 +1,8 @@
 /* =========================================================
    sw.js — Service Worker گپ‌یار
-   - Cache: پوسته‌ی اپ
-   - Push: دریافت اعلان‌ها
 ========================================================= */
 
-const CACHE_VERSION = 'gapyar-v3';
+const CACHE_VERSION = 'gapyar-v4';
 const APP_SHELL = [
   './',
   './index.html',
@@ -13,7 +11,6 @@ const APP_SHELL = [
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2'
 ];
 
-/* ---------------------- Install ---------------------- */
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_VERSION)
@@ -22,7 +19,6 @@ self.addEventListener('install', (event) => {
   );
 });
 
-/* ---------------------- Activate ---------------------- */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -33,14 +29,12 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-/* ---------------------- Fetch (Cache-first برای استاتیک) ---------------------- */
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
   if (req.method !== 'GET') return;
 
-  // Supabase و WebSocket ها رو کش نکن
   if (url.hostname.endsWith('supabase.co') ||
       url.hostname.endsWith('supabase.in') ||
       req.headers.get('upgrade') === 'websocket') {
@@ -61,7 +55,7 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-/* ---------------------- Push ---------------------- */
+/* --- Push notifications (اختیاری — برای Web Push) --- */
 self.addEventListener('push', (event) => {
   let data = {};
   try{
@@ -87,7 +81,7 @@ self.addEventListener('push', (event) => {
   event.waitUntil(self.registration.showNotification(title, options));
 });
 
-/* ---------------------- Notification click ---------------------- */
+/* --- Notification click --- */
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
@@ -107,14 +101,13 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-/* ---------------------- Message from client ---------------------- */
+/* --- پیام از کلاینت: نمایش اعلان فوری --- */
 self.addEventListener('message', (event) => {
   if (event.data === 'SKIP_WAITING') {
     self.skipWaiting();
     return;
   }
 
-  // اگه کلاینت خواست اعلان فوری نشون بدیم
   if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
     const { title, body, tag, data } = event.data;
     self.registration.showNotification(title || 'گپ‌یار', {
@@ -128,5 +121,3 @@ self.addEventListener('message', (event) => {
       dir: 'rtl',
       lang: 'fa'
     });
-  }
-});
