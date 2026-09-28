@@ -407,7 +407,6 @@
   .tick.read{color:#7DD3FC}
   @keyframes msgIn{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 
-  /* نشانگر «ویرایش‌شده» */
   .edited-tag{
     display:inline-block;
     font-size:10px;
@@ -416,7 +415,6 @@
     margin-inline-start:5px;
   }
 
-  /* حالت ویرایش روی حباب */
   .editing-target{
     outline:2px dashed var(--accent);
     outline-offset:2px;
@@ -1474,7 +1472,7 @@
       </div>
 
       <div class="notify-banner" id="notify-banner" style="display:none">
-        <span>🔔 برای اعلان و صدای پیام جدید، اعلان‌ها را فعال کنید</span>
+        <span>🔔 برای دریافت اعلان پیام‌های جدید، اجازه بدهید</span>
         <button id="notify-enable" type="button">فعال‌سازی</button>
       </div>
 
@@ -1508,7 +1506,6 @@
         <button id="attach-clear">حذف</button>
       </div>
 
-      <!-- ویرایش -->
       <div class="edit-bar" id="edit-bar">
         <div class="eb-icon">
           <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
@@ -1591,6 +1588,10 @@
   <button data-action="profile" type="button">
     <span class="mi"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
     ویرایش پروفایل
+  </button>
+  <button data-action="notify" type="button">
+    <span class="mi"><svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></span>
+    فعال‌سازی اعلان
   </button>
   <button data-action="logout" type="button" class="danger">
     <span class="mi"><svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></span>
@@ -1965,17 +1966,86 @@ function playPing(){
   }catch(e){}
 }
 
+/* =========================================================
+   NOTIFICATIONS — اجازه + نمایش
+========================================================= */
 const notifySupported = 'Notification' in window;
+let swRegistration = null;
+
 function updateNotifyBanner(){
-  const show = notifySupported && Notification.permission === 'default';
-  $('#notify-banner').style.display = show ? 'flex' : 'none';
+  const banner = $('#notify-banner');
+  if(!banner) return;
+  const showBanner = notifySupported
+    && Notification.permission === 'default'
+    && document.getElementById('app')?.style.display === 'block';
+  banner.style.display = showBanner ? 'flex' : 'none';
 }
-$('#notify-enable').onclick = async () => {
+
+// درخواست اجازه‌ی اعلان
+async function requestNotifyPermission(){
+  if(!notifySupported){
+    toast('مرورگر شما از اعلان پشتیبانی نمی‌کند.', true);
+    return;
+  }
   unlockAudio();
-  try{ await Notification.requestPermission(); }catch(e){}
-  updateNotifyBanner();
-  setTimeout(playPing, 150);
-};
+  try{
+    const perm = await Notification.requestPermission();
+    updateNotifyBanner();
+    if(perm === 'granted'){
+      toast('اعلان‌ها فعال شد ✅');
+      setTimeout(playPing, 200);
+    } else if(perm === 'denied'){
+      toast('دسترسی اعلان رد شد. از تنظیمات مرورگر اجازه بدهید.', true);
+    }
+  }catch(err){
+    console.warn('requestNotifyPermission:', err);
+    toast('خطا در درخواست اجازه‌ی اعلان', true);
+  }
+}
+
+$('#notify-enable')?.addEventListener('click', requestNotifyPermission);
+
+// نمایش اعلان از طریق Service Worker یا مستقیم
+function showAppNotification(title, body, conv){
+  if(!notifySupported || Notification.permission !== 'granted') return;
+
+  const tagKey = conv ? convKey(conv) : 'gapyar-msg';
+
+  // اولویت با Service Worker
+  if(navigator.serviceWorker && navigator.serviceWorker.controller){
+    navigator.serviceWorker.controller.postMessage({
+      type: 'SHOW_NOTIFICATION',
+      title,
+      body,
+      tag: tagKey,
+      data: {
+        url: location.href,
+        convId: conv?.id,
+        convType: conv?.type
+      }
+    });
+    return;
+  }
+
+  // فالبک
+  try{
+    const n = new Notification(title, {
+      body,
+      icon: './launchericon-96x96.png',
+      badge: './launchericon-96x96.png',
+      tag: tagKey,
+      dir: 'rtl',
+      lang: 'fa'
+    });
+    n.onclick = () => {
+      window.focus();
+      if(conv) openConversation(conv);
+      try{ n.close(); }catch(e){}
+    };
+  }catch(err){
+    console.warn('showAppNotification:', err);
+  }
+}
 
 function previewText(m){
   if(m.content) return m.content.length > 120 ? m.content.slice(0,120) + '…' : m.content;
@@ -1985,13 +2055,16 @@ function previewText(m){
 }
 
 function notifyIncoming(title, body, conv){
+  // صدا و ویبره همیشه
   playPing();
-  if(navigator.vibrate){ try{ navigator.vibrate([150, 80, 150]); }catch(e){} }
-  if(notifySupported && Notification.permission === 'granted' && (document.hidden || !document.hasFocus())){
-    try{
-      const n = new Notification(title, { body, icon: safeUrl(conv.avatarUrl) || undefined, tag: convKey(conv) });
-      n.onclick = () => { window.focus(); openConversation(conv); n.close(); };
-    }catch(e){}
+  if(navigator.vibrate){
+    try{ navigator.vibrate([150, 80, 150]); }catch(e){}
+  }
+
+  // اعلان سیستمی وقتی کاربر روی تب دیگه‌ست یا صفحه مخفیه
+  const shouldNotify = document.hidden || !document.hasFocus();
+  if(shouldNotify){
+    showAppNotification(title, body, conv);
   }
 }
 
@@ -2165,6 +2238,15 @@ async function boot(authUser){
   $('#auth-screen').style.display = 'none';
   $('#app').style.display = 'block';
   hideSplash(150);
+
+  // ثبت Service Worker و بررسی اعلان
+  setTimeout(() => {
+    updateNotifyBanner();
+    if(notifySupported && Notification.permission === 'default' && !sessionStorage.getItem('gapyar_notify_asked')){
+      // یک بار در هر نشست به کاربر یادآوری می‌کنیم
+      sessionStorage.setItem('gapyar_notify_asked', '1');
+    }
+  }, 2000);
 
   const { error } = await sb.rpc('mark_delivered');
   if(error) console.warn('mark_delivered:', error.message);
@@ -2402,7 +2484,6 @@ $('#user-search').addEventListener('input', async () => {
 
 /* ---------------------- open conversation ---------------------- */
 async function openConversation(conv){
-  // اگر در حال ویرایش بودیم، لغو کن
   if(editingMessage) cancelEditMessage();
 
   current = conv;
@@ -2443,7 +2524,6 @@ async function loadMessages(){
   msgState = new Map(); orphanReceipts = new Map();
   groupRecipients = 0;
 
-  // پیام‌هایی که کاربر خودش برای خودش مخفی کرده
   let hiddenIds = [];
   try{
     const { data: hides } = await sb.from('message_hides')
@@ -2654,13 +2734,12 @@ document.addEventListener('keydown', (e) => {
 });
 
 /* =========================================================
-   MESSAGE DELETE (فقط برای DM و گروه — نه کانال)
+   MESSAGE DELETE
 ========================================================= */
 function getMsgMenuActions(m){
   const mine = m.sender_id === me.id;
   const inGroup = !!m.group_id;
 
-  // ⛔ داخل کانال پیام قابل حذف نیست
   if(current && current.type === 'channel'){
     return [];
   }
@@ -2669,7 +2748,6 @@ function getMsgMenuActions(m){
 
   const actions = [];
 
-  // ویرایش — فقط پیام متنی خودم بدون فایل
   if(mine && m.content && !m.file_url){
     actions.push({
       label:'✏️ ویرایش پیام',
@@ -3013,7 +3091,6 @@ function renderMessage(m, receipts){
 
   row.appendChild(bubble);
 
-  // منوی حذف/ویرایش پیام (فقط اگر کانال نباشد)
   const isChannel = current && current.type === 'channel';
   if(!isChannel){
     row.addEventListener('contextmenu', (e) => {
@@ -3202,7 +3279,6 @@ $('#attach-clear').onclick = () => {
 async function sendMessage(){
   if(!current) return;
 
-  // اگر در حالت ویرایش هستیم → submit کن
   if(editingMessage){
     await submitEditMessage();
     return;
@@ -3971,6 +4047,7 @@ document.querySelectorAll('#mobile-menu button').forEach(btn => {
     $('#mobile-menu').classList.remove('show');
     const action = btn.dataset.action;
     if(action === 'profile') openProfileModal();
+    else if(action === 'notify') requestNotifyPermission();
     else if(action === 'logout') $('#btn-logout').click();
   });
 });
@@ -4021,6 +4098,8 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js', { scope: './' })
       .then(reg => {
+        swRegistration = reg;
+        console.log('SW registered:', reg.scope);
         reg.addEventListener('updatefound', () => {
           const sw = reg.installing;
           if (!sw) return;
