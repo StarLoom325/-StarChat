@@ -1,9 +1,3 @@
-# انتشار خودکار روی GitHub Pages
-# config.js از روی Secrets مخزن ساخته می‌شود و هیچ‌وقت داخل کد نیست.
-# راه‌اندازی: Repo > Settings > Secrets and variables > Actions > New repository secret
-#   SUPABASE_URL       = آدرس پروژه
-#   SUPABASE_ANON_KEY  = کلید anon/public
-# و Repo > Settings > Pages > Source = "GitHub Actions"
 name: Deploy to GitHub Pages
 
 on:
