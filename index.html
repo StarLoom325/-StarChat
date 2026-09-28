@@ -161,6 +161,19 @@
   @media (hover:none){ .conv-menu-btn{opacity:.85} }
   .list-hint{padding:8px 16px 12px;font-size:12.5px;color:#9FBAB4;line-height:1.8}
 
+  .lock-icon{
+    display:inline-block;
+    width:14px;height:14px;
+    margin-inline-start:4px;
+    vertical-align:middle;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:2.2;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    opacity:.7;
+  }
+
   .unread-badge{
     min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent-2);color:#3b2a08;
     font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;
@@ -197,23 +210,63 @@
   .bubble{
     padding:10px 14px;border-radius:16px;font-size:14.5px;line-height:1.7;position:relative;
     box-shadow:0 1px 2px #0001;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;
+    max-width:100%;
   }
   .bubble-row.me .bubble{background:var(--bubble-me);color:#fff;border-bottom-left-radius:5px}
   .bubble-row.them .bubble{background:var(--bubble-them);color:var(--text);border-bottom-right-radius:5px;border:1px solid var(--line)}
   .bubble .sender-tag{display:block;font-size:11.5px;font-weight:700;color:var(--accent);margin-bottom:3px}
   .bubble a{color:inherit;text-decoration:underline;word-break:break-all}
-  .bubble img.msg-image{max-width:100%;width:auto;height:auto;border-radius:10px;display:block;margin-top:4px;cursor:pointer}
-  .file-chip{
-    display:flex;align-items:center;gap:8px;background:#00000012;padding:8px 10px;border-radius:10px;
-    margin-top:4px;text-decoration:none;color:inherit;font-size:13px;word-break:break-all;
+  .bubble img.msg-image{
+    max-width:100%;width:auto;height:auto;border-radius:10px;display:block;margin-top:4px;cursor:pointer;
+    max-height:360px;object-fit:cover;
   }
-  .bubble-row.me .file-chip{background:#ffffff26}
   .bubble-time{font-size:10.5px;margin-top:4px;display:flex;direction:ltr;justify-content:flex-start;align-items:center;gap:4px}
   .bubble-time .t{opacity:.7}
   .tick{display:inline-flex;color:rgba(255,255,255,.75)}
   .tick svg{width:16px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .tick.read{color:#7DD3FC}
   @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ---------- File card ---------- */
+  .file-card{
+    display:flex;align-items:center;gap:10px;
+    background:#00000012;padding:9px 11px;border-radius:11px;
+    margin-top:4px;text-decoration:none;color:inherit;font-size:13px;
+    min-width:220px;max-width:100%;
+    transition:.15s;
+  }
+  .bubble-row.me .file-card{background:#ffffff26}
+  .file-card:active{transform:scale(.99)}
+  .file-card .fc-icon{
+    width:40px;height:40px;border-radius:9px;
+    background:rgba(255,255,255,.5);
+    display:flex;align-items:center;justify-content:center;
+    flex:none;font-size:20px;
+  }
+  .bubble-row.me .file-card .fc-icon{background:rgba(255,255,255,.25)}
+  .file-card .fc-meta{min-width:0;flex:1}
+  .file-card .fc-name{
+    font-weight:600;font-size:13.5px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    margin-bottom:2px;
+  }
+  .file-card .fc-info{font-size:11px;opacity:.75}
+  .file-card .fc-dl{
+    width:34px;height:34px;border-radius:50%;
+    background:rgba(255,255,255,.5);
+    border:0;cursor:pointer;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    color:inherit;padding:0;
+    transition:.15s;
+  }
+  .bubble-row.me .file-card .fc-dl{background:rgba(255,255,255,.3)}
+  .file-card .fc-dl:hover{background:rgba(255,255,255,.7)}
+  .file-card .fc-dl:active{transform:scale(.9)}
+  .file-card .fc-dl svg{
+    width:16px;height:16px;
+    fill:none;stroke:currentColor;
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+  }
 
   .composer{
     flex:none;padding:14px 20px;background:var(--paper-2);border-top:1px solid var(--line);
@@ -379,7 +432,100 @@
     text-align:center;
   }
 
-  /* ============ Mobile elements (hidden on desktop) ============ */
+  /* ============ Lightbox ============ */
+  .lightbox{
+    position:fixed;inset:0;z-index:200;
+    background:rgba(0,0,0,.92);
+    display:none;align-items:center;justify-content:center;
+    padding:0;
+    animation:fadeIn .2s ease;
+  }
+  .lightbox.show{display:flex}
+  .lightbox img{
+    max-width:100%;max-height:100%;
+    object-fit:contain;
+    user-select:none;
+    -webkit-user-drag:none;
+  }
+  .lb-close{
+    position:absolute;
+    top:calc(12px + var(--safe-top));
+    right:calc(12px + var(--safe-right));
+    width:42px;height:42px;
+    border-radius:50%;
+    border:0;
+    background:rgba(255,255,255,.15);
+    color:#fff;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    padding:0;
+    z-index:2;
+    transition:.15s;
+  }
+  .lb-close:active{transform:scale(.9);background:rgba(255,255,255,.3)}
+  .lb-close svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+  .lb-download{
+    position:absolute;
+    top:calc(12px + var(--safe-top));
+    left:calc(12px + var(--safe-left));
+    height:42px;
+    padding:0 16px;
+    border-radius:21px;
+    border:0;
+    background:rgba(255,255,255,.15);
+    color:#fff;
+    cursor:pointer;
+    display:flex;align-items:center;gap:8px;
+    font-family:inherit;font-size:13.5px;font-weight:600;
+    z-index:2;
+    transition:.15s;
+  }
+  .lb-download:active{transform:scale(.96);background:rgba(255,255,255,.3)}
+  .lb-download svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ============ Attach Sheet ============ */
+  .attach-sheet-back{
+    position:fixed;inset:0;background:rgba(0,0,0,.5);
+    z-index:120;display:none;
+    align-items:flex-end;justify-content:center;
+    padding:16px;
+    padding-bottom:calc(16px + var(--safe-bottom));
+    padding-left:calc(16px + var(--safe-left));
+    padding-right:calc(16px + var(--safe-right));
+    animation:fadeIn .15s ease;
+  }
+  .attach-sheet-back.show{display:flex}
+  .attach-sheet{
+    background:#fff;border-radius:18px;padding:8px;
+    width:100%;max-width:420px;
+    box-shadow:0 20px 60px -10px rgba(0,0,0,.5);
+    animation:slideUp .22s cubic-bezier(.2,.8,.2,1);
+    direction:rtl;
+  }
+  .attach-sheet button{
+    display:flex;align-items:center;gap:14px;
+    width:100%;border:0;background:transparent;
+    padding:13px 14px;border-radius:12px;
+    font-family:inherit;font-size:15px;font-weight:600;
+    color:var(--text);cursor:pointer;text-align:right;
+    transition:.15s;
+  }
+  .attach-sheet button:active{background:#F0EDE4}
+  .attach-sheet .as-icon{
+    width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;color:#fff;
+  }
+  .attach-sheet .as-icon.gallery{background:#7B61FF}
+  .attach-sheet .as-icon.document{background:#2F8F7E}
+  .attach-sheet .as-icon.camera{background:#E7A94C}
+  .attach-sheet .as-icon svg{
+    width:22px;height:22px;
+    fill:none;stroke:currentColor;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  /* ============ Mobile elements ============ */
   .mobile-header{ display: none; }
   .mobile-tabs{ display: none; }
   .mobile-menu{ display: none; }
@@ -453,11 +599,95 @@
   }
   .btn-ghost:active{background:#F0EDE4}
 
-  .back-btn{display:none !important}
+  /* ============ Visibility Options ============ */
+  .vis-options{
+    display:flex;flex-direction:column;gap:8px;
+    margin-bottom:14px;
+  }
+  .vis-option{
+    display:flex;align-items:flex-start;gap:12px;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    cursor:pointer;
+    transition:.15s;
+    background:#FBFAF6;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  .vis-option:hover{ background:#F6F3EC; }
+  .vis-option:active{ transform:scale(.99); }
+  .vis-option.selected{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+  }
+  .vis-option input[type="radio"]{
+    display:none;
+  }
+  .vis-option .vo-radio{
+    width:20px;height:20px;
+    border-radius:50%;
+    border:2px solid var(--line);
+    flex:none;
+    margin-top:2px;
+    position:relative;
+    transition:.15s;
+    background:#fff;
+  }
+  .vis-option.selected .vo-radio{
+    border-color:var(--accent);
+  }
+  .vis-option.selected .vo-radio::after{
+    content:'';
+    position:absolute;
+    inset:4px;
+    border-radius:50%;
+    background:var(--accent);
+  }
+  .vis-option .vo-body{ min-width:0; flex:1; }
+  .vis-option .vo-title{
+    font-size:14px;
+    font-weight:700;
+    color:var(--text);
+    display:flex;align-items:center;gap:6px;
+    margin-bottom:3px;
+  }
+  .vis-option .vo-title svg{
+    width:16px;height:16px;
+    fill:none;stroke:currentColor;stroke-width:2;
+    stroke-linecap:round;stroke-linejoin:round;
+    color:var(--accent);
+  }
+  .vis-option.selected .vo-title{ color:var(--accent); }
+  .vis-option .vo-desc{
+    font-size:12px;
+    color:var(--text-dim);
+    line-height:1.6;
+  }
+  .vis-option.selected .vo-desc{ color:#1F5D50; }
 
-  /* ==========================================================
-     ================ RESPONSIVE ==============================
-     ========================================================== */
+  /* badge group (locked) */
+  .grp-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:3px;
+    font-size:10.5px;
+    font-weight:700;
+    padding:2px 6px;
+    border-radius:6px;
+    background:var(--accent-soft);
+    color:var(--accent);
+    margin-inline-start:6px;
+    vertical-align:middle;
+    flex:none;
+  }
+  .grp-badge svg{
+    width:10px;height:10px;
+    fill:none;stroke:currentColor;stroke-width:2.4;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  .back-btn{display:none !important}
 
   @media (max-width:1024px){
     .sidebar{width:280px}
@@ -465,11 +695,7 @@
     .bubble-row{max-width:78%}
   }
 
-  /* ============================================================
-     ============ MOBILE (max 900px) — WhatsApp-like ===========
-     ============================================================ */
   @media (max-width:900px){
-
     .sidebar{
       position: fixed;
       top: 0; right: 0; bottom: 0; left: 0;
@@ -481,7 +707,6 @@
       color: var(--text);
       overflow: hidden;
     }
-
     .main{
       position: fixed;
       top: 0; right: 0; bottom: 0; left: 0;
@@ -490,7 +715,6 @@
       display: none;
       background: var(--paper);
     }
-
     .shell.chat-open .sidebar{ display: none !important; }
     .shell.chat-open .main{ display: flex !important; }
 
@@ -502,7 +726,6 @@
     .mobile-fab{ display: flex; }
     .back-btn{ display: inline-flex !important; }
 
-    /* ============ Mobile top bar ============ */
     .mobile-header{
       align-items: center;
       justify-content: space-between;
@@ -794,6 +1017,7 @@
     .messages{ padding: 14px 12px;gap: 8px; }
     .bubble-row{ max-width: 85%; }
     .bubble{ font-size: 14.5px;padding: 9px 13px;line-height: 1.65; }
+    .bubble img.msg-image{ max-height: 300px; }
 
     .composer{
       padding: 10px 12px;
@@ -808,6 +1032,9 @@
     .rec-bar{ padding: 8px 12px;padding-bottom: calc(8px + var(--safe-bottom)); gap: 8px; }
     .rec-btn{ width: 38px;height: 38px; }
 
+    .file-card{ min-width: 200px; }
+    .file-card .fc-icon{ width: 38px;height: 38px;font-size: 18px; }
+
     /* Auth */
     .auth-card{ padding: 28px 22px;border-radius: 18px; }
     .auth-brand span{ font-size: 20px; }
@@ -818,6 +1045,13 @@
     .modal{ padding: 22px 18px;border-radius: 14px; }
     .modal h3{ font-size: 16px; }
     .modal p.sub{ font-size: 12.5px; }
+
+    .lb-close{ width: 40px;height: 40px; }
+    .lb-download{ height: 40px;padding: 0 14px;font-size: 13px; }
+
+    .vis-option{ padding: 11px 12px; }
+    .vis-option .vo-title{ font-size: 13.5px; }
+    .vis-option .vo-desc{ font-size: 11.5px; }
   }
 
   @media (max-width:480px){
@@ -841,6 +1075,7 @@
     .rec-hint{ font-size: 12.5px; }
     .rec-btn{ width: 36px;height: 36px; }
     .voice-player{ min-width: 160px;max-width: 240px; }
+    .file-card{ min-width: 180px; }
   }
 
   @media (max-width:360px){
@@ -877,7 +1112,7 @@
   }
 
   button:focus-visible,input:focus-visible,textarea:focus-visible{
-    outline: 2px solid var(--accent);outline-offset: 2px;
+    outline: 2px solid var(--accent);outline-offset:2px;
   }
   #app,.shell,.main,.messages,.list{ overscroll-behavior: contain; }
 </style>
@@ -917,7 +1152,6 @@
   <div class="shell" id="shell">
     <aside class="sidebar" id="sidebar">
 
-      <!-- موبایل: نوار بالا -->
       <header class="mobile-header">
         <div class="title-wrap">
           <span class="title-dot"></span>
@@ -933,7 +1167,6 @@
         </div>
       </header>
 
-      <!-- دسکتاپ: نوار بالا -->
       <div class="sidebar-top">
         <button class="me-btn" id="btn-my-profile" title="ویرایش پروفایل">
           <div class="avatar" id="me-avatar">?</div>
@@ -958,6 +1191,7 @@
         <button class="mtab" data-tab="dm" type="button">چت‌ها</button>
         <button class="mtab" data-tab="group" type="button">گروه‌ها</button>
         <button class="mtab" data-tab="channel" type="button">کانال‌ها</button>
+        <button class="mtab" data-tab="discover" type="button">کشف</button>
       </div>
 
       <div class="notify-banner" id="notify-banner" style="display:none">
@@ -995,7 +1229,6 @@
         <button id="attach-clear">حذف</button>
       </div>
 
-      <!-- ============ Voice Recording Bar ============ -->
       <div class="rec-bar" id="rec-bar">
         <div class="rec-dot" id="rec-dot"></div>
         <span class="rec-time" id="rec-time">0:00</span>
@@ -1013,8 +1246,7 @@
       </div>
 
       <div class="composer" id="composer" style="display:none">
-        <button class="round-btn file" id="btn-attach" title="پیوست فایل">📎</button>
-        <input type="file" id="file-input">
+        <button class="round-btn file" id="btn-attach" title="پیوست فایل" type="button">📎</button>
         <textarea id="msg-input" rows="1" placeholder="پیامی بنویسید…"></textarea>
         <button class="round-btn mic" id="btn-mic" title="ضبط صدا" type="button">
           <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
@@ -1026,6 +1258,42 @@
       </div>
     </main>
   </div>
+</div>
+
+<!-- ===================== ATTACH SHEET ===================== -->
+<div class="attach-sheet-back" id="attach-sheet-back">
+  <div class="attach-sheet" id="attach-sheet">
+    <button data-action="gallery" type="button">
+      <span class="as-icon gallery">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      </span>
+      گالری تصاویر
+    </button>
+    <button data-action="camera" type="button">
+      <span class="as-icon camera">
+        <svg viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+      </span>
+      دوربین
+    </button>
+    <button data-action="document" type="button">
+      <span class="as-icon document">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/><line x1="9" y1="11" x2="15" y2="11"/></svg>
+      </span>
+      فایل / سند
+    </button>
+  </div>
+</div>
+
+<!-- ===================== LIGHTBOX ===================== -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lb-close" type="button" title="بستن">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a class="lb-download" id="lb-download" download href="#">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    دانلود
+  </a>
+  <img id="lb-img" alt="">
 </div>
 
 <!-- ===================== MOBILE DROPDOWN MENU ===================== -->
@@ -1082,6 +1350,36 @@
     <input type="file" id="group-avatar-input" accept="image/*" style="display:none">
 
     <div class="field"><label id="group-name-label">نام گروه</label><input type="text" id="group-name"></div>
+
+    <!-- === Visibility Options === -->
+    <div class="field">
+      <label>نوع گروه</label>
+      <div class="vis-options" id="vis-options">
+        <label class="vis-option selected" data-vis="public">
+          <input type="radio" name="visibility" value="public" checked>
+          <span class="vo-radio"></span>
+          <span class="vo-body">
+            <span class="vo-title">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              گروه آزاد
+            </span>
+            <span class="vo-desc">هر کسی می‌تواند این گروه را با جستجو پیدا کند و به آن بپیوندد</span>
+          </span>
+        </label>
+        <label class="vis-option" data-vis="private">
+          <input type="radio" name="visibility" value="private">
+          <span class="vo-radio"></span>
+          <span class="vo-body">
+            <span class="vo-title">
+              <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              گروه قفل‌شده
+            </span>
+            <span class="vo-desc">فقط مدیر گروه می‌تواند اعضا را اضافه کند. در جستجو ظاهر نمی‌شود</span>
+          </span>
+        </label>
+      </div>
+    </div>
+
     <div class="user-pick" id="group-user-pick"></div>
     <div class="modal-actions">
       <button class="btn-ghost" id="group-cancel">انصراف</button>
@@ -1131,6 +1429,10 @@
 <div class="ctx-menu" id="ctx-menu"></div>
 <div class="toast" id="toast"></div>
 
+<input type="file" id="file-input-gallery" accept="image/*" multiple style="display:none">
+<input type="file" id="file-input-camera" accept="image/*" capture="environment" style="display:none">
+<input type="file" id="file-input-doc" style="display:none">
+
 <script>
 /* =========================================================
    کلید و آدرس Supabase از فایل config.js خوانده می‌شود
@@ -1164,11 +1466,13 @@ let contacts = [];
 const contactMap = new Map();
 const strangers = new Map();
 const profileCache = new Map();
-let allGroups = [];
+let allGroups = [];       // گروه‌هایی که کاربر عضوشونه
+let discoverGroups = [];  // نتایج جستجوی کشف
 let current = null;
 let realtimeChannel = null;
 let pendingFile = null;
 let newConvType = 'group';
+let newVisibility = 'public';
 let pendingGroupAvatarFile = null;
 let pendingProfileAvatarFile = null;
 
@@ -1233,6 +1537,43 @@ async function uploadToStorage(file, kind){
 function assertImage(file){
   if(!file.type.startsWith('image/')) throw new Error('فقط فایل تصویری برای عکس پروفایل مجاز است.');
   if(file.size > 5*1024*1024) throw new Error('حجم عکس پروفایل نباید بیشتر از ۵ مگابایت باشد.');
+}
+
+function fmtDur(sec){
+  const s = Math.max(0, Math.floor(sec || 0));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2,'0')}`;
+}
+
+function fmtBytes(b){
+  if(!b) return '';
+  const u = ['B','KB','MB','GB'];
+  let i = 0;
+  while(b >= 1024 && i < u.length-1){ b /= 1024; i++; }
+  return b.toFixed(b < 10 && i > 0 ? 1 : 0) + ' ' + u[i];
+}
+
+function fileIconFor(name, type){
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  const ft = (type || '').toLowerCase();
+  if(ft.startsWith('image/')) return '🖼';
+  if(ft.startsWith('audio/')) return '🎵';
+  if(ft.startsWith('video/')) return '🎬';
+  const map = {
+    pdf:'📕', doc:'📘', docx:'📘', xls:'📗', xlsx:'📗', ppt:'📙', pptx:'📙',
+    zip:'🗜', rar:'🗜', '7z':'🗜', tar:'🗜', gz:'🗜',
+    txt:'📄', md:'📝', json:'📄', xml:'📄',
+    js:'💛', ts:'💙', jsx:'💛', tsx:'💙',
+    html:'🌐', css:'🎨', scss:'🎨',
+    py:'🐍', java:'☕', c:'🔧', cpp:'🔧', h:'🔧', go:'🔷', rs:'🦀', rb:'💎', php:'🐘',
+    csv:'📊', sql:'🗃', sh:'⚙️', bat:'⚙️', exe:'⚙️'
+  };
+  return map[ext] || '📄';
+}
+
+function lockBadgeHtml(){
+  return '<span class="grp-badge"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>قفل</span>';
 }
 
 /* ---------------------- sound + notifications ---------------------- */
@@ -1368,7 +1709,7 @@ function translateErr(m){
 $('#btn-logout').onclick = async () => { await sb.auth.signOut(); };
 
 function resetState(){
-  me = null; current = null; contacts = []; allGroups = [];
+  me = null; current = null; contacts = []; allGroups = []; discoverGroups = [];
   contactMap.clear(); strangers.clear(); profileCache.clear();
   msgState = new Map(); orphanReceipts = new Map();
   Object.keys(unread).forEach(k => delete unread[k]);
@@ -1482,6 +1823,41 @@ async function loadContactsAndGroups(){
   }
 }
 
+/* ---------------------- Discover (search public groups) ---------------------- */
+async function searchPublicGroups(q){
+  const query = (q || '').trim();
+  if(query.length < 2) return [];
+  const pattern = query.replace(/[\\%_]/g, (m) => '\\' + m);
+  const { data, error } = await sb.from('groups')
+    .select('id, name, avatar_url, created_by, type, visibility')
+    .eq('visibility', 'public')
+    .ilike('name', `%${pattern}%`)
+    .order('name')
+    .limit(30);
+  if(error){ console.warn('search public groups:', error.message); return []; }
+  // فیلتر گروه‌هایی که کاربر خودش عضوشونه
+  return (data || []).filter(g => !allGroups.some(ag => ag.id === g.id));
+}
+
+/* ---------------------- Join group ---------------------- */
+async function joinPublicGroup(g){
+  if(!g) return;
+  try{
+    const { error } = await sb.from('group_members').insert({ group_id: g.id, user_id: me.id });
+    if(error && error.code !== '23505') throw error;
+    toast('به گروه پیوستید');
+    discoverGroups = discoverGroups.filter(x => x.id !== g.id);
+    await loadContactsAndGroups();
+    renderConvList();
+    openConversation({
+      type: g.type === 'channel' ? 'channel' : 'group',
+      id: g.id, title: g.name, avatarUrl: g.avatar_url, createdBy: g.created_by
+    });
+  }catch(err){
+    toast('خطا در پیوستن: ' + err.message, true);
+  }
+}
+
 /* ---------------------- conversation list ---------------------- */
 function renderConvList(){
   const list = $('#conv-list');
@@ -1490,6 +1866,22 @@ function renderConvList(){
   const has = (s) => (s || '').toLowerCase().includes(q);
 
   const tab = isMobile() ? currentTab : 'all';
+
+  // ---- Discover tab (کشف گروه‌های آزاد) ----
+  if(tab === 'discover'){
+    list.appendChild(el('div','sidebar-section-title','کشف گروه‌های آزاد'));
+    if(q.length < 2){
+      list.appendChild(el('div','list-hint','نام گروه را در کادر جستجو تایپ کنید (حداقل ۲ حرف).'));
+      return;
+    }
+    if(!discoverGroups.length){
+      list.appendChild(el('div','list-hint','گروهی با این نام پیدا نشد.'));
+      return;
+    }
+    discoverGroups.forEach(g => list.appendChild(discoverItem(g)));
+    return;
+  }
+
   const showChannels = tab === 'all' || tab === 'channel';
   const showGroups = tab === 'all' || tab === 'group';
   const showDms = tab === 'all' || tab === 'dm';
@@ -1515,14 +1907,14 @@ function renderConvList(){
   if(channels.length){
     list.appendChild(el('div','sidebar-section-title','کانال‌ها'));
     channels.forEach(g => list.appendChild(convItem({
-      type:'channel', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by
+      type:'channel', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by, visibility:g.visibility
     })));
   }
 
   if(groups.length){
     list.appendChild(el('div','sidebar-section-title','گروه‌ها'));
     groups.forEach(g => list.appendChild(convItem({
-      type:'group', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by
+      type:'group', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by, visibility:g.visibility
     })));
   }
 
@@ -1542,12 +1934,19 @@ function convItem(conv){
   if(current && current.type===conv.type && current.id===conv.id) item.classList.add('active');
   const av = avatarNode(conv.avatarUrl, convFallback(conv));
   const meta = el('div','conv-meta');
-  meta.appendChild(el('div','conv-name', escapeHtml(conv.title)));
+
+  const nameEl = el('div','conv-name');
+  nameEl.innerHTML = escapeHtml(conv.title) + (conv.visibility === 'private' && (conv.type==='group' || conv.type==='channel') ? lockBadgeHtml() : '');
+  meta.appendChild(nameEl);
 
   let sub = convLabel(conv);
   if(conv.type === 'dm'){
     if(!conv.isContact) sub = 'مخاطب ذخیره‌نشده';
     else if(conv.username && conv.username !== conv.title) sub = conv.username;
+  } else if(conv.visibility === 'private'){
+    sub = convLabel(conv) + ' • قفل‌شده';
+  } else if(conv.visibility === 'public' && conv.type !== 'dm'){
+    sub = convLabel(conv) + ' • آزاد';
   }
   meta.appendChild(el('div','conv-sub', escapeHtml(sub)));
   item.appendChild(av); item.appendChild(meta);
@@ -1565,7 +1964,40 @@ function convItem(conv){
   return item;
 }
 
-$('#user-search').addEventListener('input', renderConvList);
+function discoverItem(g){
+  const item = el('div','conv-item');
+  const av = avatarNode(g.avatar_url, initials(g.name));
+  const meta = el('div','conv-meta');
+  meta.appendChild(el('div','conv-name', escapeHtml(g.name)));
+  meta.appendChild(el('div','conv-sub', 'گروه آزاد • برای پیوستن ضربه بزنید'));
+  item.appendChild(av);
+  item.appendChild(meta);
+
+  const joinBtn = el('button','icon-btn');
+  joinBtn.type = 'button';
+  joinBtn.title = 'پیوستن';
+  joinBtn.style.cssText = 'width:auto;padding:0 14px;height:34px;border-radius:10px;background:var(--accent);color:#fff;font-family:inherit;font-size:12.5px;font-weight:700;';
+  joinBtn.textContent = 'پیوستن';
+  joinBtn.onclick = (e) => { e.stopPropagation(); joinPublicGroup(g); };
+  item.appendChild(joinBtn);
+
+  item.onclick = () => joinPublicGroup(g);
+  return item;
+}
+
+$('#user-search').addEventListener('input', async () => {
+  const q = $('#user-search').value.trim();
+  if(isMobile() && currentTab === 'discover'){
+    // جستجوی گروه‌های عمومی
+    const seq = ++discoverSeq;
+    if(q.length < 2){ discoverGroups = []; renderConvList(); return; }
+    discoverGroups = await searchPublicGroups(q);
+    if(seq !== discoverSeq) return;
+  }
+  renderConvList();
+});
+
+let discoverSeq = 0;
 
 /* ---------------------- open conversation ---------------------- */
 async function openConversation(conv){
@@ -1582,7 +2014,10 @@ async function openConversation(conv){
   $('#chat-header').style.display = 'flex';
   setAvatar($('#chat-avatar'), conv.avatarUrl, convFallback(conv));
   $('#chat-title').textContent = conv.title;
-  $('#chat-sub').textContent = convLabel(conv);
+  let sub = convLabel(conv);
+  if(conv.visibility === 'private' && (conv.type==='group' || conv.type==='channel')) sub += ' • قفل‌شده';
+  else if(conv.visibility === 'public' && (conv.type==='group' || conv.type==='channel')) sub += ' • آزاد';
+  $('#chat-sub').textContent = sub;
 
   const canSend = conv.type !== 'channel' || conv.createdBy === me.id;
   $('#composer').style.display = canSend ? 'flex' : 'none';
@@ -1591,7 +2026,6 @@ async function openConversation(conv){
   await loadMessages();
   markReadCurrent();
 
-  // آپدیت دکمه‌ی میکروفون/ارسال
   if(typeof updateMicVisibility === 'function'){
     setTimeout(updateMicVisibility, 100);
   }
@@ -1686,14 +2120,67 @@ function onReceipt(r){
   refreshTick(r.message_id);
 }
 
-/* ---------------------- Voice Player ---------- */
-function fmtDur(sec){
-  const s = Math.max(0, Math.floor(sec || 0));
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${String(r).padStart(2,'0')}`;
+/* ---------------------- Download helper ---------------------- */
+async function downloadFile(url, filename){
+  try{
+    toast('در حال دانلود…');
+    const res = await fetch(url, { mode: 'cors' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const blob = await res.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename || 'file';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+    toast('دانلود شروع شد');
+  }catch(err){
+    try{
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename || 'file';
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      toast('دانلود شروع شد');
+    }catch(e2){
+      toast('خطا در دانلود: ' + err.message, true);
+    }
+  }
 }
 
+/* ---------------------- Lightbox ---------------------- */
+const lightbox = $('#lightbox');
+const lbImg = $('#lb-img');
+const lbDownload = $('#lb-download');
+let lbCurrentUrl = null, lbCurrentName = null;
+
+function openLightbox(url, name){
+  lbCurrentUrl = url;
+  lbCurrentName = name || 'image';
+  lbImg.src = url;
+  lbDownload.href = url;
+  lbDownload.setAttribute('download', lbCurrentName);
+  lightbox.classList.add('show');
+}
+function closeLightbox(){
+  lightbox.classList.remove('show');
+  lbImg.src = '';
+}
+$('#lb-close')?.addEventListener('click', closeLightbox);
+lightbox?.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && lightbox.classList.contains('show')) closeLightbox();
+});
+lbDownload?.addEventListener('click', (e) => {
+  e.preventDefault();
+  if(lbCurrentUrl) downloadFile(lbCurrentUrl, lbCurrentName);
+});
+
+/* ---------------------- Voice Player ---------- */
 function voiceNode(href, m){
   const wrap = el('div', 'voice-player');
   const btn = el('button', 'voice-play-btn');
@@ -1757,6 +2244,37 @@ function voiceNode(href, m){
   return wrap;
 }
 
+/* ---------------------- File Card ---------- */
+function fileCardNode(href, m){
+  const card = el('div', 'file-card');
+  const icon = el('div', 'fc-icon', fileIconFor(m.file_name || '', m.file_type || ''));
+  const meta = el('div', 'fc-meta');
+  const nm = el('div', 'fc-name', escapeHtml(m.file_name || 'فایل'));
+  const info = el('div', 'fc-info', fmtBytes(m.file_size) || 'فایل');
+  meta.appendChild(nm);
+  meta.appendChild(info);
+
+  const dl = el('button', 'fc-dl');
+  dl.type = 'button';
+  dl.title = 'دانلود';
+  dl.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  dl.onclick = (e) => { e.stopPropagation(); downloadFile(href, m.file_name || 'file'); };
+
+  card.onclick = () => {
+    const ext = (m.file_name || '').split('.').pop().toLowerCase();
+    if(['pdf','txt','md','json','html','csv'].includes(ext) || (m.file_type||'').startsWith('image/')){
+      window.open(href, '_blank', 'noopener');
+    } else {
+      downloadFile(href, m.file_name || 'file');
+    }
+  };
+
+  card.appendChild(icon);
+  card.appendChild(meta);
+  card.appendChild(dl);
+  return card;
+}
+
 /* ---------------------- render message ---------------------- */
 function renderMessage(m, receipts){
   const box = $('#messages');
@@ -1785,14 +2303,20 @@ function renderMessage(m, receipts){
     if(ft.startsWith('image/')){
       const img = el('img','msg-image');
       img.src = fileHref;
-      img.onclick = () => window.open(fileHref, '_blank', 'noopener');
+      img.loading = 'lazy';
+      img.onclick = () => openLightbox(fileHref, m.file_name || 'image.jpg');
       bubble.appendChild(img);
     } else if(ft.startsWith('audio/')){
       bubble.appendChild(voiceNode(fileHref, m));
+    } else if(ft.startsWith('video/')){
+      const vid = document.createElement('video');
+      vid.src = fileHref;
+      vid.controls = true;
+      vid.playsInline = true;
+      vid.style.cssText = 'max-width:100%;border-radius:10px;margin-top:4px;display:block';
+      bubble.appendChild(vid);
     } else {
-      const a = el('a','file-chip', `📄 ${escapeHtml(m.file_name||'فایل')}`);
-      a.href = fileHref; a.target = '_blank'; a.rel = 'noopener noreferrer';
-      bubble.appendChild(a);
+      bubble.appendChild(fileCardNode(fileHref, m));
     }
   }
 
@@ -1845,7 +2369,7 @@ async function convForMessage(m){
     let g = allGroups.find(x => x.id === m.group_id);
     if(!g){ await loadContactsAndGroups(); renderConvList(); g = allGroups.find(x => x.id === m.group_id); }
     if(!g) return null;
-    return { type: g.type==='channel' ? 'channel' : 'group', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by };
+    return { type: g.type==='channel' ? 'channel' : 'group', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by, visibility:g.visibility };
   }
   const c = contactMap.get(m.sender_id);
   if(c) return dmConv(c);
@@ -1894,23 +2418,56 @@ $('#msg-input').addEventListener('keydown', (e) => {
 });
 $('#btn-send').onclick = sendMessage;
 
-$('#btn-attach').onclick = () => $('#file-input').click();
-$('#file-input').addEventListener('change', (e) => {
-  const f = e.target.files[0];
-  if(!f) return;
+/* ---- Attach Sheet ---- */
+const attachSheetBack = $('#attach-sheet-back');
+const fileInputGallery = $('#file-input-gallery');
+const fileInputCamera = $('#file-input-camera');
+const fileInputDoc = $('#file-input-doc');
+
+$('#btn-attach').onclick = () => {
+  attachSheetBack.classList.add('show');
+};
+attachSheetBack?.addEventListener('click', (e) => {
+  if(e.target === attachSheetBack) attachSheetBack.classList.remove('show');
+});
+document.querySelectorAll('#attach-sheet button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    attachSheetBack.classList.remove('show');
+    const action = btn.dataset.action;
+    if(action === 'gallery') fileInputGallery.click();
+    else if(action === 'camera') fileInputCamera.click();
+    else if(action === 'document') fileInputDoc.click();
+  });
+});
+
+function handleFiles(files){
+  if(!files || !files.length) return;
+  const f = files[0];
   if(f.size > MAX_FILE_MB*1024*1024){
     alert(`حجم فایل نباید بیشتر از ${MAX_FILE_MB} مگابایت باشد.`);
-    e.target.value = '';
     return;
   }
   pendingFile = f;
   $('#attach-preview').style.display = 'flex';
   $('#attach-name').textContent = f.name;
   setTimeout(updateMicVisibility, 0);
+}
+
+fileInputGallery?.addEventListener('change', (e) => {
+  handleFiles(e.target.files);
+  e.target.value = '';
 });
+fileInputCamera?.addEventListener('change', (e) => {
+  handleFiles(e.target.files);
+  e.target.value = '';
+});
+fileInputDoc?.addEventListener('change', (e) => {
+  handleFiles(e.target.files);
+  e.target.value = '';
+});
+
 $('#attach-clear').onclick = () => {
   pendingFile = null;
-  $('#file-input').value = '';
   $('#attach-preview').style.display = 'none';
   setTimeout(updateMicVisibility, 0);
 };
@@ -1922,16 +2479,17 @@ async function sendMessage(){
   if(text.length > 4000){ alert('پیام نباید بیشتر از ۴۰۰۰ کاراکتر باشد.'); return; }
 
   $('#btn-send').disabled = true;
-  let file_url=null, file_name=null, file_type=null;
+  let file_url=null, file_name=null, file_type=null, file_size=null;
 
   try{
     if(pendingFile){
+      file_size = pendingFile.size;
       file_url = await uploadToStorage(pendingFile, 'files');
       file_name = pendingFile.name.slice(0, 200);
       file_type = pendingFile.type || null;
     }
 
-    const row = { sender_id: me.id, content: text || null, file_url, file_name, file_type };
+    const row = { sender_id: me.id, content: text || null, file_url, file_name, file_type, file_size };
     if(current.type==='dm') row.receiver_id = current.id;
     else row.group_id = current.id;
 
@@ -1940,7 +2498,6 @@ async function sendMessage(){
 
     $('#msg-input').value = '';
     pendingFile = null;
-    $('#file-input').value = '';
     $('#attach-preview').style.display = 'none';
     updateMicVisibility();
   } catch(err){
@@ -1950,6 +2507,17 @@ async function sendMessage(){
   }
 }
 
+/* ---------------------- visibility options ---------------------- */
+document.querySelectorAll('#vis-options .vis-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('#vis-options .vis-option').forEach(x => x.classList.remove('selected'));
+    opt.classList.add('selected');
+    const radio = opt.querySelector('input[type="radio"]');
+    if(radio) radio.checked = true;
+    newVisibility = opt.dataset.vis || 'public';
+  });
+});
+
 /* ---------------------- group / channel creation ---------------------- */
 function setNewConvType(type){
   newConvType = type;
@@ -1957,8 +2525,8 @@ function setNewConvType(type){
   $('#type-tab-channel').classList.toggle('active', type==='channel');
   $('#group-modal-title').textContent = type==='channel' ? 'کانال جدید' : 'گروه جدید';
   $('#group-modal-sub').textContent = type==='channel'
-    ? 'نام کانال و مشترکین را مشخص کنید (فقط شما پیام می‌فرستید)'
-    : 'نام گروه و اعضا را مشخص کنید';
+    ? 'نام کانال و نوع آن را مشخص کنید (فقط شما پیام می‌فرستید)'
+    : 'نام و نوع گروه را مشخص کنید';
   $('#group-name-label').textContent = type==='channel' ? 'نام کانال' : 'نام گروه';
   $('#group-create').textContent = type==='channel' ? 'ساخت کانال' : 'ساخت گروه';
 }
@@ -1979,6 +2547,16 @@ function openNewConvModal(type){
   pendingGroupAvatarFile = null;
   $('#group-avatar-img').style.display = 'none';
   $('#group-avatar-placeholder').style.display = 'block';
+
+  // reset visibility to public
+  newVisibility = 'public';
+  document.querySelectorAll('#vis-options .vis-option').forEach(x => {
+    const isPublic = x.dataset.vis === 'public';
+    x.classList.toggle('selected', isPublic);
+    const r = x.querySelector('input[type="radio"]');
+    if(r) r.checked = isPublic;
+  });
+
   setNewConvType(type || 'group');
   $('#group-modal').style.display = 'flex';
 }
@@ -2011,8 +2589,16 @@ $('#group-create').onclick = async () => {
     let avatar_url = null;
     if(pendingGroupAvatarFile) avatar_url = await uploadToStorage(pendingGroupAvatarFile, 'avatars');
 
+    const insertRow = {
+      name,
+      created_by: me.id,
+      type: newConvType,
+      avatar_url,
+      visibility: newVisibility || 'public'
+    };
+
     const { data: group, error } = await sb.from('groups')
-      .insert({ name, created_by: me.id, type: newConvType, avatar_url })
+      .insert(insertRow)
       .select().maybeSingle();
     if(error) throw error;
 
@@ -2025,7 +2611,11 @@ $('#group-create').onclick = async () => {
     $('#group-modal').style.display = 'none';
     await loadContactsAndGroups();
     renderConvList();
-    openConversation({ type:newConvType, id: group.id, title: group.name, avatarUrl: group.avatar_url, createdBy: group.created_by });
+    openConversation({
+      type:newConvType, id: group.id, title: group.name,
+      avatarUrl: group.avatar_url, createdBy: group.created_by,
+      visibility: group.visibility
+    });
   } catch(err){
     alert('خطا در ساخت: ' + err.message);
   } finally {
@@ -2116,7 +2706,6 @@ function closeCurrent(){
   current = null;
   msgState = new Map(); orphanReceipts = new Map();
   pendingFile = null;
-  $('#file-input').value = '';
   $('#attach-preview').style.display = 'none';
   $('#chat-header').style.display = 'none';
   $('#composer').style.display = 'none';
@@ -2141,9 +2730,17 @@ function menuActions(conv){
     ];
   }
   const noun = conv.type === 'channel' ? 'کانال' : 'گروه';
-  return conv.createdBy === me.id
-    ? [{ label:`🗑 حذف ${noun} برای همه`, danger:true, fn:() => deleteGroupForAll(conv) }]
-    : [{ label:`🚪 ترک ${noun}`, danger:true, fn:() => leaveGroup(conv) }];
+  const actions = [];
+  // مدیریت اعضا فقط برای سازنده
+  if(conv.createdBy === me.id){
+    actions.push({ label:'👥 مدیریت اعضا', fn:() => manageMembers(conv) });
+  }
+  if(conv.createdBy === me.id){
+    actions.push({ label:`🗑 حذف ${noun} برای همه`, danger:true, fn:() => deleteGroupForAll(conv) });
+  } else {
+    actions.push({ label:`🚪 ترک ${noun}`, danger:true, fn:() => leaveGroup(conv) });
+  }
+  return actions;
 }
 
 function showCtxMenu(conv, x, y){
@@ -2164,6 +2761,84 @@ function hideCtxMenu(){ $('#ctx-menu').style.display = 'none'; }
 document.addEventListener('click', hideCtxMenu);
 document.addEventListener('keydown', (e) => { if(e.key === 'Escape') hideCtxMenu(); });
 $('#conv-list').addEventListener('scroll', hideCtxMenu);
+
+/* ---------------------- manage members (dialog) ---------------------- */
+async function manageMembers(conv){
+  // ساده: نمایش پیام با لیست اعضا و امکان افزودن/حذف
+  // از مودال گروه استفاده می‌کنیم
+  const pick = $('#group-user-pick');
+  pick.innerHTML = '';
+
+  // اعضای فعلی
+  const { data: members } = await sb.from('group_members')
+    .select('user_id, profiles:user_id(username, avatar_url)')
+    .eq('group_id', conv.id);
+
+  const memberIds = new Set((members||[]).map(m => m.user_id));
+
+  if(!contacts.length){
+    pick.appendChild(el('div','pick-hint','هنوز مخاطبی ندارید.'));
+  }
+  contacts.forEach(c => {
+    const checked = memberIds.has(c.contact_id) ? 'checked' : '';
+    const label = el('label', null, `<input type="checkbox" value="${c.contact_id}" ${checked}> ${escapeHtml(contactDisplay(c))}`);
+    pick.appendChild(label);
+  });
+
+  $('#group-name').value = conv.title;
+  $('#group-modal-title').textContent = 'مدیریت اعضا';
+  $('#group-modal-sub').textContent = 'اعضای گروه را انتخاب یا حذف کنید';
+  $('#group-name-label').textContent = 'نام گروه';
+  $('#group-name').disabled = true;
+  $('#group-create').textContent = 'ذخیره تغییرات';
+  $('#group-modal').style.display = 'flex';
+
+  // نمای انتخاب public/private برای گروه موجود
+  newVisibility = conv.visibility || 'public';
+  document.querySelectorAll('#vis-options .vis-option').forEach(x => {
+    x.classList.toggle('selected', x.dataset.vis === newVisibility);
+    const r = x.querySelector('input[type="radio"]');
+    if(r) r.checked = (x.dataset.vis === newVisibility);
+  });
+
+  // دکمه‌ی ذخیره رو موقتاً جایگزین کن
+  const btn = $('#group-create');
+  const clone = btn.cloneNode(true);
+  btn.parentNode.replaceChild(clone, btn);
+  clone.onclick = async () => {
+    const nowChecked = new Set([...document.querySelectorAll('#group-user-pick input:checked')].map(i => i.value));
+    // اضافه کردن اعضای جدید
+    const toAdd = [...nowChecked].filter(id => !memberIds.has(id));
+    // حذف اعضای برداشته‌شده (به جز خود سازنده)
+    const toRemove = [...memberIds].filter(id => !nowChecked.has(id) && id !== conv.createdBy);
+
+    clone.disabled = true;
+    try{
+      if(toAdd.length){
+        const rows = toAdd.map(uid => ({ group_id: conv.id, user_id: uid }));
+        const { error } = await sb.from('group_members').insert(rows);
+        if(error) throw error;
+      }
+      if(toRemove.length){
+        for(const uid of toRemove){
+          await sb.from('group_members').delete().eq('group_id', conv.id).eq('user_id', uid);
+        }
+      }
+      // ذخیره visibility
+      if(newVisibility !== conv.visibility){
+        await sb.from('groups').update({ visibility: newVisibility }).eq('id', conv.id);
+      }
+      toast('تغییرات ذخیره شد');
+      $('#group-modal').style.display = 'none';
+      await loadContactsAndGroups();
+      renderConvList();
+    }catch(err){
+      toast('خطا: ' + err.message, true);
+    }finally{
+      clone.disabled = false;
+    }
+  };
+}
 
 /* ---------------------- contact actions ---------------------- */
 async function renameContact(conv){
@@ -2517,7 +3192,8 @@ async function sendVoiceMessage(){
       content: null,
       file_url,
       file_name: file.name,
-      file_type: recBlob.type || 'audio/webm'
+      file_type: recBlob.type || 'audio/webm',
+      file_size: recBlob.size
     };
     if(current.type === 'dm') row.receiver_id = current.id;
     else row.group_id = current.id;
@@ -2576,7 +3252,6 @@ document.addEventListener('visibilitychange', () => {
   if(document.hidden && isRecording) stopRecording(true);
 });
 
-// اطمینان از مخفی بودن اولیه‌ی دکمه‌ی ارسال
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(updateMicVisibility, 100);
 });
@@ -2590,11 +3265,21 @@ document.getElementById('btn-back')?.addEventListener('click', () => {
 });
 
 document.querySelectorAll('#mobile-tabs .mtab').forEach(btn => {
-  btn.addEventListener('click', () => {
+  btn.addEventListener('click', async () => {
     currentTab = btn.dataset.tab;
     document.querySelectorAll('#mobile-tabs .mtab').forEach(b => {
       b.classList.toggle('active', b === btn);
     });
+
+    // برای تب کشف، جستجو را انجام بده
+    if(currentTab === 'discover'){
+      const q = $('#user-search').value.trim();
+      if(q.length >= 2){
+        discoverGroups = await searchPublicGroups(q);
+      } else {
+        discoverGroups = [];
+      }
+    }
     renderConvList();
     $('#conv-list').scrollTop = 0;
   });
@@ -2648,6 +3333,7 @@ document.querySelectorAll('#fab-sheet button').forEach(btn => {
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape'){
     $('#fab-sheet-back').classList.remove('show');
+    $('#attach-sheet-back').classList.remove('show');
   }
 });
 
@@ -2655,6 +3341,7 @@ mqMobile.addEventListener('change', () => {
   if(!isMobile()){
     $('#mobile-menu').classList.remove('show');
     $('#fab-sheet-back').classList.remove('show');
+    $('#attach-sheet-back').classList.remove('show');
     currentTab = 'all';
     document.querySelectorAll('#mobile-tabs .mtab').forEach(b => {
       b.classList.toggle('active', b.dataset.tab === 'all');
