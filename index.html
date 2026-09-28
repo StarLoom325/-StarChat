@@ -2,18 +2,20 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>گپ‌یار | پیام‌رسان</title>
-  <!-- PWA -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- ===================== PWA ===================== -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0F2027">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="96x96" href="launchericon-96x96.png">
+<link rel="apple-touch-icon" href="launchericon-96x96.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="گپ‌یار">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- ================================================ -->
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -301,6 +303,77 @@
     .back-btn{display:inline-flex !important}
   }
   .back-btn{display:none}
+
+  /* ============ اصلاحات موبایل و PWA ============ */
+
+  /* ارتفاع پویا برای مرورگرهای موبایل (نوار آدرس) */
+  @supports (height: 100dvh){
+    #auth-screen{ min-height: 100dvh; }
+    #app{ height: 100dvh; }
+  }
+
+  /* اصلاح جهت سایدبار روی موبایل — باید از سمت راست بیاد (RTL) */
+  @media (max-width:760px){
+    .sidebar{
+      position:fixed;
+      top:0; bottom:0;
+      right:0; left:auto;
+      width:86vw; max-width:320px;
+      z-index:30;
+      transform:translateX(100%);
+      transition:transform .25s ease;
+      box-shadow:-10px 0 30px -8px rgba(0,0,0,.4);
+    }
+    .sidebar.open{ transform:translateX(0); }
+
+    .messages{ padding:12px 10px; gap:7px; }
+    .composer{ padding:10px 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+    .chat-header{
+      padding:0 12px;
+      height: calc(56px + env(safe-area-inset-top, 0px));
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+    .sidebar-top{ padding: calc(14px + env(safe-area-inset-top, 0px)) 14px 12px; }
+    .sidebar-search{ padding:10px 12px; }
+    .conv-item{ padding:9px 12px; }
+    .attach-preview{ padding:0 12px 8px; }
+
+    .field input,
+    .sidebar-search input,
+    .composer textarea,
+    #contact-search,
+    #contact-alias,
+    #group-name,
+    #profile-username{ font-size:16px; }
+
+    .bubble{ font-size:14px; padding:8px 11px; line-height:1.6; }
+    .bubble-row{ max-width:88%; }
+    .bubble img.msg-image{ max-width:220px; }
+
+    .round-btn{ width:40px; height:40px; font-size:16px; }
+    .icon-btn{ width:32px; height:32px; font-size:15px; }
+
+    .modal{ padding:22px 18px; max-width:calc(100vw - 24px); }
+    .auth-card{ padding:28px 22px; }
+    .auth-brand span{ font-size:20px; }
+  }
+
+  /* گوشی‌های خیلی کوچک */
+  @media (max-width:380px){
+    .messages{ padding:10px 8px; }
+    .conv-item{ padding:8px 10px; }
+    .conv-item .avatar{ width:36px !important; height:36px !important; }
+    .composer{ padding:8px 8px calc(8px + env(safe-area-inset-bottom, 0px)); }
+  }
+
+  /* حالت standalone (وقتی نصب شد) */
+  @media (display-mode: standalone){
+    .sidebar-top{ padding-top: calc(18px + env(safe-area-inset-top, 0px)); }
+    .chat-header{
+      height: calc(60px + env(safe-area-inset-top, 0px));
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+  }
 </style>
 </head>
 <body>
@@ -1549,6 +1622,26 @@ $('#contact-add').onclick = async () => {
 /* ---------------------- mobile ---------------------- */
 $('#btn-back')?.addEventListener('click', () => $('#sidebar').classList.add('open'));
 
+/* =========================================================
+   ثبت Service Worker برای PWA
+========================================================= */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { scope: './' })
+      .then(reg => {
+        reg.addEventListener('updatefound', () => {
+          const sw = reg.installing;
+          if (!sw) return;
+          sw.addEventListener('statechange', () => {
+            if (sw.state === 'installed' && navigator.serviceWorker.controller) {
+              sw.postMessage('SKIP_WAITING');
+            }
+          });
+        });
+      })
+      .catch(err => console.warn('SW:', err));
+  });
+}
 </script>
 </body>
 </html>
