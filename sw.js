@@ -121,3 +121,5 @@ self.addEventListener('message', (event) => {
       dir: 'rtl',
       lang: 'fa'
     });
+  }
+});
