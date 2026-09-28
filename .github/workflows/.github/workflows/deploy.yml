@@ -23,20 +23,23 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build config.js from secrets
+      - name: Build site with config.js
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          mkdir dist
+          mkdir -p dist
           cp index.html dist/
-          cat > dist/config.js <<JS
-          window.APP_CONFIG = {
-            SUPABASE_URL: "${SUPABASE_URL}",
-            SUPABASE_ANON_KEY: "${SUPABASE_ANON_KEY}",
-            BUCKET: "chat-files"
-          };
-          JS
+          {
+            echo "window.APP_CONFIG = {"
+            echo "  SUPABASE_URL: \"${SUPABASE_URL}\","
+            echo "  SUPABASE_ANON_KEY: \"${SUPABASE_ANON_KEY}\","
+            echo "  BUCKET: \"chat-files\""
+            echo "};"
+          } > dist/config.js
+          echo "--- config.js محتوا ---"
+          cat dist/config.js
+          echo "-----------------------"
 
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
