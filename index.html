@@ -235,6 +235,17 @@
   .round-btn.send{background:var(--accent);color:#fff}
   .round-btn.send:hover{background:#26766A}
   .round-btn:disabled{opacity:.5;cursor:default}
+  .round-btn.mic{background:#F0EDE4;color:var(--text)}
+  .round-btn.mic:hover{background:#E5E1D4}
+  .round-btn.mic.recording{
+    background:var(--danger);
+    color:#fff;
+    animation:pulse 1s infinite;
+  }
+  @keyframes pulse{
+    0%, 100% { opacity: 1; }
+    50% { opacity: .6; }
+  }
   #file-input{display:none}
   .attach-preview{
     display:none;align-items:center;gap:8px;padding:8px 20px;background:var(--paper-2);
@@ -245,6 +256,127 @@
     flex:none;padding:14px 20px;background:var(--paper-2);border-top:1px solid var(--line);
     color:var(--text-dim);font-size:13px;text-align:center;
     padding-bottom:calc(14px + var(--safe-bottom));
+  }
+
+  /* ============ Voice Recording Bar ============ */
+  .rec-bar{
+    display:none;
+    align-items:center;
+    gap:10px;
+    padding:10px 20px;
+    background:#FEE9E6;
+    border-top:1px solid #F5C6BF;
+    flex:none;
+    padding-bottom:calc(10px + var(--safe-bottom));
+  }
+  .rec-bar.show{ display:flex; }
+  .rec-bar.preview{ background:#E1F1ED; border-top-color:#B8DDD3; }
+
+  .rec-dot{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--danger);
+    flex:none;
+    animation:pulse 1s infinite;
+  }
+  .rec-time{
+    font-family:'Vazirmatn', monospace;
+    font-size:15px;font-weight:700;
+    color:var(--danger);
+    direction:ltr;
+    min-width:56px;
+    text-align:center;
+    flex:none;
+  }
+  .rec-bar.preview .rec-time{ color:var(--accent); }
+
+  .rec-hint{
+    flex:1;
+    font-size:13.5px;
+    color:#8A3A2E;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .rec-bar.preview .rec-hint{ color:#1F5D50; }
+
+  .rec-bar audio{
+    flex:1;
+    height:36px;
+    min-width:0;
+  }
+
+  .rec-btn{
+    width:40px;height:40px;
+    border-radius:50%;
+    border:0;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+    transition:.15s;
+    padding:0;
+  }
+  .rec-btn:active{ transform:scale(.92); }
+  .rec-btn svg{
+    width:20px;height:20px;
+    fill:none;stroke:currentColor;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  }
+  .rec-btn.cancel{ background:#fff; color:var(--danger); }
+  .rec-btn.cancel:hover{ background:#FFF0EE; }
+  .rec-btn.stop{ background:var(--danger); color:#fff; }
+  .rec-btn.stop:hover{ background:#A84A3B; }
+  .rec-btn.accept{ background:var(--accent); color:#fff; }
+  .rec-btn.accept:hover{ background:#26766A; }
+
+  /* ============ Voice Player in bubble ============ */
+  .voice-player{
+    display:flex;align-items:center;gap:10px;
+    padding:4px 0;
+    min-width:180px;max-width:280px;
+  }
+  .voice-play-btn{
+    width:38px;height:38px;
+    border-radius:50%;
+    border:0;
+    background:rgba(255,255,255,.25);
+    color:#fff;
+    cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;padding:0;
+    transition:.15s;
+  }
+  .bubble-row.them .voice-play-btn{
+    background:var(--accent);
+    color:#fff;
+  }
+  .voice-play-btn:active{ transform:scale(.92); }
+  .voice-play-btn svg{
+    width:18px;height:18px;
+    fill:currentColor;stroke:none;
+  }
+  .voice-wave{
+    flex:1;height:28px;
+    display:flex;align-items:center;gap:2px;min-width:0;
+  }
+  .voice-wave span{
+    flex:1;min-width:2px;
+    background:currentColor;
+    opacity:.35;
+    border-radius:1px;
+    transition:opacity .15s;
+    height:40%;
+  }
+  .bubble-row.me .voice-wave{ color:#fff; }
+  .bubble-row.them .voice-wave{ color:var(--accent); }
+  .voice-wave span.active{ opacity:1; }
+  .voice-dur{
+    font-size:11.5px;
+    direction:ltr;
+    opacity:.85;
+    flex:none;
+    min-width:36px;
+    text-align:center;
   }
 
   /* ============ Mobile elements (hidden on desktop) ============ */
@@ -338,7 +470,6 @@
      ============================================================ */
   @media (max-width:900px){
 
-    /* Sidebar = لیست، تمام صفحه */
     .sidebar{
       position: fixed;
       top: 0; right: 0; bottom: 0; left: 0;
@@ -351,7 +482,6 @@
       overflow: hidden;
     }
 
-    /* Main = چت، تمام صفحه، پیش‌فرض مخفی */
     .main{
       position: fixed;
       top: 0; right: 0; bottom: 0; left: 0;
@@ -364,11 +494,9 @@
     .shell.chat-open .sidebar{ display: none !important; }
     .shell.chat-open .main{ display: flex !important; }
 
-    /* مخفی کردن تاپ‌بار دسکتاپ */
     .sidebar-top{ display: none !important; }
     .sidebar > .sidebar-section-title{ display: none !important; }
 
-    /* نمایش المان‌های موبایل */
     .mobile-header{ display: flex; }
     .mobile-tabs{ display: flex; }
     .mobile-fab{ display: flex; }
@@ -438,7 +566,6 @@
       width: 36px;height: 36px;font-size: 13px;
     }
 
-    /* ============ Search bar (always visible) ============ */
     .sidebar-search{
       display: block !important;
       padding: 8px 12px;
@@ -456,7 +583,6 @@
     }
     .sidebar-search input::placeholder{ color: var(--text-dim); }
 
-    /* ============ Tabs (top center) ============ */
     .mobile-tabs{
       align-items: center;
       justify-content: center;
@@ -491,7 +617,6 @@
       color: var(--accent);
     }
 
-    /* ============ Conversation list ============ */
     .list{ background: var(--paper-2); }
     .sidebar-section-title{
       display: block !important;
@@ -522,7 +647,6 @@
       margin: 10px 12px 0;
     }
 
-    /* ============ FAB (bottom-left) ============ */
     .mobile-fab{
       position: fixed;
       left: calc(16px + var(--safe-left));
@@ -551,7 +675,6 @@
       stroke-width: 2.4;stroke-linecap: round;stroke-linejoin: round;
     }
 
-    /* ============ FAB Bottom Sheet ============ */
     .fab-sheet-back{
       position: fixed;
       inset: 0;
@@ -617,7 +740,6 @@
       stroke-width: 2;stroke-linecap: round;stroke-linejoin: round;
     }
 
-    /* ============ Dropdown menu (top) ============ */
     .mobile-menu{
       display: none;
       position: fixed;
@@ -656,7 +778,6 @@
       stroke-width: 1.9;stroke-linecap: round;stroke-linejoin: round;
     }
 
-    /* ============ Chat view ============ */
     .chat-header{
       height: auto;
       min-height: 56px;
@@ -684,6 +805,9 @@
     .composer textarea{ font-size: 16px;padding: 11px 14px;border-radius: 22px; }
     .round-btn{ width: 44px;height: 44px;font-size: 16px; }
 
+    .rec-bar{ padding: 8px 12px;padding-bottom: calc(8px + var(--safe-bottom)); gap: 8px; }
+    .rec-btn{ width: 38px;height: 38px; }
+
     /* Auth */
     .auth-card{ padding: 28px 22px;border-radius: 18px; }
     .auth-brand span{ font-size: 20px; }
@@ -691,13 +815,11 @@
     .field input{ font-size: 16px; }
     .btn-primary{ font-size: 14.5px;padding: 12px; }
 
-    /* Modal */
     .modal{ padding: 22px 18px;border-radius: 14px; }
     .modal h3{ font-size: 16px; }
     .modal p.sub{ font-size: 12.5px; }
   }
 
-  /* ============ Mobile small (max 480px) ============ */
   @media (max-width:480px){
     .mobile-header .title{ font-size: 18px; }
     .mobile-header button{ width: 40px;height: 40px; }
@@ -714,9 +836,13 @@
     .modal{ padding: 20px 16px; }
     .mobile-fab{ width: 54px;height: 54px; }
     .mtab{ padding: 7px 12px;font-size: 13px; }
+    .rec-bar{ padding: 6px 10px;padding-bottom: calc(6px + var(--safe-bottom)); }
+    .rec-time{ font-size: 14px;min-width: 48px; }
+    .rec-hint{ font-size: 12.5px; }
+    .rec-btn{ width: 36px;height: 36px; }
+    .voice-player{ min-width: 160px;max-width: 240px; }
   }
 
-  /* ============ Mobile tiny (max 360px) ============ */
   @media (max-width:360px){
     .bubble{ font-size: 13.5px;padding: 7px 10px; }
     .round-btn{ width: 40px;height: 40px;font-size: 14px; }
@@ -725,7 +851,6 @@
     .mtab{ padding: 6px 10px;font-size: 12.5px; }
   }
 
-  /* ============ Landscape موبایل ============ */
   @media (max-width:900px) and (orientation:landscape){
     .mobile-header{ min-height: 48px;padding-top: calc(6px + var(--safe-top));padding-bottom: 6px; }
     .mobile-header .title{ font-size: 17px; }
@@ -736,9 +861,9 @@
     .messages{ padding: 8px 12px; }
     .composer{ padding: 6px 12px;padding-bottom: calc(6px + var(--safe-bottom)); }
     .composer textarea{ max-height: 70px; }
+    .rec-bar{ padding: 6px 12px; }
   }
 
-  /* ============ Touch devices ============ */
   @media (hover:none) and (pointer:coarse){
     .icon-btn{ width: 38px;height: 38px;font-size: 16px; }
     .ctx-menu button{ padding: 13px 14px;font-size: 14.5px; }
@@ -746,7 +871,6 @@
     .user-pick label{ padding: 12px 12px; }
   }
 
-  /* ============ PWA standalone ============ */
   @media (display-mode:standalone){
     body{ user-select: none; }
     input,textarea{ user-select: text; }
@@ -825,12 +949,10 @@
         </div>
       </div>
 
-      <!-- Search (always visible) -->
       <div class="sidebar-search">
         <input type="text" id="user-search" placeholder="جستجو در مخاطبین، گروه‌ها و کانال‌ها…">
       </div>
 
-      <!-- موبایل: تب‌های بالا (وسط‌چین) -->
       <div class="mobile-tabs" id="mobile-tabs">
         <button class="mtab active" data-tab="all" type="button">همه</button>
         <button class="mtab" data-tab="dm" type="button">چت‌ها</button>
@@ -846,7 +968,6 @@
       <div class="sidebar-section-title">گفتگوها</div>
       <div class="list" id="conv-list"></div>
 
-      <!-- موبایل: دکمه‌ی شناور پایین-چپ -->
       <button class="mobile-fab" id="mobile-fab" type="button" aria-label="افزودن">
         <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       </button>
@@ -874,10 +995,30 @@
         <button id="attach-clear">حذف</button>
       </div>
 
+      <!-- ============ Voice Recording Bar ============ -->
+      <div class="rec-bar" id="rec-bar">
+        <div class="rec-dot" id="rec-dot"></div>
+        <span class="rec-time" id="rec-time">0:00</span>
+        <span class="rec-hint" id="rec-hint">در حال ضبط…</span>
+        <audio id="rec-audio" controls style="display:none"></audio>
+        <button class="rec-btn cancel" id="rec-cancel" title="لغو" type="button" style="display:none">
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+        <button class="rec-btn stop" id="rec-stop" title="توقف" type="button">
+          <svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></svg>
+        </button>
+        <button class="rec-btn accept" id="rec-accept" title="ارسال" type="button" style="display:none">
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+
       <div class="composer" id="composer" style="display:none">
         <button class="round-btn file" id="btn-attach" title="پیوست فایل">📎</button>
         <input type="file" id="file-input">
         <textarea id="msg-input" rows="1" placeholder="پیامی بنویسید…"></textarea>
+        <button class="round-btn mic" id="btn-mic" title="ضبط صدا" type="button">
+          <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
         <button class="round-btn send" id="btn-send" title="ارسال">➤</button>
       </div>
       <div class="channel-readonly" id="channel-readonly" style="display:none">
@@ -1134,7 +1275,9 @@ $('#notify-enable').onclick = async () => {
 
 function previewText(m){
   if(m.content) return m.content.length > 120 ? m.content.slice(0,120) + '…' : m.content;
-  return (m.file_type || '').startsWith('image/') ? '🖼 عکس' : '📎 فایل';
+  if((m.file_type||'').startsWith('image/')) return '🖼 عکس';
+  if((m.file_type||'').startsWith('audio/')) return '🎤 پیام صوتی';
+  return '📎 فایل';
 }
 
 function notifyIncoming(title, body, conv){
@@ -1447,6 +1590,11 @@ async function openConversation(conv){
 
   await loadMessages();
   markReadCurrent();
+
+  // آپدیت دکمه‌ی میکروفون/ارسال
+  if(typeof updateMicVisibility === 'function'){
+    setTimeout(updateMicVisibility, 100);
+  }
 }
 
 async function loadMessages(){
@@ -1538,6 +1686,77 @@ function onReceipt(r){
   refreshTick(r.message_id);
 }
 
+/* ---------------------- Voice Player ---------- */
+function fmtDur(sec){
+  const s = Math.max(0, Math.floor(sec || 0));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2,'0')}`;
+}
+
+function voiceNode(href, m){
+  const wrap = el('div', 'voice-player');
+  const btn = el('button', 'voice-play-btn');
+  btn.type = 'button';
+  btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20"/></svg>';
+
+  const wave = el('div', 'voice-wave');
+  const bars = 28;
+  for(let i=0;i<bars;i++){
+    const b = document.createElement('span');
+    b.style.height = (30 + Math.random()*70) + '%';
+    wave.appendChild(b);
+  }
+
+  const dur = el('span', 'voice-dur', '0:00');
+
+  const audio = document.createElement('audio');
+  audio.src = href;
+  audio.preload = 'metadata';
+  audio.style.display = 'none';
+
+  audio.addEventListener('loadedmetadata', () => {
+    dur.textContent = fmtDur(audio.duration || 0);
+  });
+  audio.addEventListener('timeupdate', () => {
+    if(!audio.duration) return;
+    const p = audio.currentTime / audio.duration;
+    const active = Math.floor(p * bars);
+    wave.querySelectorAll('span').forEach((s,i) => {
+      s.classList.toggle('active', i < active);
+    });
+    dur.textContent = fmtDur(audio.currentTime) + ' / ' + fmtDur(audio.duration);
+  });
+  audio.addEventListener('ended', () => {
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20"/></svg>';
+    wave.querySelectorAll('span').forEach(s => s.classList.remove('active'));
+    dur.textContent = fmtDur(audio.duration || 0);
+  });
+  audio.addEventListener('error', () => {
+    dur.textContent = 'خطا';
+    btn.disabled = true;
+  });
+
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('audio').forEach(a => {
+      if(a !== audio && !a.paused) a.pause();
+    });
+    if(audio.paused){
+      audio.play().catch(()=>{});
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
+    } else {
+      audio.pause();
+      btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="6 4 20 12 6 20"/></svg>';
+    }
+  });
+
+  wrap.appendChild(btn);
+  wrap.appendChild(wave);
+  wrap.appendChild(dur);
+  wrap.appendChild(audio);
+  return wrap;
+}
+
 /* ---------------------- render message ---------------------- */
 function renderMessage(m, receipts){
   const box = $('#messages');
@@ -1562,11 +1781,14 @@ function renderMessage(m, receipts){
   }
   const fileHref = safeUrl(m.file_url);
   if(fileHref){
-    if((m.file_type||'').startsWith('image/')){
+    const ft = (m.file_type || '').toLowerCase();
+    if(ft.startsWith('image/')){
       const img = el('img','msg-image');
       img.src = fileHref;
       img.onclick = () => window.open(fileHref, '_blank', 'noopener');
       bubble.appendChild(img);
+    } else if(ft.startsWith('audio/')){
+      bubble.appendChild(voiceNode(fileHref, m));
     } else {
       const a = el('a','file-chip', `📄 ${escapeHtml(m.file_name||'فایل')}`);
       a.href = fileHref; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -1684,11 +1906,13 @@ $('#file-input').addEventListener('change', (e) => {
   pendingFile = f;
   $('#attach-preview').style.display = 'flex';
   $('#attach-name').textContent = f.name;
+  setTimeout(updateMicVisibility, 0);
 });
 $('#attach-clear').onclick = () => {
   pendingFile = null;
   $('#file-input').value = '';
   $('#attach-preview').style.display = 'none';
+  setTimeout(updateMicVisibility, 0);
 };
 
 async function sendMessage(){
@@ -1718,6 +1942,7 @@ async function sendMessage(){
     pendingFile = null;
     $('#file-input').value = '';
     $('#attach-preview').style.display = 'none';
+    updateMicVisibility();
   } catch(err){
     alert('خطا در ارسال پیام: ' + err.message);
   } finally {
@@ -1884,6 +2109,9 @@ function showEmptyState(){
 }
 
 function closeCurrent(){
+  if(typeof isRecording !== 'undefined' && (isRecording || isPreview)){
+    if(typeof cancelRecording === 'function') cancelRecording();
+  }
   loadToken++;
   current = null;
   msgState = new Map(); orphanReceipts = new Map();
@@ -2097,15 +2325,270 @@ $('#contact-add').onclick = async () => {
 };
 
 /* =========================================================
+   VOICE RECORDING
+========================================================= */
+const recBar = $('#rec-bar');
+const recTime = $('#rec-time');
+const recHint = $('#rec-hint');
+const recAudio = $('#rec-audio');
+const recStopBtn = $('#rec-stop');
+const recCancelBtn = $('#rec-cancel');
+const recAcceptBtn = $('#rec-accept');
+const recDot = $('#rec-dot');
+const btnMic = $('#btn-mic');
+
+let mediaRecorder = null;
+let mediaStream = null;
+let audioChunks = [];
+let recTimerInterval = null;
+let recStartTime = 0;
+let recDuration = 0;
+let recBlob = null;
+let recBlobUrl = null;
+let isRecording = false;
+let isPreview = false;
+
+const MAX_REC_SECONDS = 180;
+
+function resetRecUI(){
+  recBar.classList.remove('show', 'preview');
+  recDot.style.display = 'block';
+  recAudio.style.display = 'none';
+  recAudio.pause();
+  recAudio.removeAttribute('src');
+  recStopBtn.style.display = 'flex';
+  recCancelBtn.style.display = 'none';
+  recAcceptBtn.style.display = 'none';
+  recHint.textContent = 'در حال ضبط…';
+  recTime.textContent = '0:00';
+  if(recBlobUrl){ URL.revokeObjectURL(recBlobUrl); recBlobUrl = null; }
+  recBlob = null;
+  btnMic.classList.remove('recording');
+  isRecording = false;
+  isPreview = false;
+}
+
+async function startRecording(){
+  if(isRecording || isPreview) return;
+  if(!navigator.mediaDevices || !window.MediaRecorder){
+    toast('مرورگر شما از ضبط صدا پشتیبانی نمی‌کند.', true);
+    return;
+  }
+
+  try{
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  }catch(err){
+    const msg = (err && err.name === 'NotAllowedError')
+      ? 'دسترسی به میکروفون رد شد. از تنظیمات مرورگر اجازه بدهید.'
+      : 'دسترسی به میکروفون ممکن نشد.';
+    toast(msg, true);
+    return;
+  }
+
+  const mimeCandidates = [
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+    'audio/mp4',
+    'audio/mpeg'
+  ];
+  let mimeType = '';
+  for(const m of mimeCandidates){
+    if(MediaRecorder.isTypeSupported(m)){ mimeType = m; break; }
+  }
+
+  try{
+    mediaRecorder = mimeType
+      ? new MediaRecorder(mediaStream, { mimeType })
+      : new MediaRecorder(mediaStream);
+  }catch(err){
+    toast('شروع ضبط ناموفق بود: ' + err.message, true);
+    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+    return;
+  }
+
+  audioChunks = [];
+  mediaRecorder.ondataavailable = (e) => {
+    if(e.data && e.data.size > 0) audioChunks.push(e.data);
+  };
+  mediaRecorder.onstop = onRecordingStop;
+  mediaRecorder.onerror = (e) => {
+    console.warn('MediaRecorder error:', e.error);
+    toast('خطا در ضبط صدا', true);
+    stopRecording(true);
+  };
+
+  mediaRecorder.start(250);
+  isRecording = true;
+  recStartTime = Date.now();
+  recDuration = 0;
+  recTime.textContent = '0:00';
+  recHint.textContent = 'در حال ضبط…';
+  recBar.classList.add('show');
+  recBar.classList.remove('preview');
+  recDot.style.display = 'block';
+  recAudio.style.display = 'none';
+  recStopBtn.style.display = 'flex';
+  recCancelBtn.style.display = 'none';
+  recAcceptBtn.style.display = 'none';
+  btnMic.classList.add('recording');
+
+  recTimerInterval = setInterval(() => {
+    recDuration = (Date.now() - recStartTime) / 1000;
+    recTime.textContent = fmtDur(recDuration);
+    if(recDuration >= MAX_REC_SECONDS){
+      stopRecording(false);
+    }
+  }, 200);
+}
+
+function stopRecording(cancelled){
+  if(!isRecording || !mediaRecorder) return;
+  isRecording = false;
+  clearInterval(recTimerInterval);
+  recTimerInterval = null;
+  btnMic.classList.remove('recording');
+
+  try{ mediaRecorder.stop(); }catch(e){}
+  if(mediaStream){
+    mediaStream.getTracks().forEach(t => t.stop());
+    mediaStream = null;
+  }
+
+  if(cancelled){
+    audioChunks = [];
+    resetRecUI();
+  }
+}
+
+function onRecordingStop(){
+  if(recDuration < 1){
+    toast('ضبط خیلی کوتاه بود.', true);
+    audioChunks = [];
+    resetRecUI();
+    return;
+  }
+
+  const mimeType = mediaRecorder.mimeType || 'audio/webm';
+  recBlob = new Blob(audioChunks, { type: mimeType });
+  audioChunks = [];
+  recBlobUrl = URL.createObjectURL(recBlob);
+
+  isPreview = true;
+  recBar.classList.add('preview');
+  recBar.classList.add('show');
+  recDot.style.display = 'none';
+  recAudio.src = recBlobUrl;
+  recAudio.style.display = 'block';
+  recHint.textContent = 'پیش‌نمایش — می‌توانید گوش دهید';
+  recTime.textContent = fmtDur(recDuration);
+  recStopBtn.style.display = 'none';
+  recCancelBtn.style.display = 'flex';
+  recAcceptBtn.style.display = 'flex';
+}
+
+function cancelRecording(){
+  if(isRecording) stopRecording(true);
+  else { audioChunks = []; resetRecUI(); }
+}
+
+async function sendVoiceMessage(){
+  if(!recBlob || !current){
+    toast('چیزی برای ارسال نیست.', true);
+    return;
+  }
+
+  recAcceptBtn.disabled = true;
+  recCancelBtn.disabled = true;
+
+  try{
+    const ext = (recBlob.type.split('/')[1] || 'webm').split(';')[0];
+    const file = new File(
+      [recBlob],
+      `voice_${Date.now()}.${ext}`,
+      { type: recBlob.type }
+    );
+
+    const file_url = await uploadToStorage(file, 'voice');
+
+    const row = {
+      sender_id: me.id,
+      content: null,
+      file_url,
+      file_name: file.name,
+      file_type: recBlob.type || 'audio/webm'
+    };
+    if(current.type === 'dm') row.receiver_id = current.id;
+    else row.group_id = current.id;
+
+    const { error } = await sb.from('messages').insert(row);
+    if(error) throw error;
+
+    resetRecUI();
+    toast('صدا ارسال شد');
+  }catch(err){
+    console.error(err);
+    toast('خطا در ارسال صدا: ' + err.message, true);
+  }finally{
+    recAcceptBtn.disabled = false;
+    recCancelBtn.disabled = false;
+  }
+}
+
+btnMic?.addEventListener('click', (e) => {
+  e.preventDefault();
+  if(isRecording) return;
+  const hasText = $('#msg-input').value.trim().length > 0;
+  const hasFile = !!pendingFile;
+  if(hasText || hasFile) return;
+  startRecording();
+});
+
+recStopBtn?.addEventListener('click', () => stopRecording(false));
+recCancelBtn?.addEventListener('click', cancelRecording);
+recAcceptBtn?.addEventListener('click', sendVoiceMessage);
+
+function updateMicVisibility(){
+  const hasText = $('#msg-input').value.trim().length > 0;
+  const hasFile = !!pendingFile;
+  const shouldShowSend = hasText || hasFile;
+  const mic = $('#btn-mic');
+  const send = $('#btn-send');
+  if(!mic || !send) return;
+  if(isRecording || isPreview){
+    mic.style.display = 'flex';
+    send.style.display = 'none';
+    return;
+  }
+  if(shouldShowSend){
+    mic.style.display = 'none';
+    send.style.display = 'flex';
+  } else {
+    mic.style.display = 'flex';
+    send.style.display = 'none';
+  }
+}
+
+$('#msg-input')?.addEventListener('input', updateMicVisibility);
+
+document.addEventListener('visibilitychange', () => {
+  if(document.hidden && isRecording) stopRecording(true);
+});
+
+// اطمینان از مخفی بودن اولیه‌ی دکمه‌ی ارسال
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(updateMicVisibility, 100);
+});
+
+/* =========================================================
    MOBILE NAVIGATION
 ========================================================= */
 
-// دکمه‌ی بازگشت در هدر چت
 document.getElementById('btn-back')?.addEventListener('click', () => {
   closeCurrent();
 });
 
-// تب‌های بالا (همه / چت‌ها / گروه‌ها / کانال‌ها)
 document.querySelectorAll('#mobile-tabs .mtab').forEach(btn => {
   btn.addEventListener('click', () => {
     currentTab = btn.dataset.tab;
@@ -2117,7 +2600,6 @@ document.querySelectorAll('#mobile-tabs .mtab').forEach(btn => {
   });
 });
 
-// منوی کشویی بالا
 $('#mobile-menu-btn')?.addEventListener('click', (e) => {
   e.stopPropagation();
   $('#mobile-menu').classList.toggle('show');
@@ -2129,12 +2611,10 @@ document.addEventListener('click', (e) => {
   }
 });
 
-// پروفایل
 $('#mobile-profile-btn')?.addEventListener('click', () => {
   openProfileModal();
 });
 
-// اکشن‌های منوی موبایل
 document.querySelectorAll('#mobile-menu button').forEach(btn => {
   btn.addEventListener('click', () => {
     $('#mobile-menu').classList.remove('show');
@@ -2144,20 +2624,17 @@ document.querySelectorAll('#mobile-menu button').forEach(btn => {
   });
 });
 
-// ===== FAB: باز کردن bottom sheet =====
 $('#mobile-fab')?.addEventListener('click', (e) => {
   e.stopPropagation();
   $('#fab-sheet-back').classList.add('show');
 });
 
-// بستن sheet با کلیک روی پس‌زمینه
 $('#fab-sheet-back')?.addEventListener('click', (e) => {
   if(e.target.id === 'fab-sheet-back'){
     $('#fab-sheet-back').classList.remove('show');
   }
 });
 
-// اکشن‌های sheet
 document.querySelectorAll('#fab-sheet button').forEach(btn => {
   btn.addEventListener('click', () => {
     $('#fab-sheet-back').classList.remove('show');
@@ -2168,14 +2645,12 @@ document.querySelectorAll('#fab-sheet button').forEach(btn => {
   });
 });
 
-// بستن sheet با Escape
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape'){
     $('#fab-sheet-back').classList.remove('show');
   }
 });
 
-// هماهنگی با تغییر اندازه
 mqMobile.addEventListener('change', () => {
   if(!isMobile()){
     $('#mobile-menu').classList.remove('show');
