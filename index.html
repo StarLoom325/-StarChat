@@ -30,7 +30,6 @@
     --transition: .22s cubic-bezier(.4,0,.2,1);
   }
 
-  /* ---------- EMERALD ---------- */
   html[data-theme="emerald"]{
     --ink:#0F2027; --panel:#16303A; --panel-2:#1D3E49;
     --paper:#F6F8F7; --paper-2:#FFFFFF; --paper-3:#F0F4F2;
@@ -42,8 +41,6 @@
     --danger:#C25B4A; --success:#2F8F7E;
     --overlay: rgba(10,20,25,.55);
   }
-
-  /* ---------- OCEAN ---------- */
   html[data-theme="ocean"]{
     --ink:#0B1E2D; --panel:#123049; --panel-2:#183D5A;
     --paper:#F4F7FA; --paper-2:#FFFFFF; --paper-3:#EDF2F7;
@@ -55,8 +52,6 @@
     --danger:#D45A4A; --success:#2E7EB8;
     --overlay: rgba(10,20,30,.55);
   }
-
-  /* ---------- ROSE ---------- */
   html[data-theme="rose"]{
     --ink:#2B1520; --panel:#3D1F2E; --panel-2:#4E2838;
     --paper:#FBF5F7; --paper-2:#FFFFFF; --paper-3:#F7EBEF;
@@ -68,8 +63,6 @@
     --danger:#C25B4A; --success:#C4507A;
     --overlay: rgba(30,10,20,.55);
   }
-
-  /* ---------- SUNSET ---------- */
   html[data-theme="sunset"]{
     --ink:#221432; --panel:#32204A; --panel-2:#412A5C;
     --paper:#FAF6FB; --paper-2:#FFFFFF; --paper-3:#F3ECF6;
@@ -81,8 +74,6 @@
     --danger:#D04545; --success:#8B4FE0;
     --overlay: rgba(20,10,30,.55);
   }
-
-  /* ---------- MIDNIGHT ---------- */
   html[data-theme="midnight"]{
     --ink:#0A0E14; --panel:#151B24; --panel-2:#1E2632;
     --paper:#0F141C; --paper-2:#1A212B; --paper-3:#141B24;
@@ -94,8 +85,6 @@
     --danger:#E06A5A; --success:#4DA8DA;
     --overlay: rgba(0,0,0,.7);
   }
-
-  /* ---------- SAND ---------- */
   html[data-theme="sand"]{
     --ink:#2B2118; --panel:#3D2F22; --panel-2:#4E3D2D;
     --paper:#FAF6EE; --paper-2:#FFFFFF; --paper-3:#F5EEE1;
@@ -107,8 +96,6 @@
     --danger:#C25B4A; --success:#7BA05B;
     --overlay: rgba(30,20,10,.55);
   }
-
-  /* ---------- MINT ---------- */
   html[data-theme="mint"]{
     --ink:#0B2E24; --panel:#124034; --panel-2:#1A5244;
     --paper:#F3FAF7; --paper-2:#FFFFFF; --paper-3:#EAF6F1;
@@ -380,8 +367,15 @@
   }
   .empty-state p{margin:0;font-size:14.5px;line-height:1.7}
 
-  .bubble-row{display:flex;max-width:75%;animation: msgIn .25s cubic-bezier(.2,.8,.2,1)}
+  .bubble-row{display:flex;max-width:75%;animation: msgIn .25s cubic-bezier(.2,.8,.2,1);cursor:default;transition: filter .15s;}
   .bubble-row.me{align-self:flex-end;flex-direction:row-reverse}
+  .bubble-row.holding{
+    filter: brightness(.9);
+  }
+  .bubble-row.deleted .bubble{
+    opacity:.55;
+    font-style:italic;
+  }
   .bubble{
     padding:10px 15px;border-radius:18px;
     font-size:14.5px;line-height:1.7;position:relative;
@@ -831,7 +825,7 @@
     stroke-linecap:round;stroke-linejoin:round;
   }
 
-  /* ============ THEME BUTTON (Desktop) ============ */
+  /* ============ THEME BUTTON ============ */
   .theme-btn{
     position:fixed;
     top:calc(16px + var(--safe-top));
@@ -909,9 +903,7 @@
   }
   @keyframes spin{to{transform:rotate(360deg)}}
 
-  /* ============================================================
-     RESPONSIVE
-     ============================================================ */
+  /* ============ RESPONSIVE ============ */
   @media (max-width:1024px){
     .sidebar{width:290px}
     .messages{padding:20px 22px}
@@ -950,7 +942,6 @@
     .mobile-fab{ display: flex; }
     .back-btn{ display: inline-flex !important; }
 
-    /* ============ MOBILE HEADER ============ */
     .mobile-header{
       align-items: center;
       justify-content: space-between;
@@ -1217,16 +1208,11 @@
     .vis-option .vo-title{ font-size: 13.5px; }
     .vis-option .vo-desc{ font-size: 11.5px; }
 
-    /* ============ THEME BTN ON MOBILE ============ */
-    /* دکمه‌ی شناور تم در موبایل مخفی میشه (به هدر منتقل شده) */
     .theme-btn{ display: none !important; }
-
-    /* پنل تم در موبایل: از بالا-چپ باز میشه، زیر هدر */
     .theme-panel{
       top: calc(64px + var(--safe-top));
       left: calc(12px + var(--safe-left));
-      right: auto;
-      bottom: auto;
+      right: auto;bottom: auto;
       transform-origin: top left;
       min-width: 280px;
       max-width: calc(100vw - 24px);
@@ -1305,11 +1291,205 @@
       transition-duration: .01ms !important;
     }
   }
+
+  /* ============ Edit Bar ============ */
+  .edit-bar{
+    display:none;
+    align-items:center;gap:10px;
+    padding:10px 20px;
+    background:var(--accent-soft);
+    border-top:1px solid var(--accent);
+    flex:none;
+    padding-bottom:calc(10px + var(--safe-bottom));
+  }
+  .edit-bar.show{ display:flex; }
+  .edit-bar .eb-icon{
+    width:32px;height:32px;border-radius:50%;
+    background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .edit-bar .eb-icon svg{
+    width:16px;height:16px;fill:none;stroke:currentColor;
+    stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+  }
+  .edit-bar .eb-body{
+    flex:1;min-width:0;
+  }
+  .edit-bar .eb-title{
+    font-size:12px;font-weight:800;color:var(--accent-hover);
+    margin-bottom:2px;
+  }
+  .edit-bar .eb-preview{
+    font-size:13px;color:var(--text-dim);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  .edit-bar .eb-close{
+    width:36px;height:36px;border-radius:50%;
+    border:0;background:var(--paper-2);color:var(--danger);
+    cursor:pointer;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    transition:var(--transition);
+  }
+  .edit-bar .eb-close:active{ transform:scale(.9); }
+  .edit-bar .eb-close svg{
+    width:18px;height:18px;fill:none;stroke:currentColor;
+    stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  /* نشانگر «ویرایش‌شده» در حباب */
+  .edited-tag{
+    display:inline-block;
+    font-size:10px;
+    font-weight:700;
+    opacity:.75;
+    margin-inline-start:5px;
+  }
+
+  /* درخواست «در حال ویرایش...» */
+  .editing-target{
+    outline:2px dashed var(--accent);
+    outline-offset:2px;
+    border-radius:20px;
+    animation: editPulse 1.5s infinite;
+  }
+  @keyframes editPulse{
+    0%,100%{ outline-color:var(--accent); opacity:1; }
+    50%{ outline-color:var(--accent-hover); opacity:.6; }
+  }
+
+  /* ============ Call UI ============ */
+  .call-back{
+    position:fixed;inset:0;z-index:300;
+    background:linear-gradient(160deg, var(--panel-2), var(--ink));
+    display:none;flex-direction:column;align-items:center;
+    color:#fff;padding:24px;
+    padding-top:calc(24px + var(--safe-top));
+    padding-bottom:calc(24px + var(--safe-bottom));
+    animation: fadeIn .25s ease;
+  }
+  .call-back.show{ display:flex; }
+
+  .call-top{
+    width:100%;display:flex;align-items:center;justify-content:space-between;
+    flex:none;
+  }
+  .call-status{
+    font-size:13px;font-weight:700;
+    color:rgba(255,255,255,.7);
+    background:rgba(255,255,255,.1);
+    padding:6px 14px;border-radius:20px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .call-status .live-dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#4ADE80;
+    animation: pulse 1.5s infinite;
+  }
+  .call-status.warn .live-dot{ background:#FBBF24; }
+  .call-status.err  .live-dot{ background:#F87171; animation:none; }
+
+  .call-btn-close{
+    width:42px;height:42px;border-radius:50%;
+    background:rgba(255,255,255,.15);border:0;color:#fff;
+    cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:var(--transition);padding:0;
+  }
+  .call-btn-close:active{ transform:scale(.9); }
+  .call-btn-close svg{
+    width:22px;height:22px;fill:none;stroke:currentColor;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  }
+
+  .call-body{
+    flex:1;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:18px;
+    width:100%;max-width:400px;
+    text-align:center;
+  }
+
+  .call-avatar{
+    width:120px;height:120px;border-radius:50%;
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    display:flex;align-items:center;justify-content:center;
+    font-size:48px;font-weight:900;
+    overflow:hidden;
+    box-shadow:0 20px 60px -10px rgba(0,0,0,.6);
+    position:relative;
+  }
+  .call-avatar img{ width:100%;height:100%;object-fit:cover; }
+  .call-avatar.ringing::before,
+  .call-avatar.ringing::after{
+    content:'';position:absolute;inset:-8px;border-radius:50%;
+    border:2px solid var(--accent);
+    animation: callRing 1.6s infinite;
+  }
+  .call-avatar.ringing::after{ animation-delay:.8s; }
+  @keyframes callRing{
+    0%{ transform:scale(1); opacity:.8; }
+    100%{ transform:scale(1.6); opacity:0; }
+  }
+
+  .call-name{font-size:22px;font-weight:900;letter-spacing:-.02em}
+  .call-sub{font-size:14px;color:rgba(255,255,255,.6)}
+  .call-timer{
+    font-family:'Vazirmatn', monospace;
+    font-size:16px;font-weight:700;
+    color:rgba(255,255,255,.85);
+    direction:ltr;min-height:20px;
+  }
+
+  .call-actions{
+    display:flex;align-items:center;justify-content:center;
+    gap:24px;margin-top:12px;
+  }
+  .call-action-btn{
+    width:64px;height:64px;border-radius:50%;border:0;
+    color:#fff;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:var(--transition);padding:0;
+    position:relative;
+  }
+  .call-action-btn:active{ transform:scale(.92); }
+  .call-action-btn svg{
+    width:26px;height:26px;fill:none;stroke:currentColor;
+    stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;
+  }
+  .call-action-btn.end{ background:#EF4444; }
+  .call-action-btn.end:hover{ background:#DC2626; }
+  .call-action-btn.mute{ background:rgba(255,255,255,.15); }
+  .call-action-btn.mute:hover{ background:rgba(255,255,255,.25); }
+  .call-action-btn.mute.muted{ background:#F59E0B; color:#000; }
+  .call-action-btn.speaker{ background:rgba(255,255,255,.15); }
+  .call-action-btn.speaker:hover{ background:rgba(255,255,255,.25); }
+  .call-action-btn.speaker.active{ background:#10B981; }
+
+  .call-hint{
+    font-size:12.5px;color:rgba(255,255,255,.5);
+    margin-top:20px;line-height:1.7;
+    max-width:280px;
+  }
+
+  /* دکمه‌ی تماس در هدر چت */
+  .call-header-btn{
+    margin-inline-start:auto;
+    width:44px;height:44px;border-radius:50%;
+    background:var(--accent-soft);color:var(--accent);
+    border:0;cursor:pointer;flex:none;
+    display:flex;align-items:center;justify-content:center;
+    transition:var(--transition);padding:0;
+  }
+  .call-header-btn:hover{ background:var(--accent);color:#fff; transform:scale(1.05); }
+  .call-header-btn:active{ transform:scale(.92); }
+  .call-header-btn svg{
+    width:22px;height:22px;fill:none;stroke:currentColor;
+    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  }
+
 </style>
 </head>
 <body>
 
-<!-- ===================== SPLASH ===================== -->
 <div id="splash">
   <div class="splash-logo">گ</div>
   <h1 class="splash-title">گپ‌یار</h1>
@@ -1322,7 +1502,6 @@
   </div>
 </div>
 
-<!-- ===================== THEME SWITCHER (Desktop) ===================== -->
 <button class="theme-btn" id="theme-btn" title="تغییر تم" type="button">
   <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/></svg>
 </button>
@@ -1330,37 +1509,29 @@
   <h4>انتخاب تم</h4>
   <div class="theme-grid">
     <button class="theme-chip" data-theme="emerald" type="button">
-      <span class="dot-wrap"><span class="dot"></span></span>
-      زمرد
+      <span class="dot-wrap"><span class="dot"></span></span>زمرد
     </button>
     <button class="theme-chip" data-theme="ocean" type="button">
-      <span class="dot-wrap"><span class="dot"></span></span>
-      اقیانوس
+      <span class="dot-wrap"><span class="dot"></span></span>اقیانوس
     </button>
     <button class="theme-chip" data-theme="rose" type="button">
-      <span class="dot-wrap"><span class="dot"></span></span>
-      رز
+      <span class="dot-wrap"><span class="dot"></span></span>رز
     </button>
     <button class="theme-chip" data-theme="sunset" type="button">
-      <span class="dot-wrap"><span class="dot"></span></span>
-      غروب
+      <span class="dot-wrap"><span class="dot"></span></span>غروب
     </button>
     <button class="theme-chip" data-theme="midnight" type="button">
-      <span class="dot-wrap"><span class="dot"></span></span>
-      نیمه‌شب
+      <span class="dot-wrap"><span class="dot"></span></span>نیمه‌شب
     </button>
     <button class="theme-chip" data-theme="sand" type="button">
-      <span class="dot-wrap"><span class="dot"></span></span>
-      شنی
+      <span class="dot-wrap"><span class="dot"></span></span>شنی
     </button>
     <button class="theme-chip" data-theme="mint" type="button">
-      <span class="dot-wrap"><span class="dot"></span></span>
-      نعنا
+      <span class="dot-wrap"><span class="dot"></span></span>نعنا
     </button>
   </div>
 </div>
 
-<!-- ===================== AUTH SCREEN ===================== -->
 <div id="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-brand"><span class="dot"></span><span>گپ‌یار</span></div>
@@ -1388,12 +1559,10 @@
   </div>
 </div>
 
-<!-- ===================== MAIN APP ===================== -->
 <div id="app">
   <div class="shell" id="shell">
     <aside class="sidebar" id="sidebar">
 
-      <!-- موبایل: نوار بالا با دکمه‌ی تم -->
       <header class="mobile-header">
         <div class="title-wrap">
           <span class="title-dot"></span>
@@ -1412,7 +1581,6 @@
         </div>
       </header>
 
-      <!-- دسکتاپ: نوار بالا -->
       <div class="sidebar-top">
         <button class="me-btn" id="btn-my-profile" title="ویرایش پروفایل">
           <div class="avatar" id="me-avatar">?</div>
@@ -1457,10 +1625,13 @@
       <div class="chat-header" id="chat-header" style="display:none">
         <button class="icon-btn back-btn" id="btn-back" title="بازگشت">→</button>
         <div class="avatar" id="chat-avatar">?</div>
-        <div>
+        <div style="min-width:0;flex:1">
           <div class="chat-title" id="chat-title">—</div>
           <div class="chat-sub" id="chat-sub"></div>
         </div>
+        <button class="call-header-btn" id="btn-call-header" title="تماس صوتی" type="button">
+          <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>
+        </button>
       </div>
 
       <div class="messages" id="messages">
@@ -1474,6 +1645,20 @@
         📎 <span id="attach-name"></span>
         <button id="attach-clear">حذف</button>
       </div>
+
+<!-- ============ Edit Bar ============ -->
+<div class="edit-bar" id="edit-bar">
+  <div class="eb-icon">
+    <svg viewBox="0 0 24 24"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+  </div>
+  <div class="eb-body">
+    <div class="eb-title">ویرایش پیام</div>
+    <div class="eb-preview" id="edit-preview">—</div>
+  </div>
+  <button class="eb-close" id="edit-cancel" type="button" title="لغو">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+</div>
 
       <div class="rec-bar" id="rec-bar">
         <div class="rec-dot" id="rec-dot"></div>
@@ -1506,7 +1691,6 @@
   </div>
 </div>
 
-<!-- ===================== ATTACH SHEET ===================== -->
 <div class="attach-sheet-back" id="attach-sheet-back">
   <div class="attach-sheet" id="attach-sheet">
     <button data-action="gallery" type="button">
@@ -1530,7 +1714,6 @@
   </div>
 </div>
 
-<!-- ===================== LIGHTBOX ===================== -->
 <div class="lightbox" id="lightbox">
   <button class="lb-close" id="lb-close" type="button" title="بستن">
     <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -1542,7 +1725,6 @@
   <img id="lb-img" alt="">
 </div>
 
-<!-- ===================== MOBILE MENU ===================== -->
 <div class="mobile-menu" id="mobile-menu">
   <button data-action="profile" type="button">
     <span class="mi"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
@@ -1554,7 +1736,6 @@
   </button>
 </div>
 
-<!-- ===================== FAB SHEET ===================== -->
 <div class="fab-sheet-back" id="fab-sheet-back">
   <div class="fab-sheet" id="fab-sheet">
     <button data-action="add-contact" type="button">
@@ -1578,7 +1759,6 @@
   </div>
 </div>
 
-<!-- ===================== GROUP/CHANNEL MODAL ===================== -->
 <div class="modal-back" id="group-modal">
   <div class="modal">
     <h3 id="group-modal-title">گفتگوی جدید</h3>
@@ -1633,7 +1813,6 @@
   </div>
 </div>
 
-<!-- ===================== PROFILE MODAL ===================== -->
 <div class="modal-back" id="profile-modal">
   <div class="modal">
     <h3>ویرایش پروفایل</h3>
@@ -1653,7 +1832,6 @@
   </div>
 </div>
 
-<!-- ===================== CONTACT MODAL ===================== -->
 <div class="modal-back" id="contact-modal">
   <div class="modal">
     <h3>افزودن مخاطب</h3>
@@ -1672,6 +1850,43 @@
 </div>
 
 <div class="ctx-menu" id="ctx-menu"></div>
+
+<!-- ===================== CALL MODAL ===================== -->
+<div class="call-back" id="call-back">
+  <div class="call-top">
+    <div class="call-status" id="call-status">
+      <span class="live-dot"></span>
+      <span id="call-status-text">در حال اتصال…</span>
+    </div>
+    <button class="call-btn-close" id="call-close" type="button" title="بستن">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="call-body">
+    <div class="call-avatar ringing" id="call-avatar">?</div>
+    <div class="call-name" id="call-name">—</div>
+    <div class="call-sub" id="call-sub">در حال برقراری…</div>
+    <div class="call-timer" id="call-timer"></div>
+
+    <div class="call-actions">
+      <button class="call-action-btn mute" id="call-mute" type="button" title="قطع/وصل میکروفون">
+        <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </button>
+      <button class="call-action-btn end" id="call-end" type="button" title="پایان تماس">
+        <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.37 1.9.72 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.35 1.85.59 2.81.72A2 2 0 0 1 22 16.92z"/></svg>
+      </button>
+      <button class="call-action-btn speaker" id="call-speaker" type="button" title="بلندگو">
+        <svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+      </button>
+    </div>
+
+    <div class="call-hint" id="call-hint">
+      اتصال از طریق WebRTC برقرار می‌شود. در صورت بروز مشکل، از تنظیمات مرورگر اجازه‌ی میکروفون را بررسی کنید.
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <input type="file" id="file-input-gallery" accept="image/*" multiple style="display:none">
@@ -2121,6 +2336,7 @@ async function boot(authUser){
   renderConvList();
   updateTitleBadge();
   subscribeRealtime();
+    listenForIncomingCalls();
 
   $('#auth-screen').style.display = 'none';
   $('#app').style.display = 'block';
@@ -2400,10 +2616,23 @@ async function loadMessages(){
   msgState = new Map(); orphanReceipts = new Map();
   groupRecipients = 0;
 
+  // پیام‌هایی که کاربر خودش برای خودش مخفی کرده
+  let hiddenIds = [];
+  try{
+    const { data: hides } = await sb.from('message_hides')
+      .select('message_id')
+      .eq('user_id', me.id);
+    hiddenIds = (hides || []).map(h => h.message_id);
+  }catch(e){ /* جدول ممکنه وجود نداشته باشه */ }
+
   let query = sb.from('messages')
     .select('*, profiles:sender_id(username), message_receipts(user_id, delivered_at, read_at)')
     .order('created_at', { ascending: false })
     .limit(200);
+
+  if(hiddenIds.length){
+    query = query.not('id', 'in', `(${hiddenIds.join(',')})`);
+  }
 
   if(conv.type === 'dm'){
     query = query.or(
@@ -2479,6 +2708,157 @@ function onReceipt(r){
   }
   upsertReceipt(entry.receipts, r);
   refreshTick(r.message_id);
+}
+
+/* =========================================================
+   MESSAGE DELETE (فقط برای چت خصوصی و گروه — نه کانال)
+========================================================= */
+function getMsgMenuActions(m){
+  const mine = m.sender_id === me.id;
+  const inGroup = !!m.group_id;
+
+  // ⛔ داخل کانال پیام قابل حذف نیست
+  if(current && current.type === 'channel'){
+    return [];
+  }
+
+  const isGroupOwner = inGroup && allGroups.some(g => g.id === m.group_id && g.created_by === me.id);
+
+  const actions = [];
+
+  // ویرایش — فقط پیام متنی خودم
+  if(mine && m.content && !m.file_url){
+    actions.push({
+      label:'✏️ ویرایش پیام',
+      fn: () => startEditMessage(m)
+    });
+  }
+
+  actions.push({
+    label:'🗑 حذف برای من',
+    fn: () => deleteMessageForMe(m)
+  });
+
+  if(mine || isGroupOwner){
+    actions.push({
+      label:'🗑 حذف برای همه',
+      danger:true,
+      fn: () => deleteMessageForAll(m)
+    });
+  }
+
+  return actions;
+}
+
+function showMsgMenu(m, x, y){
+  const actions = getMsgMenuActions(m);
+  if(!actions.length) return; // کانال: منو باز نمی‌شود
+
+  const menu = $('#ctx-menu');
+  menu.innerHTML = '';
+  actions.forEach(a => {
+    const b = el('button', a.danger ? 'danger' : '', a.label);
+    b.type = 'button';
+    b.onclick = () => { hideCtxMenu(); a.fn(); };
+    menu.appendChild(b);
+  });
+  menu.style.display = 'block';
+  const r = menu.getBoundingClientRect();
+  menu.style.left = Math.max(8, Math.min(x, window.innerWidth - r.width - 8)) + 'px';
+  menu.style.top = Math.max(8, Math.min(y, window.innerHeight - r.height - 8)) + 'px';
+}
+
+async function deleteMessageForMe(m){
+  if(!confirm('این پیام فقط از فهرست شما حذف می‌شود. ادامه می‌دهید؟')) return;
+  try{
+    const { error } = await sb.from('message_hides').insert({
+      message_id: m.id,
+      user_id: me.id
+    });
+    if(error && error.code !== '23505') throw error;
+
+    const row = document.querySelector(`[data-mid="${m.id}"]`);
+    if(row){
+      row.style.transition = 'opacity .25s, transform .25s';
+      row.style.opacity = '0';
+      row.style.transform = 'translateY(-6px)';
+      setTimeout(() => row.remove(), 250);
+    }
+    msgState.delete(m.id);
+
+    setTimeout(() => {
+      const box = $('#messages');
+      if(box && !box.querySelector('.bubble-row')) showEmptyState();
+    }, 300);
+
+    toast('پیام برای شما حذف شد');
+  }catch(err){
+    console.warn('deleteMessageForMe:', err);
+    const row = document.querySelector(`[data-mid="${m.id}"]`);
+    if(row){
+      row.style.opacity = '0';
+      setTimeout(() => row.remove(), 250);
+    }
+    msgState.delete(m.id);
+    toast('پیام از نمای شما حذف شد');
+  }
+}
+
+async function deleteMessageForAll(m){
+  if(current && current.type === 'channel'){
+    toast('در کانال نمی‌توان پیام را حذف کرد.', true);
+    return;
+  }
+
+  const mine = m.sender_id === me.id;
+  const isGroupOwner = !!m.group_id && allGroups.some(g => g.id === m.group_id && g.created_by === me.id);
+
+  if(!mine && !isGroupOwner){
+    toast('فقط فرستنده یا مدیر گروه می‌تواند برای همه حذف کند.', true);
+    return;
+  }
+
+  if(!confirm('این پیام برای همه‌ی اعضا حذف می‌شود. ادامه می‌دهید؟')) return;
+
+  try{
+    const { error } = await sb.from('messages').delete().eq('id', m.id);
+    if(error) throw error;
+
+    const row = document.querySelector(`[data-mid="${m.id}"]`);
+    if(row){
+      row.style.transition = 'opacity .25s, transform .25s';
+      row.style.opacity = '0';
+      row.style.transform = 'translateY(-6px)';
+      setTimeout(() => row.remove(), 250);
+    }
+    msgState.delete(m.id);
+
+    setTimeout(() => {
+      const box = $('#messages');
+      if(box && !box.querySelector('.bubble-row')) showEmptyState();
+    }, 300);
+
+    toast('پیام برای همه حذف شد');
+  }catch(err){
+    toast('خطا در حذف: ' + err.message, true);
+  }
+}
+
+function onMessageDeleted(payload){
+  const id = payload.old?.id || payload.id;
+  if(!id) return;
+  const row = document.querySelector(`[data-mid="${id}"]`);
+  if(row){
+    row.style.transition = 'opacity .25s, transform .25s';
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(-6px)';
+    setTimeout(() => {
+      row.remove();
+      const box = $('#messages');
+      if(box && !box.querySelector('.bubble-row')) showEmptyState();
+    }, 250);
+  }
+  msgState.delete(id);
 }
 
 /* ---------------------- Download ---------------------- */
@@ -2656,7 +3036,8 @@ function renderMessage(m, receipts){
     bubble.appendChild(el('span','sender-tag', escapeHtml(displayNameFor(m.sender_id, m.profiles?.username))));
   }
   if(m.content){
-    bubble.appendChild(el('div', null, linkify(m.content)));
+    const contentEl = el('div', 'msg-text', linkify(m.content));
+    bubble.appendChild(contentEl);
   }
   const fileHref = safeUrl(m.file_url);
   if(fileHref){
@@ -2682,11 +3063,45 @@ function renderMessage(m, receipts){
   }
 
   const time = new Date(m.created_at).toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
-  const timeRow = el('div','bubble-time', `<span class="t">${time}</span><span class="tick-holder"></span>`);
+  const editedTag = m.edited_at ? '<span class="edited-tag">ویرایش‌شده</span>' : '';
+  const timeRow = el('div','bubble-time', `<span class="t">${time}</span>${editedTag}<span class="tick-holder"></span>`);
   if(mine) timeRow.querySelector('.tick-holder').innerHTML = tickHtml(statusFor(entry));
   bubble.appendChild(timeRow);
 
   row.appendChild(bubble);
+
+  // ----- منوی حذف پیام (فقط اگر کانال نباشد) -----
+  const isChannel = current && current.type === 'channel';
+  if(!isChannel){
+    // راست‌کلیک روی دسکتاپ
+    row.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      showMsgMenu(m, e.clientX, e.clientY);
+    });
+
+    // نگه‌داشتن طولانی روی موبایل
+    let pressTimer = null;
+    let pressed = false;
+    row.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      pressed = true;
+      row.classList.add('holding');
+      pressTimer = setTimeout(() => {
+        pressTimer = null;
+        if(navigator.vibrate){ try{ navigator.vibrate(30); }catch(err){} }
+        showMsgMenu(m, t.clientX, t.clientY);
+      }, 500);
+    }, { passive:true });
+    const cancelPress = () => {
+      if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; }
+      row.classList.remove('holding');
+      pressed = false;
+    };
+    ['touchend','touchmove','touchcancel'].forEach(ev => {
+      row.addEventListener(ev, cancelPress, { passive:true });
+    });
+  }
+
   box.appendChild(row);
   box.scrollTop = box.scrollHeight;
 }
@@ -2712,6 +3127,7 @@ function subscribeRealtime(){
     .on('postgres_changes', { event:'INSERT', schema:'public', table:'message_receipts' }, p => onReceipt(p.new))
     .on('postgres_changes', { event:'UPDATE', schema:'public', table:'message_receipts' }, p => onReceipt(p.new))
     .on('postgres_changes', { event:'DELETE', schema:'public', table:'groups' }, p => onGroupDeleted(p.old?.id))
+    .on('postgres_changes', { event:'DELETE', schema:'public', table:'messages' }, p => onMessageDeleted(p.old || p))
     .on('postgres_changes', { event:'INSERT', schema:'public', table:'group_members' }, p => {
       if(me && p.new.user_id === me.id) refreshLists();
     })
@@ -2824,6 +3240,13 @@ $('#attach-clear').onclick = () => {
 };
 
 async function sendMessage(){
+
+  // اگر در حالت ویرایش هستیم، به‌جای ارسال پیام جدید، ویرایش کن
+  if(editingMessage){
+    await submitEditMessage();
+    return;
+  }
+
   if(!current) return;
   const text = $('#msg-input').value.trim();
   if(!text && !pendingFile) return;
@@ -3625,6 +4048,710 @@ mqMobile.addEventListener('change', () => {
     $('#shell').classList.remove('chat-open');
   }
   renderConvList();
+});
+
+/* =========================================================
+   MESSAGE EDIT
+========================================================= */
+let editingMessage = null; // { id, content, rowEl }
+
+const editBar = $('#edit-bar');
+const editPreview = $('#edit-preview');
+
+function startEditMessage(m){
+  // فقط پیام متنی خودم یا (مدیر گروه برای پیام گروهی بدون فایل)
+  if(!me) return;
+  if(m.sender_id !== me.id){
+    toast('فقط پیام‌های خودت را می‌توانی ویرایش کنی.', true);
+    return;
+  }
+  if(!m.content){
+    toast('فقط پیام متنی قابل ویرایش است.', true);
+    return;
+  }
+  // کانال: اجازه ویرایش می‌دهیم (چون مالک کانال هم پیام خودش را دارد)
+  // DM و گروه و کانال — همه اوکی است
+
+  // اگر ویرایش قبلی باز بود، لغو کن
+  if(editingMessage){
+    cancelEditMessage();
+  }
+
+  editingMessage = {
+    id: m.id,
+    content: m.content,
+    rowEl: document.querySelector(`[data-mid="${m.id}"]`)
+  };
+
+  const input = $('#msg-input');
+  input.value = m.content;
+  editPreview.textContent = m.content.slice(0, 80);
+  editBar.classList.add('show');
+  editingMessage.rowEl?.classList.add('editing-target');
+
+  // فوکوس + اسکرول به پایین
+  setTimeout(() => {
+    input.focus();
+    const box = $('#messages');
+    if(box) box.scrollTop = box.scrollHeight;
+  }, 100);
+
+  updateMicVisibility();
+}
+
+function cancelEditMessage(){
+  if(!editingMessage) return;
+  editingMessage.rowEl?.classList.remove('editing-target');
+  editingMessage = null;
+  editBar.classList.remove('show');
+  $('#msg-input').value = '';
+  updateMicVisibility();
+}
+
+async function submitEditMessage(){
+  if(!editingMessage) return;
+  const newText = $('#msg-input').value.trim();
+  if(!newText){ toast('متن پیام نمی‌تواند خالی باشد.', true); return; }
+  if(newText === editingMessage.content){
+    // تغییر نکرده، فقط ببند
+    cancelEditMessage();
+    return;
+  }
+  if(newText.length > 4000){ toast('پیام نباید بیشتر از ۴۰۰۰ کاراکتر باشد.', true); return; }
+
+  const target = editingMessage;
+  const btn = $('#btn-send');
+  btn.disabled = true;
+
+  try{
+    const { error } = await sb.from('messages')
+      .update({ content: newText, edited_at: new Date().toISOString() })
+      .eq('id', target.id);
+    if(error) throw error;
+
+    // آپدیت DOM به‌صورت درجا
+    updateMessageInDom(target.id, newText);
+
+    // پاک‌سازی
+    target.rowEl?.classList.remove('editing-target');
+    editingMessage = null;
+    editBar.classList.remove('show');
+    $('#msg-input').value = '';
+    updateMicVisibility();
+
+    toast('پیام ویرایش شد');
+  }catch(err){
+    toast('خطا در ویرایش: ' + err.message, true);
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+function updateMessageInDom(mid, newText){
+  const row = document.querySelector(`[data-mid="${mid}"]`);
+  if(!row) return;
+  const bubble = row.querySelector('.bubble');
+  if(!bubble) return;
+
+  // حذف محتوای قدیمی (بدون حذف sender-tag، تیک، زمان)
+  const contentEl = bubble.querySelector('.msg-text');
+  if(contentEl){
+    contentEl.innerHTML = linkify(newText);
+  }
+
+  // اضافه کردن برچسب «ویرایش‌شده» اگه نبود
+  const timeRow = bubble.querySelector('.bubble-time');
+  if(timeRow && !timeRow.querySelector('.edited-tag')){
+    const tag = el('span', 'edited-tag', 'ویرایش‌شده');
+    timeRow.appendChild(tag);
+  }
+
+  // آپدیت state
+  const entry = msgState.get(mid);
+  if(entry){ entry.m.content = newText; entry.m.edited_at = new Date().toISOString(); }
+}
+
+$('#edit-cancel')?.addEventListener('click', cancelEditMessage);
+
+// کلید Escape → لغو ویرایش
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && editingMessage) cancelEditMessage();
+});
+
+/* =========================================================
+   VOICE CALL (WebRTC)
+   - یک به یک: caller → callee مستقیم
+   - در گروه: فقط با اولین عضو آنلاین (غیر از خودم)
+========================================================= */
+let callState = {
+  active: false,
+  peer: null,          // RTCPeerConnection
+  stream: null,        // MediaStream محلی
+  targetUserId: null,
+  targetName: null,
+  isCaller: false,
+  muted: false,
+  speakerOn: false,
+  startedAt: 0,
+  timerInterval: null,
+  channel: null,       // کانال Supabase برای سیگنالینگ
+  remoteAudio: null
+};
+
+const callBack = $('#call-back');
+const callAvatarEl = $('#call-avatar');
+const callNameEl = $('#call-name');
+const callSubEl = $('#call-sub');
+const callTimerEl = $('#call-timer');
+const callStatusTextEl = $('#call-status-text');
+const callStatusEl = $('#call-status');
+
+const RTC_CONFIG = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' }
+  ]
+};
+
+function setCallStatus(text, kind){
+  callStatusTextEl.textContent = text;
+  callStatusEl.classList.remove('warn', 'err');
+  if(kind) callStatusEl.classList.add(kind);
+}
+
+function fmtCallTime(sec){
+  const s = Math.max(0, Math.floor(sec));
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${String(r).padStart(2,'0')}`;
+}
+
+function startCallTimer(){
+  callState.startedAt = Date.now();
+  callTimerEl.textContent = '0:00';
+  if(callState.timerInterval) clearInterval(callState.timerInterval);
+  callState.timerInterval = setInterval(() => {
+    const sec = (Date.now() - callState.startedAt) / 1000;
+    callTimerEl.textContent = fmtCallTime(sec);
+  }, 500);
+}
+
+function stopCallTimer(){
+  if(callState.timerInterval){
+    clearInterval(callState.timerInterval);
+    callState.timerInterval = null;
+  }
+}
+
+function resetCallUI(){
+  callAvatarEl.classList.remove('ringing');
+  callTimerEl.textContent = '';
+  callState.muted = false;
+  callState.speakerOn = false;
+  $('#call-mute')?.classList.remove('muted');
+  $('#call-speaker')?.classList.remove('active');
+}
+
+function closeCallUI(){
+  callBack.classList.remove('show');
+  resetCallUI();
+}
+
+async function cleanupCall(){
+  stopCallTimer();
+  if(callState.timerInterval){ clearInterval(callState.timerInterval); callState.timerInterval = null; }
+
+  try{
+    if(callState.channel){
+      await sb.removeChannel(callState.channel);
+      callState.channel = null;
+    }
+  }catch(e){}
+
+  try{
+    if(callState.peer){
+      callState.peer.onicecandidate = null;
+      callState.peer.ontrack = null;
+      callState.peer.onconnectionstatechange = null;
+      callState.peer.close();
+    }
+  }catch(e){}
+  callState.peer = null;
+
+  try{
+    if(callState.stream){
+      callState.stream.getTracks().forEach(t => t.stop());
+    }
+  }catch(e){}
+  callState.stream = null;
+
+  if(callState.remoteAudio){
+    try{ callState.remoteAudio.pause(); }catch(e){}
+    callState.remoteAudio.remove();
+    callState.remoteAudio = null;
+  }
+
+  callState.active = false;
+  callState.targetUserId = null;
+  callState.targetName = null;
+  callState.isCaller = false;
+  closeCallUI();
+}
+
+async function initiateCall(){
+  if(callState.active) return;
+  if(!current) return;
+
+  // ⛔ در کانال نمی‌شود تماس گرفت
+  if(current.type === 'channel'){
+    toast('در کانال نمی‌توان تماس گرفت.', true);
+    return;
+  }
+
+  // پیدا کردن مخاطب هدف
+  let targetId = null;
+  let targetName = null;
+
+  if(current.type === 'dm'){
+    // در چت خصوصی، طرف مقابل مخاطب است
+    targetId = current.id;
+    targetName = current.title;
+  } else {
+    // در گروه، اولین عضو آنلاین (ساده: اولین عضو غیر از خودم)
+    const { data: members } = await sb.from('group_members')
+      .select('user_id')
+      .eq('group_id', current.id);
+
+    const other = (members || []).map(m => m.user_id).filter(id => id !== me.id);
+    if(!other.length){
+      toast('عضو دیگری در گروه نیست.', true);
+      return;
+    }
+    targetId = other[0];
+    const p = await getProfile(targetId);
+    targetName = p?.username || 'کاربر';
+  }
+
+  if(!targetId){
+    toast('مخاطبی برای تماس پیدا نشد.', true);
+    return;
+  }
+
+  callState.active = true;
+  callState.targetUserId = targetId;
+  callState.targetName = targetName;
+  callState.isCaller = true;
+
+  // UI
+  callNameEl.textContent = targetName;
+  callAvatarEl.textContent = initials(targetName);
+  callAvatarEl.innerHTML = '';
+  const p = await getProfile(targetId);
+  if(p?.avatar_url){
+    const img = document.createElement('img');
+    img.src = safeUrl(p.avatar_url) || '';
+    img.alt = '';
+    callAvatarEl.appendChild(img);
+  } else {
+    callAvatarEl.textContent = initials(targetName);
+  }
+  callAvatarEl.classList.add('ringing');
+  callSubEl.textContent = 'در حال برقراری تماس…';
+  setCallStatus('در حال زنگ زدن…');
+  callBack.classList.add('show');
+
+  // 1) گرفتن میکروفون
+  try{
+    callState.stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true },
+      video: false
+    });
+  }catch(err){
+    toast('دسترسی به میکروفون ممکن نشد: ' + err.message, true);
+    cleanupCall();
+    return;
+  }
+
+  // 2) کانال سیگنالینگ
+  const channelName = `call:${targetId}`; // caller:callee
+  const callerChannel = `call:${me.id}`;  // کانال اختصاصی callee
+
+  callState.channel = sb.channel(`call:${me.id}`, {
+    config: { broadcast: { self: false } }
+  });
+
+  // گوش دادن به پاسخ callee
+  callState.channel.on('broadcast', { event: 'answer' }, async ({ payload }) => {
+    if(!callState.peer || !callState.isCaller) return;
+    try{
+      await callState.peer.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+    }catch(err){ console.warn('setRemoteDescription(answer):', err); }
+  });
+
+  callState.channel.on('broadcast', { event: 'ice-callee' }, async ({ payload }) => {
+    if(!callState.peer) return;
+    try{
+      await callState.peer.addIceCandidate(new RTCIceCandidate(payload.candidate));
+    }catch(err){ console.warn('addIceCandidate(callee):', err); }
+  });
+
+  callState.channel.on('broadcast', { event: 'reject' }, () => {
+    toast('تماس رد شد.', true);
+    cleanupCall();
+  });
+
+  callState.channel.on('broadcast', { event: 'hangup' }, () => {
+    toast('طرف مقابل تماس را قطع کرد.');
+    cleanupCall();
+  });
+
+  callState.channel.subscribe(async (status) => {
+    if(status !== 'SUBSCRIBED') return;
+
+    // 3) ساخت PeerConnection
+    const peer = new RTCPeerConnection(RTC_CONFIG);
+    callState.peer = peer;
+
+    callState.stream.getTracks().forEach(t => peer.addTrack(t, callState.stream));
+
+    peer.onicecandidate = (e) => {
+      if(e.candidate){
+        callState.channel.send({
+          type: 'broadcast',
+          event: 'ice-caller',
+          payload: { candidate: e.candidate.toJSON ? e.candidate.toJSON() : e.candidate }
+        });
+      }
+    };
+
+    peer.ontrack = (e) => {
+      if(!callState.remoteAudio){
+        callState.remoteAudio = document.createElement('audio');
+        callState.remoteAudio.autoplay = true;
+        callState.remoteAudio.playsInline = true;
+        document.body.appendChild(callState.remoteAudio);
+      }
+      callState.remoteAudio.srcObject = e.streams[0];
+    };
+
+    peer.onconnectionstatechange = () => {
+      const st = peer.connectionState;
+      if(st === 'connected'){
+        callAvatarEl.classList.remove('ringing');
+        callSubEl.textContent = 'در حال مکالمه…';
+        setCallStatus('متصل');
+        startCallTimer();
+      } else if(st === 'failed' || st === 'disconnected' || st === 'closed'){
+        if(callState.active){
+          toast('اتصال قطع شد.', true);
+          cleanupCall();
+        }
+      }
+    };
+
+    // 4) ساخت offer
+    try{
+      const offer = await peer.createOffer({ offerToReceiveAudio: true });
+      await peer.setLocalDescription(offer);
+
+      // فرستادن offer روی کانال callee
+      const targetChannel = sb.channel(`call:${targetId}`, {
+        config: { broadcast: { self: false } }
+      });
+      await targetChannel.subscribe();
+      await targetChannel.send({
+        type: 'broadcast',
+        event: 'offer',
+        payload: { from: me.id, fromName: me.username, sdp: peer.localDescription }
+      });
+      // نگه‌داشتن کانال برای فرستادن hangup
+      setTimeout(() => { try{ sb.removeChannel(targetChannel); }catch(e){} }, 5000);
+    }catch(err){
+      console.warn('createOffer:', err);
+      toast('خطا در شروع تماس: ' + err.message, true);
+      cleanupCall();
+    }
+  });
+}
+
+// ---------- دریافت تماس ----------
+function listenForIncomingCalls(){
+  // کانال اختصاصی من — هر کسی که با من تماس می‌گیرد این‌جا offer می‌فرستد
+  const incomingChannel = sb.channel(`call:${me.id}`, {
+    config: { broadcast: { self: false } }
+  });
+
+  incomingChannel.on('broadcast', { event: 'offer' }, async ({ payload }) => {
+    if(callState.active){
+      // مشغولم → رد کن
+      try{
+        const rejectCh = sb.channel(`call:${payload.from}`, { config:{ broadcast:{ self:false } } });
+        await rejectCh.subscribe();
+        await rejectCh.send({ type:'broadcast', event:'reject', payload:{ reason:'busy' } });
+        setTimeout(() => { try{ sb.removeChannel(rejectCh); }catch(e){} }, 2000);
+      }catch(e){}
+      return;
+    }
+
+    await handleIncomingCall(payload);
+  });
+
+  incomingChannel.subscribe();
+}
+
+async function handleIncomingCall(payload){
+  const callerId = payload.from;
+  const callerName = payload.fromName || 'کاربر';
+  const profile = await getProfile(callerId);
+
+  callState.active = true;
+  callState.isCaller = false;
+  callState.targetUserId = callerId;
+  callState.targetName = callerName;
+
+  // نمایش UI
+  callNameEl.textContent = callerName;
+  callAvatarEl.innerHTML = '';
+  if(profile?.avatar_url){
+    const img = document.createElement('img');
+    img.src = safeUrl(profile.avatar_url) || '';
+    img.alt = '';
+    callAvatarEl.appendChild(img);
+  } else {
+    callAvatarEl.textContent = initials(callerName);
+  }
+  callAvatarEl.classList.add('ringing');
+  callSubEl.textContent = 'تماس ورودی…';
+  setCallStatus('زنگ می‌خورد…');
+  callBack.classList.add('show');
+
+  // دکمه‌ی پایان = رد تماس
+  const endBtn = $('#call-end');
+  const endHandler = () => {
+    rejectCall(payload);
+    endBtn.removeEventListener('click', endHandler);
+    // برگرداندن listener اصلی
+    setTimeout(() => {
+      endBtn.addEventListener('click', defaultEndHandler);
+    }, 0);
+  };
+
+  // به‌جای روش بالا، ساده‌تر: بعد از رد، cleanup می‌کند
+  const defaultEndHandler = async () => {
+    // اگر تماس در حال مکالمه است، قطع کن
+    await hangupCall();
+  };
+
+  // برای سادگی: کاربر با کلیک روی "پایان" تماس را رد می‌کند
+  // اما می‌خواهیم امکان "پاسخ" هم داشته باشیم. برای پاسخ، از دکمه‌ی speaker استفاده می‌کنیم؟ خیر.
+  // به‌جایش: دکمه‌ی end = رد، و دکمه‌ی mute را "پاسخ" می‌کنیم.
+  // راه‌حل بهتر: یه دکمه‌ی accept توی UI نشان بدهیم.
+
+  // ----- روش بهتر: پاسخ سریع -----
+  // UI را به حالت "پاسخ/رد" ببریم
+  callSubEl.textContent = 'برای پاسخ، روی دکمه‌ی سبز بزنید';
+
+  // ساخت دکمه‌ی accept به‌صورت پویا
+  const actions = document.querySelector('.call-actions');
+  let acceptBtn = document.getElementById('call-accept');
+  if(!acceptBtn && actions){
+    acceptBtn = document.createElement('button');
+    acceptBtn.className = 'call-action-btn';
+    acceptBtn.id = 'call-accept';
+    acceptBtn.title = 'پاسخ';
+    acceptBtn.style.background = '#10B981';
+    acceptBtn.innerHTML = '<svg viewBox="0 0 24 24" style="width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"><polygon points="5 3 19 12 5 21"/></svg>';
+    acceptBtn.onclick = async () => {
+      try{ acceptBtn.disabled = true; }catch(e){}
+      await acceptCall(payload);
+    };
+    actions.insertBefore(acceptBtn, actions.firstChild);
+  }
+
+  // end = رد
+  const endClone = endBtn.cloneNode(true);
+  endBtn.parentNode.replaceChild(endClone, endBtn);
+  endClone.onclick = async () => {
+    await rejectCall(payload);
+  };
+}
+
+async function acceptCall(payload){
+  const callerId = payload.from;
+
+  try{
+    callState.stream = await navigator.mediaDevices.getUserMedia({
+      audio: { echoCancellation:true, noiseSuppression:true, autoGainControl:true },
+      video: false
+    });
+  }catch(err){
+    toast('دسترسی به میکروفون ممکن نشد: ' + err.message, true);
+    await rejectCall(payload);
+    return;
+  }
+
+  // حذف دکمه‌ی accept
+  document.getElementById('call-accept')?.remove();
+
+  callAvatarEl.classList.remove('ringing');
+  callSubEl.textContent = 'در حال اتصال…';
+  setCallStatus('در حال اتصال…');
+
+  // کانال من (که caller به آن گوش می‌دهد)
+  callState.channel = sb.channel(`call:${me.id}`, {
+    config: { broadcast: { self:false } }
+  });
+
+  const peer = new RTCPeerConnection(RTC_CONFIG);
+  callState.peer = peer;
+
+  callState.stream.getTracks().forEach(t => peer.addTrack(t, callState.stream));
+
+  peer.onicecandidate = (e) => {
+    if(e.candidate){
+      callState.channel.send({
+        type: 'broadcast',
+        event: 'ice-callee',
+        payload: { candidate: e.candidate.toJSON ? e.candidate.toJSON() : e.candidate }
+      });
+    }
+  };
+
+  peer.ontrack = (e) => {
+    if(!callState.remoteAudio){
+      callState.remoteAudio = document.createElement('audio');
+      callState.remoteAudio.autoplay = true;
+      callState.remoteAudio.playsInline = true;
+      document.body.appendChild(callState.remoteAudio);
+    }
+    callState.remoteAudio.srcObject = e.streams[0];
+  };
+
+  peer.onconnectionstatechange = () => {
+    const st = peer.connectionState;
+    if(st === 'connected'){
+      callSubEl.textContent = 'در حال مکالمه…';
+      setCallStatus('متصل');
+      startCallTimer();
+    } else if(st === 'failed' || st === 'disconnected' || st === 'closed'){
+      if(callState.active){
+        toast('اتصال قطع شد.', true);
+        cleanupCall();
+      }
+    }
+  };
+
+  callState.channel.subscribe(async (status) => {
+    if(status !== 'SUBSCRIBED') return;
+
+    // دریافت ICE از caller
+    callState.channel.on('broadcast', { event:'ice-caller' }, async ({ payload }) => {
+      if(!callState.peer) return;
+      try{
+        await callState.peer.addIceCandidate(new RTCIceCandidate(payload.candidate));
+      }catch(err){ console.warn('addIceCandidate(caller):', err); }
+    });
+
+    callState.channel.on('broadcast', { event:'hangup' }, () => {
+      toast('طرف مقابل تماس را قطع کرد.');
+      cleanupCall();
+    });
+
+    // تنظیم offer
+    try{
+      await peer.setRemoteDescription(new RTCSessionDescription(payload.sdp));
+      const answer = await peer.createAnswer();
+      await peer.setLocalDescription(answer);
+
+      // فرستادن answer به caller
+      const callerChannel = sb.channel(`call:${callerId}`, {
+        config: { broadcast: { self:false } }
+      });
+      await callerChannel.subscribe();
+      await callerChannel.send({
+        type: 'broadcast',
+        event: 'answer',
+        payload: { sdp: peer.localDescription }
+      });
+
+      // ICE candidates بعدی هم از طریق همون کانال
+      peer.onicecandidate = (e) => {
+        if(e.candidate){
+          callerChannel.send({
+            type: 'broadcast',
+            event: 'ice-callee',
+            payload: { candidate: e.candidate.toJSON ? e.candidate.toJSON() : e.candidate }
+          });
+        }
+      };
+    }catch(err){
+      console.warn('acceptCall:', err);
+      toast('خطا در پذیرش تماس: ' + err.message, true);
+      cleanupCall();
+    }
+  });
+}
+
+async function rejectCall(payload){
+  try{
+    const ch = sb.channel(`call:${payload.from}`, { config:{ broadcast:{ self:false } } });
+    await ch.subscribe();
+    await ch.send({ type:'broadcast', event:'reject', payload:{ reason:'declined' } });
+    setTimeout(() => { try{ sb.removeChannel(ch); }catch(e){} }, 2000);
+  }catch(e){}
+  await cleanupCall();
+}
+
+async function hangupCall(){
+  // به طرف مقابل خبر بده
+  if(callState.channel){
+    try{
+      await callState.channel.send({
+        type: 'broadcast',
+        event: 'hangup',
+        payload: { from: me.id }
+      });
+    }catch(e){}
+  }
+  await cleanupCall();
+}
+
+// ---------- کنترل‌های UI تماس ----------
+$('#btn-call-header')?.addEventListener('click', () => initiateCall());
+
+$('#call-close')?.addEventListener('click', () => hangupCall());
+
+$('#call-end')?.addEventListener('click', () => hangupCall());
+
+$('#call-mute')?.addEventListener('click', () => {
+  if(!callState.stream) return;
+  const audioTrack = callState.stream.getAudioTracks()[0];
+  if(!audioTrack) return;
+  audioTrack.enabled = !audioTrack.enabled;
+  callState.muted = !audioTrack.enabled;
+  $('#call-mute').classList.toggle('muted', callState.muted);
+  toast(callState.muted ? 'میکروفون قطع شد' : 'میکروفون وصل شد');
+});
+
+$('#call-speaker')?.addEventListener('click', () => {
+  callState.speakerOn = !callState.speakerOn;
+  $('#call-speaker').classList.toggle('active', callState.speakerOn);
+  if(callState.remoteAudio){
+    // در iOS و برخی مرورگرها، setSinkId پشتیبانی می‌شود
+    try{
+      if(callState.speakerOn && callState.remoteAudio.setSinkId){
+        // این API محدود است؛ ولی برای نمایش کافیه
+      }
+    }catch(e){}
+  }
+  toast(callState.speakerOn ? 'بلندگو روشن شد' : 'بلندگو خاموش شد');
+});
+
+// Escape → پایان تماس
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && callState.active){
+    hangupCall();
+  }
 });
 
 /* =========================================================
