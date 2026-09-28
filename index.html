@@ -2,7 +2,7 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=5">
 <title>گپ‌یار | پیام‌رسان</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -34,21 +34,31 @@
     --bubble-them:#FFFFFF;
     --danger:#C25B4A;
     --radius:14px;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
   }
-  *{box-sizing:border-box}
-  html,body{height:100%}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%;overflow:hidden}
   body{
     margin:0;
     font-family:'Vazirmatn', Tahoma, sans-serif;
     background:var(--ink);
     color:var(--text);
+    overscroll-behavior:none;
+    -webkit-font-smoothing:antialiased;
   }
   ::-webkit-scrollbar{width:8px;height:8px}
   ::-webkit-scrollbar-thumb{background:#0002;border-radius:8px}
+  @media (max-width:760px){
+    ::-webkit-scrollbar{width:4px;height:4px}
+  }
 
-  /* ------------ Auth screen ------------ */
+  /* ==================== Auth screen ==================== */
   #auth-screen{
     min-height:100vh;
+    min-height:100dvh;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -56,7 +66,8 @@
       radial-gradient(1200px 600px at 20% -10%, #1D4A46 0%, transparent 60%),
       radial-gradient(900px 500px at 100% 110%, #2A5A50 0%, transparent 55%),
       var(--ink);
-    padding:24px;
+    padding:calc(24px + var(--safe-top)) calc(16px + var(--safe-right)) calc(24px + var(--safe-bottom)) calc(16px + var(--safe-left));
+    overflow-y:auto;
   }
   .auth-card{
     width:100%;
@@ -89,32 +100,36 @@
   .field{margin-bottom:14px}
   .field label{display:block;font-size:12.5px;color:var(--text-dim);margin-bottom:6px;font-weight:600}
   .field input{
-    width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid var(--line);
-    font-family:inherit;font-size:14.5px;background:#FBFAF6;color:var(--text);outline:none;
+    width:100%;padding:12px 13px;border-radius:10px;border:1.5px solid var(--line);
+    font-family:inherit;font-size:15px;background:#FBFAF6;color:var(--text);outline:none;
     transition:.15s;
   }
   .field input:focus{border-color:var(--accent);background:#fff}
   .btn-primary{
-    width:100%;padding:12px;border:0;border-radius:10px;background:var(--ink);color:#fff;
+    width:100%;padding:13px;border:0;border-radius:10px;background:var(--ink);color:#fff;
     font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px;transition:.15s;
   }
   .btn-primary:hover{background:#0A1A20}
+  .btn-primary:active{transform:scale(.98)}
   .btn-primary:disabled{opacity:.6;cursor:default}
-  .auth-msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px}
+  .auth-msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px;line-height:1.7}
   .auth-msg.err{color:var(--danger)}
   .auth-msg.ok{color:var(--accent)}
 
-  /* ------------ App shell ------------ */
-  #app{display:none;height:100vh;background:var(--paper)}
-  .shell{display:flex;height:100%}
+  /* ==================== App shell ==================== */
+  #app{display:none;height:100vh;height:100dvh;background:var(--paper);overflow:hidden}
+  .shell{display:flex;height:100%;position:relative}
 
+  /* ---------- Sidebar ---------- */
   .sidebar{
     width:320px;flex:none;background:var(--panel);color:#EAF2F0;
     display:flex;flex-direction:column;
+    padding-top:var(--safe-top);
+    padding-left:var(--safe-left);
   }
   .sidebar-top{
     padding:18px 18px 14px;display:flex;align-items:center;justify-content:space-between;
-    border-bottom:1px solid #ffffff14;
+    border-bottom:1px solid #ffffff14;flex:none;
   }
   .me{display:flex;align-items:center;gap:10px;min-width:0}
   .avatar{
@@ -124,77 +139,75 @@
     overflow:hidden;
   }
   .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
-  .me-btn{display:flex;align-items:center;gap:10px;min-width:0;border:0;background:none;padding:0;cursor:pointer;text-align:inherit;font-family:inherit}
-  .avatar-upload{
-    width:72px;height:72px;border-radius:50%;background:#F0EDE4;color:var(--text-dim);
-    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;cursor:pointer;
-    overflow:hidden;font-size:24px;border:1.5px dashed var(--line);
-  }
-  .avatar-upload img{width:100%;height:100%;object-fit:cover}
-  .channel-readonly{
-    flex:none;padding:12px 20px;background:var(--paper-2);border-top:1px solid var(--line);
-    color:var(--text-dim);font-size:13px;text-align:center;
-  }
+  .me-btn{display:flex;align-items:center;gap:10px;min-width:0;border:0;background:none;padding:0;cursor:pointer;text-align:inherit;font-family:inherit;color:inherit}
   .me-name{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .me-status{font-size:11.5px;color:#9FC6BE}
   .icon-btn{
-    width:34px;height:34px;border-radius:9px;border:0;background:#ffffff12;color:#EAF2F0;
+    width:36px;height:36px;border-radius:9px;border:0;background:#ffffff12;color:#EAF2F0;
     cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none;
     transition:.15s;
   }
   .icon-btn:hover{background:#ffffff22}
+  .icon-btn:active{transform:scale(.94)}
 
-  .sidebar-search{padding:12px 14px}
+  .sidebar-search{padding:12px 14px;flex:none}
   .sidebar-search input{
-    width:100%;padding:9px 12px;border-radius:9px;border:0;background:#ffffff14;color:#fff;
-    font-family:inherit;font-size:13.5px;outline:none;
+    width:100%;padding:10px 12px;border-radius:9px;border:0;background:#ffffff14;color:#fff;
+    font-family:inherit;font-size:14px;outline:none;
   }
   .sidebar-search input::placeholder{color:#B9D6D0}
 
   .sidebar-section-title{
     padding:14px 16px 6px;font-size:11.5px;color:#9FC6BE;font-weight:700;letter-spacing:.02em;
+    flex:none;
   }
-  .list{overflow-y:auto;flex:1}
+  .list{overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch}
   .conv-item{
-    display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;
+    display:flex;align-items:center;gap:10px;padding:11px 16px;cursor:pointer;
     border-inline-start:3px solid transparent;transition:.12s;
   }
   .conv-item:hover{background:#ffffff0c}
+  .conv-item:active{background:#ffffff18}
   .conv-item.active{background:#ffffff16;border-inline-start-color:var(--accent-2)}
-  .conv-item .avatar{width:40px;height:40px;font-size:14px}
+  .conv-item .avatar{width:42px;height:42px;font-size:14px}
   .conv-meta{min-width:0;flex:1}
   .conv-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .conv-sub{font-size:12px;color:#9FBAB4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  /* ---------- Main ---------- */
+  .main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;background:var(--paper)}
   .chat-header{
     height:64px;flex:none;background:var(--paper-2);border-bottom:1px solid var(--line);
     display:flex;align-items:center;gap:12px;padding:0 20px;
   }
-  .chat-header .avatar{width:38px;height:38px;font-size:14px}
-  .chat-title{font-weight:700;font-size:15px}
-  .chat-sub{font-size:12px;color:var(--text-dim)}
+  .chat-header .avatar{width:40px;height:40px;font-size:14px}
+  .chat-title{font-weight:700;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chat-sub{font-size:12px;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .chat-header > div:last-child{min-width:0}
 
-  .messages{flex:1;overflow-y:auto;padding:22px 26px;display:flex;flex-direction:column;gap:10px}
-  .empty-state{
-    margin:auto;text-align:center;color:var(--text-dim);max-width:280px;
+  .messages{
+    flex:1;overflow-y:auto;padding:22px 26px;display:flex;flex-direction:column;gap:10px;
+    -webkit-overflow-scrolling:touch;min-height:0;
   }
-  .empty-state .big{font-size:34px;margin-bottom:8px}
+  .empty-state{
+    margin:auto;text-align:center;color:var(--text-dim);max-width:300px;padding:20px;
+  }
+  .empty-state .big{font-size:38px;margin-bottom:10px}
 
-  .bubble-row{display:flex;max-width:78%}
+  .bubble-row{display:flex;max-width:75%}
   .bubble-row.me{align-self:flex-end;flex-direction:row-reverse}
   .bubble{
-    padding:9px 13px;border-radius:16px;font-size:14.5px;line-height:1.65;position:relative;
-    box-shadow:0 1px 2px #0001;
+    padding:10px 14px;border-radius:16px;font-size:14.5px;line-height:1.7;position:relative;
+    box-shadow:0 1px 2px #0001;word-wrap:break-word;overflow-wrap:break-word;word-break:break-word;
   }
   .bubble-row.me .bubble{background:var(--bubble-me);color:#fff;border-bottom-left-radius:5px}
   .bubble-row.them .bubble{background:var(--bubble-them);color:var(--text);border-bottom-right-radius:5px;border:1px solid var(--line)}
   .bubble .sender-tag{display:block;font-size:11.5px;font-weight:700;color:var(--accent);margin-bottom:3px}
-  .bubble a{color:inherit;text-decoration:underline}
-  .bubble img.msg-image{max-width:260px;border-radius:10px;display:block;margin-top:4px;cursor:pointer}
+  .bubble a{color:inherit;text-decoration:underline;word-break:break-all}
+  .bubble img.msg-image{max-width:100%;width:auto;height:auto;border-radius:10px;display:block;margin-top:4px;cursor:pointer}
   .file-chip{
     display:flex;align-items:center;gap:8px;background:#00000012;padding:8px 10px;border-radius:10px;
-    margin-top:4px;text-decoration:none;color:inherit;font-size:13px;
+    margin-top:4px;text-decoration:none;color:inherit;font-size:13px;word-break:break-all;
   }
   .bubble-row.me .file-chip{background:#ffffff26}
   .bubble-time{font-size:10.5px;margin-top:4px;display:flex;direction:ltr;justify-content:flex-start;align-items:center;gap:4px}
@@ -207,27 +220,30 @@
     font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;
   }
   .notify-banner{
-    display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 14px 0;padding:9px 12px;
-    background:#ffffff14;border-radius:10px;font-size:12.5px;color:#DCEBE8;
+    display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 14px 0;padding:10px 12px;
+    background:#ffffff14;border-radius:10px;font-size:12.5px;color:#DCEBE8;flex:none;
   }
   .notify-banner button{
     border:0;border-radius:8px;background:var(--accent-2);color:#3b2a08;font-family:inherit;
-    font-weight:700;font-size:12px;padding:6px 10px;cursor:pointer;flex:none;
+    font-weight:700;font-size:12px;padding:7px 10px;cursor:pointer;flex:none;
   }
 
   .composer{
-    flex:none;padding:14px 20px;background:var(--paper-2);border-top:1px solid var(--line);
+    flex:none;padding:14px 20px calc(14px + var(--safe-bottom));background:var(--paper-2);
+    border-top:1px solid var(--line);
     display:flex;align-items:flex-end;gap:10px;
   }
   .composer textarea{
     flex:1;resize:none;border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;
-    font-family:inherit;font-size:14.5px;max-height:120px;outline:none;background:#FBFAF6;
+    font-family:inherit;font-size:15px;max-height:120px;outline:none;background:#FBFAF6;
+    line-height:1.5;
   }
   .composer textarea:focus{border-color:var(--accent)}
   .round-btn{
-    width:42px;height:42px;border-radius:50%;border:0;flex:none;cursor:pointer;
+    width:44px;height:44px;border-radius:50%;border:0;flex:none;cursor:pointer;
     display:flex;align-items:center;justify-content:center;font-size:17px;transition:.15s;
   }
+  .round-btn:active{transform:scale(.92)}
   .round-btn.file{background:#F0EDE4;color:var(--text)}
   .round-btn.file:hover{background:#E5E1D4}
   .round-btn.send{background:var(--accent);color:#fff}
@@ -235,13 +251,19 @@
   .round-btn:disabled{opacity:.5;cursor:default}
   #file-input{display:none}
   .attach-preview{
-    display:none;align-items:center;gap:8px;padding:0 20px 10px;background:var(--paper-2);font-size:13px;color:var(--text-dim);
+    display:none;align-items:center;gap:8px;padding:8px 20px;background:var(--paper-2);
+    font-size:13px;color:var(--text-dim);border-top:1px solid var(--line);flex:none;
   }
-  .attach-preview button{border:0;background:none;color:var(--danger);cursor:pointer;font-family:inherit;font-weight:700}
+  .attach-preview button{border:0;background:none;color:var(--danger);cursor:pointer;font-family:inherit;font-weight:700;padding:4px 8px}
+  .channel-readonly{
+    flex:none;padding:14px 20px calc(14px + var(--safe-bottom));background:var(--paper-2);
+    border-top:1px solid var(--line);color:var(--text-dim);font-size:13px;text-align:center;
+  }
 
   .conv-menu-btn{
-    border:0;background:none;color:#B9D6D0;font-size:19px;line-height:1;width:28px;height:28px;border-radius:8px;
+    border:0;background:none;color:#B9D6D0;font-size:19px;line-height:1;width:30px;height:30px;border-radius:8px;
     cursor:pointer;opacity:0;flex:none;transition:.12s;font-family:inherit;
+    display:flex;align-items:center;justify-content:center;
   }
   .conv-item:hover .conv-menu-btn,.conv-menu-btn:focus{opacity:1}
   .conv-menu-btn:hover{background:#ffffff1f}
@@ -253,127 +275,245 @@
     box-shadow:0 14px 34px -8px #0007;display:none;
   }
   .ctx-menu button{
-    display:block;width:100%;text-align:start;border:0;background:none;padding:9px 12px;border-radius:8px;
-    font-family:inherit;font-size:13.5px;cursor:pointer;color:inherit;
+    display:block;width:100%;text-align:start;border:0;background:none;padding:11px 12px;border-radius:8px;
+    font-family:inherit;font-size:14px;cursor:pointer;color:inherit;
   }
   .ctx-menu button:hover{background:#F0EDE4}
   .ctx-menu button.danger{color:var(--danger)}
 
-  .pick-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--line);font-size:14px}
+  .pick-item{display:flex;align-items:center;gap:10px;padding:11px 12px;cursor:pointer;border-bottom:1px solid var(--line);font-size:14px}
   .pick-item:last-child{border-bottom:0}
   .pick-item:hover{background:#F6F3EC}
   .pick-item.selected{background:#E1F1ED}
   .pick-item.disabled{opacity:.55;cursor:default}
-  .pick-item .avatar{width:32px;height:32px;font-size:13px}
+  .pick-item .avatar{width:34px;height:34px;font-size:13px}
   .pick-item .tag{margin-inline-start:auto;font-size:11.5px;color:var(--text-dim)}
   .pick-hint{padding:14px;text-align:center;color:var(--text-dim);font-size:13px;line-height:1.8}
 
   .toast{
-    position:fixed;bottom:24px;left:50%;transform:translate(-50%,16px);background:var(--ink);color:#fff;
-    padding:10px 16px;border-radius:10px;font-size:13.5px;opacity:0;pointer-events:none;transition:.2s;z-index:90;max-width:90vw;
+    position:fixed;bottom:calc(24px + var(--safe-bottom));left:50%;transform:translate(-50%,16px);
+    background:var(--ink);color:#fff;
+    padding:11px 16px;border-radius:10px;font-size:13.5px;opacity:0;pointer-events:none;
+    transition:.2s;z-index:90;max-width:calc(90vw - 32px);text-align:center;
   }
   .toast.show{opacity:1;transform:translate(-50%,0)}
   .toast.err{background:var(--danger)}
 
-  /* ------------ Modal ------------ */
+  /* ==================== Modal ==================== */
   .modal-back{
     position:fixed;inset:0;background:#0A1A20AA;display:none;align-items:center;justify-content:center;z-index:50;
+    padding:calc(16px + var(--safe-top)) calc(16px + var(--safe-right)) calc(16px + var(--safe-bottom)) calc(16px + var(--safe-left));
+    overflow-y:auto;
   }
   .modal{
-    background:#fff;border-radius:16px;padding:26px;width:100%;max-width:380px;box-shadow:0 30px 60px -20px #0009;
+    background:#fff;border-radius:16px;padding:26px;width:100%;max-width:400px;
+    box-shadow:0 30px 60px -20px #0009;max-height:calc(100dvh - 32px - var(--safe-top) - var(--safe-bottom));
+    display:flex;flex-direction:column;margin:auto;
   }
   .modal h3{margin:0 0 4px;font-size:17px}
-  .modal p.sub{margin:0 0 16px;color:var(--text-dim);font-size:13px}
-  .user-pick{max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
+  .modal p.sub{margin:0 0 16px;color:var(--text-dim);font-size:13px;line-height:1.6}
+  .avatar-upload{
+    width:72px;height:72px;border-radius:50%;background:#F0EDE4;color:var(--text-dim);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;cursor:pointer;
+    overflow:hidden;font-size:24px;border:1.5px dashed var(--line);flex:none;
+  }
+  .avatar-upload img{width:100%;height:100%;object-fit:cover}
+  .user-pick{
+    max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:16px;
+    -webkit-overflow-scrolling:touch;
+  }
   .user-pick label{
-    display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:10px;padding:11px 12px;font-size:14px;cursor:pointer;
+    border-bottom:1px solid var(--line);
   }
   .user-pick label:last-child{border-bottom:0}
-  .modal-actions{display:flex;gap:10px}
+  .user-pick input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent);flex:none}
+  .modal-actions{display:flex;gap:10px;flex:none;margin-top:auto}
   .btn-ghost{
-    flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
-    font-family:inherit;font-weight:600;cursor:pointer;
+    flex:1;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
+    font-family:inherit;font-weight:600;cursor:pointer;font-size:14px;
   }
+  .btn-ghost:active{background:#F0EDE4}
 
-  @media (max-width:760px){
-    .sidebar{position:fixed;inset:0 auto 0 0;width:86vw;max-width:320px;z-index:30;transform:translateX(105%);transition:.2s;}
-    html[dir="rtl"] .sidebar{transform:translateX(105%)}
-    .sidebar.open{transform:translateX(0)}
-    .shell{position:relative}
-    .back-btn{display:inline-flex !important}
-  }
   .back-btn{display:none}
 
-  /* ============ اصلاحات موبایل و PWA ============ */
+  /* ==========================================================
+     ================ RESPONSIVE BREAKPOINTS ==================
+     ========================================================== */
 
-  /* ارتفاع پویا برای مرورگرهای موبایل (نوار آدرس) */
-  @supports (height: 100dvh){
-    #auth-screen{ min-height: 100dvh; }
-    #app{ height: 100dvh; }
+  /* ---------- تبلت افقی و کوچک (max 1024px) ---------- */
+  @media (max-width:1024px){
+    .sidebar{width:280px}
+    .messages{padding:18px 20px}
+    .bubble-row{max-width:78%}
   }
 
-  /* اصلاح جهت سایدبار روی موبایل — باید از سمت راست بیاد (RTL) */
-  @media (max-width:760px){
+  /* ---------- تبلت عمودی و موبایل بزرگ (max 900px) ---------- */
+  @media (max-width:900px){
     .sidebar{
       position:fixed;
-      top:0; bottom:0;
-      right:0; left:auto;
-      width:86vw; max-width:320px;
+      top:0;bottom:0;right:0;left:auto;
+      width:min(360px, 88vw);
       z-index:30;
       transform:translateX(100%);
-      transition:transform .25s ease;
-      box-shadow:-10px 0 30px -8px rgba(0,0,0,.4);
+      transition:transform .28s cubic-bezier(.4,0,.2,1);
+      box-shadow:-10px 0 30px -8px rgba(0,0,0,.5);
+      padding-top:var(--safe-top);
+      padding-bottom:var(--safe-bottom);
+      padding-right:var(--safe-right);
     }
-    .sidebar.open{ transform:translateX(0); }
+    .sidebar.open{transform:translateX(0)}
+    .back-btn{display:inline-flex !important}
+    .shell{position:relative}
 
-    .messages{ padding:12px 10px; gap:7px; }
-    .composer{ padding:10px 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+    /* وقتی سایدبار بازه، پس‌زمینه تاریک بشه */
+    .sidebar.open::after{
+      content:'';position:fixed;inset:0;
+      background:rgba(0,0,0,.4);z-index:-1;
+      animation:fadeIn .2s ease;
+    }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  }
+
+  /* ---------- موبایل (max 760px) ---------- */
+  @media (max-width:760px){
+    /* Header */
     .chat-header{
-      padding:0 12px;
-      height: calc(56px + env(safe-area-inset-top, 0px));
-      padding-top: env(safe-area-inset-top, 0px);
+      height:auto;
+      min-height:56px;
+      padding:10px 12px;
+      padding-top:calc(10px + var(--safe-top));
+      gap:8px;
     }
-    .sidebar-top{ padding: calc(14px + env(safe-area-inset-top, 0px)) 14px 12px; }
-    .sidebar-search{ padding:10px 12px; }
-    .conv-item{ padding:9px 12px; }
-    .attach-preview{ padding:0 12px 8px; }
+    .chat-header .avatar{width:36px;height:36px;font-size:13px}
+    .chat-title{font-size:14.5px}
+    .chat-sub{font-size:11px}
 
-    .field input,
-    .sidebar-search input,
-    .composer textarea,
-    #contact-search,
-    #contact-alias,
-    #group-name,
-    #profile-username{ font-size:16px; }
+    /* Sidebar */
+    .sidebar-top{padding:14px 14px 12px}
+    .sidebar-search{padding:10px 12px}
+    .sidebar-section-title{padding:12px 14px 5px}
+    .conv-item{padding:10px 12px;gap:9px}
+    .conv-item .avatar{width:40px;height:40px}
+    .conv-name{font-size:13.5px}
+    .conv-sub{font-size:11.5px}
 
-    .bubble{ font-size:14px; padding:8px 11px; line-height:1.6; }
-    .bubble-row{ max-width:88%; }
-    .bubble img.msg-image{ max-width:220px; }
-
-    .round-btn{ width:40px; height:40px; font-size:16px; }
-    .icon-btn{ width:32px; height:32px; font-size:15px; }
-
-    .modal{ padding:22px 18px; max-width:calc(100vw - 24px); }
-    .auth-card{ padding:28px 22px; }
-    .auth-brand span{ font-size:20px; }
-  }
-
-  /* گوشی‌های خیلی کوچک */
-  @media (max-width:380px){
-    .messages{ padding:10px 8px; }
-    .conv-item{ padding:8px 10px; }
-    .conv-item .avatar{ width:36px !important; height:36px !important; }
-    .composer{ padding:8px 8px calc(8px + env(safe-area-inset-bottom, 0px)); }
-  }
-
-  /* حالت standalone (وقتی نصب شد) */
-  @media (display-mode: standalone){
-    .sidebar-top{ padding-top: calc(18px + env(safe-area-inset-top, 0px)); }
-    .chat-header{
-      height: calc(60px + env(safe-area-inset-top, 0px));
-      padding-top: env(safe-area-inset-top, 0px);
+    /* Messages */
+    .messages{padding:14px 12px;gap:8px}
+    .bubble-row{max-width:88%}
+    .bubble{
+      font-size:14px;padding:9px 12px;line-height:1.6;
     }
+    .bubble img.msg-image{max-width:min(240px, 70vw)}
+    .empty-state .big{font-size:32px}
+
+    /* Composer */
+    .composer{
+      padding:10px 12px calc(10px + var(--safe-bottom));
+      gap:8px;
+    }
+    .composer textarea{
+      font-size:16px;/* جلوگیری از زوم iOS */
+      padding:10px 12px;
+      border-radius:12px;
+    }
+    .round-btn{width:42px;height:42px;font-size:16px}
+    .attach-preview{padding:8px 12px;font-size:12.5px}
+
+    /* Auth */
+    .auth-card{padding:28px 22px;border-radius:18px}
+    .auth-brand span{font-size:20px}
+    .auth-sub{font-size:13px;margin-bottom:22px}
+    .field input{font-size:16px}
+    .btn-primary{font-size:14.5px;padding:12px}
+
+    /* Modal */
+    .modal{padding:22px 18px;border-radius:14px}
+    .modal h3{font-size:16px}
+    .modal p.sub{font-size:12.5px}
+
+    /* Toast */
+    .toast{font-size:13px;padding:10px 14px}
   }
+
+  /* ---------- موبایل کوچک (max 480px) ---------- */
+  @media (max-width:480px){
+    .sidebar{width:88vw}
+    .messages{padding:10px 8px;gap:6px}
+    .bubble{font-size:13.5px;padding:8px 11px}
+    .bubble-row{max-width:92%}
+    .chat-header{padding:8px 10px;padding-top:calc(8px + var(--safe-top))}
+    .composer{padding:8px 8px calc(8px + var(--safe-bottom))}
+    .round-btn{width:40px;height:40px;font-size:15px}
+    .icon-btn{width:34px;height:34px;font-size:15px}
+    .auth-card{padding:24px 18px}
+    .auth-brand span{font-size:18px}
+    .modal{padding:20px 16px}
+    .conv-item{padding:9px 10px}
+    .sidebar-section-title{padding:10px 12px 4px}
+    .sidebar-search{padding:8px 10px}
+  }
+
+  /* ---------- موبایل خیلی کوچک (max 360px) ---------- */
+  @media (max-width:360px){
+    .bubble{font-size:13px;padding:7px 10px}
+    .round-btn{width:38px;height:38px;font-size:14px}
+    .composer textarea{padding:9px 10px;font-size:16px}
+    .auth-card{padding:20px 14px}
+    .auth-brand span{font-size:17px}
+    .tab button,.tabs button{font-size:13px}
+    .chat-title{font-size:13.5px}
+  }
+
+  /* ---------- حالت افقی موبایل (landscape) ---------- */
+  @media (max-width:900px) and (orientation:landscape){
+    .chat-header{min-height:48px;padding:6px 12px}
+    .messages{padding:8px 12px}
+    .composer{padding:6px 12px calc(6px + var(--safe-bottom))}
+    .composer textarea{max-height:80px}
+    .auth-card{padding:20px 24px;max-width:460px}
+    .auth-sub{margin-bottom:16px}
+    .field{margin-bottom:10px}
+    .modal{max-height:calc(100dvh - 24px)}
+  }
+
+  /* ---------- دستگاه‌های لمسی: دکمه‌های بزرگ‌تر ---------- */
+  @media (hover:none) and (pointer:coarse){
+    .icon-btn{width:38px;height:38px;font-size:16px}
+    .round-btn{width:44px;height:44px}
+    .conv-item{padding:12px 14px}
+    .ctx-menu button{padding:13px 14px;font-size:14.5px}
+    .pick-item{padding:12px 12px}
+    .user-pick label{padding:12px 12px}
+  }
+
+  /* ---------- حالت نصب‌شده (PWA standalone) ---------- */
+  @media (display-mode:standalone){
+    #auth-screen{padding-top:calc(24px + var(--safe-top))}
+    .sidebar{padding-top:var(--safe-top)}
+    .chat-header{padding-top:calc(10px + var(--safe-top))}
+    /* مخفی کردن نوار اضافی */
+    body{user-select:none}
+    input,textarea{user-select:text}
+  }
+
+  /* ---------- جلوگیری از انتخاب متن غیرضروری ---------- */
+  .sidebar,.chat-header,.conv-item,.round-btn,.icon-btn,.btn-primary,.btn-ghost{
+    -webkit-user-select:none;user-select:none;
+  }
+  .bubble,.field input,textarea,.modal p{user-select:text;-webkit-user-select:text}
+
+  /* ---------- بهبود فوکوس روی کیبورد ---------- */
+  button:focus-visible,input:focus-visible,textarea:focus-visible{
+    outline:2px solid var(--accent);outline-offset:2px;
+  }
+
+  /* ---------- انیمیشن ورود پیام ---------- */
+  @keyframes msgIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .bubble-row{animation:msgIn .18s ease-out}
+
+  /* ---------- جلوگیری از رفلوی اسکرول در بدنه ---------- */
+  #app,.shell,.main,.messages{overscroll-behavior:contain}
 </style>
 </head>
 <body>
@@ -418,7 +558,7 @@
             <div class="me-status">آنلاین</div>
           </div>
         </button>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:6px">
           <button class="icon-btn" id="btn-add-contact" title="افزودن مخاطب">➕</button>
           <button class="icon-btn" id="btn-new-group" title="ساخت گروه یا کانال">👥</button>
           <button class="icon-btn" id="btn-logout" title="خروج">⏻</button>
@@ -435,7 +575,7 @@
 
     <main class="main">
       <div class="chat-header" id="chat-header" style="display:none">
-        <button class="icon-btn back-btn" id="btn-back">→</button>
+        <button class="icon-btn back-btn" id="btn-back" title="فهرست">→</button>
         <div class="avatar" id="chat-avatar">?</div>
         <div>
           <div class="chat-title" id="chat-title">—</div>
@@ -489,7 +629,7 @@
     <div class="user-pick" id="group-user-pick"></div>
     <div class="modal-actions">
       <button class="btn-ghost" id="group-cancel">انصراف</button>
-      <button class="btn-primary" id="group-create" style="margin-top:0">ساخت</button>
+      <button class="btn-primary" id="group-create" style="margin-top:0;width:auto;flex:1">ساخت</button>
     </div>
   </div>
 </div>
@@ -509,7 +649,7 @@
     <div class="field"><label>نام نمایشی</label><input type="text" id="profile-username"></div>
     <div class="modal-actions">
       <button class="btn-ghost" id="profile-cancel">انصراف</button>
-      <button class="btn-primary" id="profile-save" style="margin-top:0">ذخیره</button>
+      <button class="btn-primary" id="profile-save" style="margin-top:0;width:auto;flex:1">ذخیره</button>
     </div>
   </div>
 </div>
@@ -527,7 +667,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-ghost" id="contact-cancel" type="button">انصراف</button>
-      <button class="btn-primary" id="contact-add" type="button" style="margin-top:0" disabled>افزودن به مخاطبین</button>
+      <button class="btn-primary" id="contact-add" type="button" style="margin-top:0;width:auto;flex:1" disabled>افزودن به مخاطبین</button>
     </div>
   </div>
 </div>
@@ -564,28 +704,27 @@ const cfgError = configProblem();
 const sb = cfgError ? null : supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
 
 /* ---------------------- state ---------------------- */
-let me = null;            // { id, username, avatar_url }
-let contacts = [];        // مخاطبین من: [{contact_id, alias, profile}]
-const contactMap = new Map();   // contact_id -> همان ردیف
-const strangers = new Map();    // فرستنده‌هایی که مخاطب من نیستند: id -> profile
-const profileCache = new Map(); // id -> profile
-let allGroups = [];       // گروه‌ها و کانال‌های من (جدول groups؛ فیلد type)
-let current = null;       // { type:'dm'|'group'|'channel', id, title, avatarUrl, createdBy }
+let me = null;
+let contacts = [];
+const contactMap = new Map();
+const strangers = new Map();
+const profileCache = new Map();
+let allGroups = [];
+let current = null;
 let realtimeChannel = null;
 let pendingFile = null;
 let newConvType = 'group';
 let pendingGroupAvatarFile = null;
 let pendingProfileAvatarFile = null;
 
-let msgState = new Map();       // message id -> { m, receipts: [{user_id, delivered_at, read_at}] }
-let orphanReceipts = new Map(); // رسیدهایی که قبل از رندر پیام رسیده‌اند
-let groupRecipients = 0;        // تعداد اعضای دیگر گروه فعلی
+let msgState = new Map();
+let orphanReceipts = new Map();
+let groupRecipients = 0;
 let loadToken = 0;
 let bootedFor = null;
-const unread = {};              // 'dm:<id>' | 'group:<id>' | 'channel:<id>' -> count
+const unread = {};
 
 /* ---------------------- helpers ---------------------- */
-// فقط آدرس‌های همین پروژه‌ی Supabase مجاز است (جلوگیری از javascript: و آدرس‌های مخرب)
 function safeUrl(u){
   if(!u || !CFG.SUPABASE_URL) return null;
   try{
@@ -620,7 +759,6 @@ function setAvatar(holder, url, fallback){
   else { holder.textContent = fallback; }
 }
 
-// نام فایل در Storage فقط انگلیسی/عدد (نام فارسی باعث خطای InvalidKey می‌شود)؛ نام اصلی در دیتابیس می‌ماند
 function storagePath(file, kind){
   const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,8);
   const rand = Math.random().toString(36).slice(2,8);
@@ -646,7 +784,6 @@ function unlockAudio(){
     if(audioCtx.state === 'suspended') audioCtx.resume();
   }catch(e){}
 }
-// مرورگرها تا اولین کلیک/لمس کاربر اجازه‌ی پخش صدا نمی‌دهند
 ['click','keydown','touchstart'].forEach(ev => document.addEventListener(ev, unlockAudio, { passive:true }));
 
 function playPing(){
@@ -674,7 +811,7 @@ $('#notify-enable').onclick = async () => {
   unlockAudio();
   try{ await Notification.requestPermission(); }catch(e){}
   updateNotifyBanner();
-  setTimeout(playPing, 150); // پخش آزمایشی صدا
+  setTimeout(playPing, 150);
 };
 
 function previewText(m){
@@ -689,7 +826,7 @@ function notifyIncoming(title, body, conv){
     try{
       const n = new Notification(title, { body, icon: safeUrl(conv.avatarUrl) || undefined, tag: convKey(conv) });
       n.onclick = () => { window.focus(); openConversation(conv); n.close(); };
-    }catch(e){ /* بعضی مرورگرهای موبایل اجازه‌ی این روش را نمی‌دهند */ }
+    }catch(e){}
   }
 }
 
@@ -781,7 +918,6 @@ function resetState(){
 if(sb){
   sb.auth.onAuthStateChange((event, session) => {
     if(session && session.user){
-      // این رویداد با هر بازگشت به تب دوباره می‌آید؛ فقط یک‌بار برای هر کاربر راه‌اندازی کن
       if(bootedFor === session.user.id) return;
       bootedFor = session.user.id;
       setTimeout(() => boot(session.user), 0);
@@ -817,7 +953,6 @@ async function boot(authUser){
   updateTitleBadge();
   subscribeRealtime();
 
-  // پیام‌هایی که وقتی آفلاین بودم برایم آمده‌اند «رسیده» حساب شوند (تیک دوم فرستنده)
   const { error } = await sb.rpc('mark_delivered');
   if(error) console.warn('mark_delivered:', error.message);
 }
@@ -859,7 +994,6 @@ async function loadContacts(){
   contacts.forEach(c => { contactMap.set(c.contact_id, c); profileCache.set(c.contact_id, c.profile); });
 }
 
-// فرستنده‌هایی که پیام خوانده‌نشده دارند ولی در مخاطبین من نیستند، در فهرست دیده شوند
 async function loadStrangers(){
   strangers.clear();
   const ids = Object.keys(unread).filter(k => k.startsWith('dm:')).map(k => k.slice(3)).filter(id => !contactMap.has(id));
@@ -963,7 +1097,6 @@ async function openConversation(conv){
   $('#chat-title').textContent = conv.title;
   $('#chat-sub').textContent = convLabel(conv);
 
-  // در کانال فقط سازنده می‌تواند پیام بفرستد
   const canSend = conv.type !== 'channel' || conv.createdBy === me.id;
   $('#composer').style.display = canSend ? 'flex' : 'none';
   $('#channel-readonly').style.display = canSend ? 'none' : 'block';
@@ -998,7 +1131,7 @@ async function loadMessages(){
     reqs.push(sb.from('group_members').select('user_id', { count:'exact', head:true }).eq('group_id', conv.id));
   }
   const [res, cnt] = await Promise.all(reqs);
-  if(token !== loadToken) return; // کاربر وسط بارگذاری گفتگوی دیگری را باز کرد
+  if(token !== loadToken) return;
 
   if(cnt && !cnt.error) groupRecipients = Math.max(0, (cnt.count || 1) - 1);
   if(res.error){
@@ -1020,7 +1153,6 @@ function statusFor(entry){
     if(rs.length) return 'delivered';
     return 'sent';
   }
-  // گروه: وقتی همه‌ی اعضای دیگر دریافت/خوانده باشند
   if(groupRecipients > 0){
     if(rs.filter(r => r.read_at).length >= groupRecipients) return 'read';
     if(rs.length >= groupRecipients) return 'delivered';
@@ -1050,7 +1182,7 @@ function upsertReceipt(arr, r){
 }
 
 function onReceipt(r){
-  if(!me || r.user_id === me.id) return; // رسیدهای خودم مهم نیستند
+  if(!me || r.user_id === me.id) return;
   const entry = msgState.get(r.message_id);
   if(!entry){
     const arr = orphanReceipts.get(r.message_id) || [];
@@ -1066,7 +1198,7 @@ function onReceipt(r){
 function renderMessage(m, receipts){
   const box = $('#messages');
   if(box.querySelector('.empty-state')) box.innerHTML = '';
-  if(msgState.has(m.id)) return; // جلوگیری از تکرار (رقابت بین بارگذاری و realtime)
+  if(msgState.has(m.id)) return;
 
   const rs = (receipts || orphanReceipts.get(m.id) || []).slice();
   orphanReceipts.delete(m.id);
@@ -1171,14 +1303,13 @@ async function onNewMessage(m){
   }
   if(mine) return;
 
-  // ---- پیام تازه از طرف دیگران ----
   const conv = await convForMessage(m);
   if(!conv) return;
   const viewing = inCurrent && document.visibilityState === 'visible' && document.hasFocus();
 
   if(conv.type !== 'channel'){
     if(viewing){
-      markReadCurrent(); // هم «رسیده» هم «خوانده شد»
+      markReadCurrent();
     } else {
       sb.rpc('mark_delivered', { p_ids: [m.id] }).then(({error}) => { if(error) console.warn(error.message); });
     }
@@ -1314,7 +1445,6 @@ $('#group-create').onclick = async () => {
       .select().maybeSingle();
     if(error) throw error;
 
-    // سازنده را تریگر پایگاه‌داده عضو می‌کند؛ بقیه را اینجا اضافه می‌کنیم
     if(checked.length){
       const members = checked.map(uid => ({ group_id: group.id, user_id: uid }));
       const { error: memErr } = await sb.from('group_members').insert(members);
@@ -1407,7 +1537,7 @@ function showEmptyState(){
 }
 
 function closeCurrent(){
-  loadToken++; // بارگذاری‌های در جریان نادیده گرفته شوند
+  loadToken++;
   current = null;
   msgState = new Map(); orphanReceipts = new Map();
   pendingFile = null;
@@ -1526,7 +1656,6 @@ async function deleteGroupForAll(conv){
   toast(`${noun} حذف شد`);
 }
 
-// وقتی سازنده گروه/کانالی را حذف کند، برای بقیه‌ی اعضا هم از فهرست برداشته می‌شود
 function onGroupDeleted(id){
   if(!id || !allGroups.some(g => g.id === id)) return;
   const wasCurrent = !!current && current.type !== 'dm' && current.id === id;
@@ -1574,7 +1703,7 @@ async function runContactSearch(){
     .neq('id', me.id)
     .order('username')
     .limit(20);
-  if(seq !== contactSearchSeq) return; // جستجوی جدیدتری شروع شده
+  if(seq !== contactSearchSeq) return;
   box.innerHTML = '';
   if(error){ box.appendChild(el('div','pick-hint','خطا در جستجو: ' + escapeHtml(error.message))); return; }
   if(!data || !data.length){ box.appendChild(el('div','pick-hint','کاربری با این نام پیدا نشد.')); return; }
