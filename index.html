@@ -483,27 +483,28 @@ const cfgError = configProblem();
 const sb = cfgError ? null : supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
 
 /* ---------------------- state ---------------------- */
-let me = null;
-let contacts = [];
-const contactMap = new Map();
-const strangers = new Map();
-const profileCache = new Map();
-let allGroups = [];
-let current = null;
+let me = null;            // { id, username, avatar_url }
+let contacts = [];        // مخاطبین من: [{contact_id, alias, profile}]
+const contactMap = new Map();   // contact_id -> همان ردیف
+const strangers = new Map();    // فرستنده‌هایی که مخاطب من نیستند: id -> profile
+const profileCache = new Map(); // id -> profile
+let allGroups = [];       // گروه‌ها و کانال‌های من (جدول groups؛ فیلد type)
+let current = null;       // { type:'dm'|'group'|'channel', id, title, avatarUrl, createdBy }
 let realtimeChannel = null;
 let pendingFile = null;
 let newConvType = 'group';
 let pendingGroupAvatarFile = null;
 let pendingProfileAvatarFile = null;
 
-let msgState = new Map();
-let orphanReceipts = new Map();
-let groupRecipients = 0;
+let msgState = new Map();       // message id -> { m, receipts: [{user_id, delivered_at, read_at}] }
+let orphanReceipts = new Map(); // رسیدهایی که قبل از رندر پیام رسیده‌اند
+let groupRecipients = 0;        // تعداد اعضای دیگر گروه فعلی
 let loadToken = 0;
 let bootedFor = null;
-const unread = {};
+const unread = {};              // 'dm:<id>' | 'group:<id>' | 'channel:<id>' -> count
 
 /* ---------------------- helpers ---------------------- */
+// فقط آدرس‌های همین پروژه‌ی Supabase مجاز است (جلوگیری از javascript: و آدرس‌های مخرب)
 function safeUrl(u){
   if(!u || !CFG.SUPABASE_URL) return null;
   try{
@@ -538,6 +539,7 @@ function setAvatar(holder, url, fallback){
   else { holder.textContent = fallback; }
 }
 
+// نام فایل در Storage فقط انگلیسی/عدد (نام فارسی باعث خطای InvalidKey می‌شود)؛ نام اصلی در دیتابیس می‌ماند
 function storagePath(file, kind){
   const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,8);
   const rand = Math.random().toString(36).slice(2,8);
@@ -563,6 +565,7 @@ function unlockAudio(){
     if(audioCtx.state === 'suspended') audioCtx.resume();
   }catch(e){}
 }
+// مرورگرها تا اولین کلیک/لمس کاربر اجازه‌ی پخش صدا نمی‌دهند
 ['click','keydown','touchstart'].forEach(ev => document.addEventListener(ev, unlockAudio, { passive:true }));
 
 function playPing(){
@@ -590,7 +593,7 @@ $('#notify-enable').onclick = async () => {
   unlockAudio();
   try{ await Notification.requestPermission(); }catch(e){}
   updateNotifyBanner();
-  setTimeout(playPing, 150);
+  setTimeout(playPing, 150); // پخش آزمایشی صدا
 };
 
 function previewText(m){
@@ -605,7 +608,7 @@ function notifyIncoming(title, body, conv){
     try{
       const n = new Notification(title, { body, icon: safeUrl(conv.avatarUrl) || undefined, tag: convKey(conv) });
       n.onclick = () => { window.focus(); openConversation(conv); n.close(); };
-    }catch(e){}
+    }catch(e){ /* بعضی مرورگرهای موبایل اجازه‌ی این روش را نمی‌دهند */ }
   }
 }
 
@@ -697,6 +700,7 @@ function resetState(){
 if(sb){
   sb.auth.onAuthStateChange((event, session) => {
     if(session && session.user){
+      // این رویداد با هر بازگشت به تب دوباره می‌آید؛ فقط یک‌بار برای هر کاربر راه‌اندازی کن
       if(bootedFor === session.user.id) return;
       bootedFor = session.user.id;
       setTimeout(() => boot(session.user), 0);
@@ -732,6 +736,7 @@ async function boot(authUser){
   updateTitleBadge();
   subscribeRealtime();
 
+  // پیام‌هایی که وقتی آفلاین بودم برایم آمده‌اند «رسیده» حساب شوند (تیک دوم فرستنده)
   const { error } = await sb.rpc('mark_delivered');
   if(error) console.warn('mark_delivered:', error.message);
 }
@@ -773,6 +778,7 @@ async function loadContacts(){
   contacts.forEach(c => { contactMap.set(c.contact_id, c); profileCache.set(c.contact_id, c.profile); });
 }
 
+// فرستنده‌هایی که پیام خوانده‌نشده دارند ولی در مخاطبین من نیستند، در فهرست دیده شوند
 async function loadStrangers(){
   strangers.clear();
   const ids = Object.keys(unread).filter(k => k.startsWith('dm:')).map(k => k.slice(3)).filter(id => !contactMap.has(id));
@@ -876,6 +882,7 @@ async function openConversation(conv){
   $('#chat-title').textContent = conv.title;
   $('#chat-sub').textContent = convLabel(conv);
 
+  // در کانال فقط سازنده می‌تواند پیام بفرستد
   const canSend = conv.type !== 'channel' || conv.createdBy === me.id;
   $('#composer').style.display = canSend ? 'flex' : 'none';
   $('#channel-readonly').style.display = canSend ? 'none' : 'block';
@@ -910,7 +917,7 @@ async function loadMessages(){
     reqs.push(sb.from('group_members').select('user_id', { count:'exact', head:true }).eq('group_id', conv.id));
   }
   const [res, cnt] = await Promise.all(reqs);
-  if(token !== loadToken) return;
+  if(token !== loadToken) return; // کاربر وسط بارگذاری گفتگوی دیگری را باز کرد
 
   if(cnt && !cnt.error) groupRecipients = Math.max(0, (cnt.count || 1) - 1);
   if(res.error){
@@ -932,6 +939,7 @@ function statusFor(entry){
     if(rs.length) return 'delivered';
     return 'sent';
   }
+  // گروه: وقتی همه‌ی اعضای دیگر دریافت/خوانده باشند
   if(groupRecipients > 0){
     if(rs.filter(r => r.read_at).length >= groupRecipients) return 'read';
     if(rs.length >= groupRecipients) return 'delivered';
@@ -961,7 +969,7 @@ function upsertReceipt(arr, r){
 }
 
 function onReceipt(r){
-  if(!me || r.user_id === me.id) return;
+  if(!me || r.user_id === me.id) return; // رسیدهای خودم مهم نیستند
   const entry = msgState.get(r.message_id);
   if(!entry){
     const arr = orphanReceipts.get(r.message_id) || [];
@@ -977,7 +985,7 @@ function onReceipt(r){
 function renderMessage(m, receipts){
   const box = $('#messages');
   if(box.querySelector('.empty-state')) box.innerHTML = '';
-  if(msgState.has(m.id)) return;
+  if(msgState.has(m.id)) return; // جلوگیری از تکرار (رقابت بین بارگذاری و realtime)
 
   const rs = (receipts || orphanReceipts.get(m.id) || []).slice();
   orphanReceipts.delete(m.id);
@@ -1082,13 +1090,14 @@ async function onNewMessage(m){
   }
   if(mine) return;
 
+  // ---- پیام تازه از طرف دیگران ----
   const conv = await convForMessage(m);
   if(!conv) return;
   const viewing = inCurrent && document.visibilityState === 'visible' && document.hasFocus();
 
   if(conv.type !== 'channel'){
     if(viewing){
-      markReadCurrent();
+      markReadCurrent(); // هم «رسیده» هم «خوانده شد»
     } else {
       sb.rpc('mark_delivered', { p_ids: [m.id] }).then(({error}) => { if(error) console.warn(error.message); });
     }
@@ -1224,6 +1233,7 @@ $('#group-create').onclick = async () => {
       .select().maybeSingle();
     if(error) throw error;
 
+    // سازنده را تریگر پایگاه‌داده عضو می‌کند؛ بقیه را اینجا اضافه می‌کنیم
     if(checked.length){
       const members = checked.map(uid => ({ group_id: group.id, user_id: uid }));
       const { error: memErr } = await sb.from('group_members').insert(members);
@@ -1316,7 +1326,7 @@ function showEmptyState(){
 }
 
 function closeCurrent(){
-  loadToken++;
+  loadToken++; // بارگذاری‌های در جریان نادیده گرفته شوند
   current = null;
   msgState = new Map(); orphanReceipts = new Map();
   pendingFile = null;
@@ -1435,6 +1445,7 @@ async function deleteGroupForAll(conv){
   toast(`${noun} حذف شد`);
 }
 
+// وقتی سازنده گروه/کانالی را حذف کند، برای بقیه‌ی اعضا هم از فهرست برداشته می‌شود
 function onGroupDeleted(id){
   if(!id || !allGroups.some(g => g.id === id)) return;
   const wasCurrent = !!current && current.type !== 'dm' && current.id === id;
@@ -1482,7 +1493,7 @@ async function runContactSearch(){
     .neq('id', me.id)
     .order('username')
     .limit(20);
-  if(seq !== contactSearchSeq) return;
+  if(seq !== contactSearchSeq) return; // جستجوی جدیدتری شروع شده
   box.innerHTML = '';
   if(error){ box.appendChild(el('div','pick-hint','خطا در جستجو: ' + escapeHtml(error.message))); return; }
   if(!data || !data.length){ box.appendChild(el('div','pick-hint','کاربری با این نام پیدا نشد.')); return; }
