@@ -1,1 +1,1546 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>گپ‌یار | پیام‌رسان</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --ink:#0F2027;
+    --panel:#16303A;
+    --panel-2:#1D3E49;
+    --paper:#F6F3EC;
+    --paper-2:#FFFFFF;
+    --accent:#2F8F7E;
+    --accent-2:#E7A94C;
+    --line:#DEDACD;
+    --text:#20302E;
+    --text-dim:#6B7C79;
+    --bubble-me:#2F8F7E;
+    --bubble-them:#FFFFFF;
+    --danger:#C25B4A;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:'Vazirmatn', Tahoma, sans-serif;
+    background:var(--ink);
+    color:var(--text);
+  }
+  ::-webkit-scrollbar{width:8px;height:8px}
+  ::-webkit-scrollbar-thumb{background:#0002;border-radius:8px}
 
+  /* ------------ Auth screen ------------ */
+  #auth-screen{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+      radial-gradient(1200px 600px at 20% -10%, #1D4A46 0%, transparent 60%),
+      radial-gradient(900px 500px at 100% 110%, #2A5A50 0%, transparent 55%),
+      var(--ink);
+    padding:24px;
+  }
+  .auth-card{
+    width:100%;
+    max-width:400px;
+    background:var(--paper-2);
+    border-radius:20px;
+    padding:36px 32px;
+    box-shadow:0 30px 60px -20px #0009;
+  }
+  .auth-brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+  }
+  .auth-brand .dot{
+    width:14px;height:14px;border-radius:50%;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    flex:none;
+  }
+  .auth-brand span{font-weight:800;font-size:22px;color:var(--ink)}
+  .auth-sub{color:var(--text-dim);font-size:14px;margin:0 0 26px}
+  .tabs{display:flex;background:#F0EDE4;border-radius:10px;padding:4px;margin-bottom:22px}
+  .tabs button{
+    flex:1;border:0;background:transparent;padding:9px 0;border-radius:8px;
+    font-family:inherit;font-weight:600;font-size:14px;color:var(--text-dim);cursor:pointer;
+    transition:.15s;
+  }
+  .tabs button.active{background:var(--ink);color:#fff}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12.5px;color:var(--text-dim);margin-bottom:6px;font-weight:600}
+  .field input{
+    width:100%;padding:11px 13px;border-radius:10px;border:1.5px solid var(--line);
+    font-family:inherit;font-size:14.5px;background:#FBFAF6;color:var(--text);outline:none;
+    transition:.15s;
+  }
+  .field input:focus{border-color:var(--accent);background:#fff}
+  .btn-primary{
+    width:100%;padding:12px;border:0;border-radius:10px;background:var(--ink);color:#fff;
+    font-family:inherit;font-weight:700;font-size:15px;cursor:pointer;margin-top:6px;transition:.15s;
+  }
+  .btn-primary:hover{background:#0A1A20}
+  .btn-primary:disabled{opacity:.6;cursor:default}
+  .auth-msg{margin-top:14px;font-size:13px;text-align:center;min-height:18px}
+  .auth-msg.err{color:var(--danger)}
+  .auth-msg.ok{color:var(--accent)}
+
+  /* ------------ App shell ------------ */
+  #app{display:none;height:100vh;background:var(--paper)}
+  .shell{display:flex;height:100%}
+
+  .sidebar{
+    width:320px;flex:none;background:var(--panel);color:#EAF2F0;
+    display:flex;flex-direction:column;
+  }
+  .sidebar-top{
+    padding:18px 18px 14px;display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid #ffffff14;
+  }
+  .me{display:flex;align-items:center;gap:10px;min-width:0}
+  .avatar{
+    width:38px;height:38px;border-radius:50%;flex:none;
+    background:linear-gradient(135deg,var(--accent),var(--accent-2));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;
+    overflow:hidden;
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .me-btn{display:flex;align-items:center;gap:10px;min-width:0;border:0;background:none;padding:0;cursor:pointer;text-align:inherit;font-family:inherit}
+  .avatar-upload{
+    width:72px;height:72px;border-radius:50%;background:#F0EDE4;color:var(--text-dim);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;cursor:pointer;
+    overflow:hidden;font-size:24px;border:1.5px dashed var(--line);
+  }
+  .avatar-upload img{width:100%;height:100%;object-fit:cover}
+  .channel-readonly{
+    flex:none;padding:12px 20px;background:var(--paper-2);border-top:1px solid var(--line);
+    color:var(--text-dim);font-size:13px;text-align:center;
+  }
+  .me-name{font-weight:700;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .me-status{font-size:11.5px;color:#9FC6BE}
+  .icon-btn{
+    width:34px;height:34px;border-radius:9px;border:0;background:#ffffff12;color:#EAF2F0;
+    cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex:none;
+    transition:.15s;
+  }
+  .icon-btn:hover{background:#ffffff22}
+
+  .sidebar-search{padding:12px 14px}
+  .sidebar-search input{
+    width:100%;padding:9px 12px;border-radius:9px;border:0;background:#ffffff14;color:#fff;
+    font-family:inherit;font-size:13.5px;outline:none;
+  }
+  .sidebar-search input::placeholder{color:#B9D6D0}
+
+  .sidebar-section-title{
+    padding:14px 16px 6px;font-size:11.5px;color:#9FC6BE;font-weight:700;letter-spacing:.02em;
+  }
+  .list{overflow-y:auto;flex:1}
+  .conv-item{
+    display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;
+    border-inline-start:3px solid transparent;transition:.12s;
+  }
+  .conv-item:hover{background:#ffffff0c}
+  .conv-item.active{background:#ffffff16;border-inline-start-color:var(--accent-2)}
+  .conv-item .avatar{width:40px;height:40px;font-size:14px}
+  .conv-meta{min-width:0;flex:1}
+  .conv-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .conv-sub{font-size:12px;color:#9FBAB4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+  .main{flex:1;display:flex;flex-direction:column;min-width:0}
+  .chat-header{
+    height:64px;flex:none;background:var(--paper-2);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:12px;padding:0 20px;
+  }
+  .chat-header .avatar{width:38px;height:38px;font-size:14px}
+  .chat-title{font-weight:700;font-size:15px}
+  .chat-sub{font-size:12px;color:var(--text-dim)}
+
+  .messages{flex:1;overflow-y:auto;padding:22px 26px;display:flex;flex-direction:column;gap:10px}
+  .empty-state{
+    margin:auto;text-align:center;color:var(--text-dim);max-width:280px;
+  }
+  .empty-state .big{font-size:34px;margin-bottom:8px}
+
+  .bubble-row{display:flex;max-width:78%}
+  .bubble-row.me{align-self:flex-end;flex-direction:row-reverse}
+  .bubble{
+    padding:9px 13px;border-radius:16px;font-size:14.5px;line-height:1.65;position:relative;
+    box-shadow:0 1px 2px #0001;
+  }
+  .bubble-row.me .bubble{background:var(--bubble-me);color:#fff;border-bottom-left-radius:5px}
+  .bubble-row.them .bubble{background:var(--bubble-them);color:var(--text);border-bottom-right-radius:5px;border:1px solid var(--line)}
+  .bubble .sender-tag{display:block;font-size:11.5px;font-weight:700;color:var(--accent);margin-bottom:3px}
+  .bubble a{color:inherit;text-decoration:underline}
+  .bubble img.msg-image{max-width:260px;border-radius:10px;display:block;margin-top:4px;cursor:pointer}
+  .file-chip{
+    display:flex;align-items:center;gap:8px;background:#00000012;padding:8px 10px;border-radius:10px;
+    margin-top:4px;text-decoration:none;color:inherit;font-size:13px;
+  }
+  .bubble-row.me .file-chip{background:#ffffff26}
+  .bubble-time{font-size:10.5px;margin-top:4px;display:flex;direction:ltr;justify-content:flex-start;align-items:center;gap:4px}
+  .bubble-time .t{opacity:.7}
+  .tick{display:inline-flex;color:rgba(255,255,255,.75)}
+  .tick svg{width:16px;height:12px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .tick.read{color:#7DD3FC}
+  .unread-badge{
+    min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:var(--accent-2);color:#3b2a08;
+    font-size:11.5px;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .notify-banner{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;margin:10px 14px 0;padding:9px 12px;
+    background:#ffffff14;border-radius:10px;font-size:12.5px;color:#DCEBE8;
+  }
+  .notify-banner button{
+    border:0;border-radius:8px;background:var(--accent-2);color:#3b2a08;font-family:inherit;
+    font-weight:700;font-size:12px;padding:6px 10px;cursor:pointer;flex:none;
+  }
+
+  .composer{
+    flex:none;padding:14px 20px;background:var(--paper-2);border-top:1px solid var(--line);
+    display:flex;align-items:flex-end;gap:10px;
+  }
+  .composer textarea{
+    flex:1;resize:none;border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;
+    font-family:inherit;font-size:14.5px;max-height:120px;outline:none;background:#FBFAF6;
+  }
+  .composer textarea:focus{border-color:var(--accent)}
+  .round-btn{
+    width:42px;height:42px;border-radius:50%;border:0;flex:none;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:17px;transition:.15s;
+  }
+  .round-btn.file{background:#F0EDE4;color:var(--text)}
+  .round-btn.file:hover{background:#E5E1D4}
+  .round-btn.send{background:var(--accent);color:#fff}
+  .round-btn.send:hover{background:#26766A}
+  .round-btn:disabled{opacity:.5;cursor:default}
+  #file-input{display:none}
+  .attach-preview{
+    display:none;align-items:center;gap:8px;padding:0 20px 10px;background:var(--paper-2);font-size:13px;color:var(--text-dim);
+  }
+  .attach-preview button{border:0;background:none;color:var(--danger);cursor:pointer;font-family:inherit;font-weight:700}
+
+  .conv-menu-btn{
+    border:0;background:none;color:#B9D6D0;font-size:19px;line-height:1;width:28px;height:28px;border-radius:8px;
+    cursor:pointer;opacity:0;flex:none;transition:.12s;font-family:inherit;
+  }
+  .conv-item:hover .conv-menu-btn,.conv-menu-btn:focus{opacity:1}
+  .conv-menu-btn:hover{background:#ffffff1f}
+  @media (hover:none){ .conv-menu-btn{opacity:.85} }
+  .list-hint{padding:8px 16px 12px;font-size:12.5px;color:#9FBAB4;line-height:1.8}
+
+  .ctx-menu{
+    position:fixed;z-index:70;background:#fff;color:var(--text);border-radius:12px;padding:6px;min-width:200px;
+    box-shadow:0 14px 34px -8px #0007;display:none;
+  }
+  .ctx-menu button{
+    display:block;width:100%;text-align:start;border:0;background:none;padding:9px 12px;border-radius:8px;
+    font-family:inherit;font-size:13.5px;cursor:pointer;color:inherit;
+  }
+  .ctx-menu button:hover{background:#F0EDE4}
+  .ctx-menu button.danger{color:var(--danger)}
+
+  .pick-item{display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--line);font-size:14px}
+  .pick-item:last-child{border-bottom:0}
+  .pick-item:hover{background:#F6F3EC}
+  .pick-item.selected{background:#E1F1ED}
+  .pick-item.disabled{opacity:.55;cursor:default}
+  .pick-item .avatar{width:32px;height:32px;font-size:13px}
+  .pick-item .tag{margin-inline-start:auto;font-size:11.5px;color:var(--text-dim)}
+  .pick-hint{padding:14px;text-align:center;color:var(--text-dim);font-size:13px;line-height:1.8}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translate(-50%,16px);background:var(--ink);color:#fff;
+    padding:10px 16px;border-radius:10px;font-size:13.5px;opacity:0;pointer-events:none;transition:.2s;z-index:90;max-width:90vw;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .toast.err{background:var(--danger)}
+
+  /* ------------ Modal ------------ */
+  .modal-back{
+    position:fixed;inset:0;background:#0A1A20AA;display:none;align-items:center;justify-content:center;z-index:50;
+  }
+  .modal{
+    background:#fff;border-radius:16px;padding:26px;width:100%;max-width:380px;box-shadow:0 30px 60px -20px #0009;
+  }
+  .modal h3{margin:0 0 4px;font-size:17px}
+  .modal p.sub{margin:0 0 16px;color:var(--text-dim);font-size:13px}
+  .user-pick{max-height:220px;overflow-y:auto;border:1px solid var(--line);border-radius:10px;margin-bottom:16px}
+  .user-pick label{
+    display:flex;align-items:center;gap:10px;padding:9px 12px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--line);
+  }
+  .user-pick label:last-child{border-bottom:0}
+  .modal-actions{display:flex;gap:10px}
+  .btn-ghost{
+    flex:1;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:#fff;
+    font-family:inherit;font-weight:600;cursor:pointer;
+  }
+
+  @media (max-width:760px){
+    .sidebar{position:fixed;inset:0 auto 0 0;width:86vw;max-width:320px;z-index:30;transform:translateX(105%);transition:.2s;}
+    html[dir="rtl"] .sidebar{transform:translateX(105%)}
+    .sidebar.open{transform:translateX(0)}
+    .shell{position:relative}
+    .back-btn{display:inline-flex !important}
+  }
+  .back-btn{display:none}
+</style>
+</head>
+<body>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-brand"><span class="dot"></span><span>گپ‌یار</span></div>
+    <p class="auth-sub">پیام‌رسان ساده روی Supabase</p>
+
+    <div class="tabs">
+      <button id="tab-login" class="active">ورود</button>
+      <button id="tab-signup">ثبت‌نام</button>
+    </div>
+
+    <form id="form-login">
+      <div class="field"><label>ایمیل</label><input type="email" id="login-email" required></div>
+      <div class="field"><label>رمز عبور</label><input type="password" id="login-pass" required></div>
+      <button class="btn-primary" type="submit">ورود</button>
+    </form>
+
+    <form id="form-signup" style="display:none">
+      <div class="field"><label>نام نمایشی</label><input type="text" id="signup-username" required></div>
+      <div class="field"><label>ایمیل</label><input type="email" id="signup-email" required></div>
+      <div class="field"><label>رمز عبور</label><input type="password" id="signup-pass" required minlength="6"></div>
+      <button class="btn-primary" type="submit">ساخت حساب</button>
+    </form>
+
+    <div id="auth-msg" class="auth-msg"></div>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="app">
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <button class="me-btn" id="btn-my-profile" title="ویرایش پروفایل">
+          <div class="avatar" id="me-avatar">?</div>
+          <div style="min-width:0">
+            <div class="me-name" id="me-name">—</div>
+            <div class="me-status">آنلاین</div>
+          </div>
+        </button>
+        <div style="display:flex;gap:8px">
+          <button class="icon-btn" id="btn-add-contact" title="افزودن مخاطب">➕</button>
+          <button class="icon-btn" id="btn-new-group" title="ساخت گروه یا کانال">👥</button>
+          <button class="icon-btn" id="btn-logout" title="خروج">⏻</button>
+        </div>
+      </div>
+      <div class="notify-banner" id="notify-banner" style="display:none">
+        <span>🔔 برای اعلان و صدای پیام جدید، اعلان‌ها را فعال کنید</span>
+        <button id="notify-enable" type="button">فعال‌سازی</button>
+      </div>
+      <div class="sidebar-search"><input type="text" id="user-search" placeholder="جستجو در مخاطبین، گروه‌ها و کانال‌ها…"></div>
+      <div class="sidebar-section-title">گفتگوها</div>
+      <div class="list" id="conv-list"></div>
+    </aside>
+
+    <main class="main">
+      <div class="chat-header" id="chat-header" style="display:none">
+        <button class="icon-btn back-btn" id="btn-back">→</button>
+        <div class="avatar" id="chat-avatar">?</div>
+        <div>
+          <div class="chat-title" id="chat-title">—</div>
+          <div class="chat-sub" id="chat-sub"></div>
+        </div>
+      </div>
+
+      <div class="messages" id="messages">
+        <div class="empty-state">
+          <div class="big">💬</div>
+          <div>یک مخاطب یا گروه را از فهرست کناری انتخاب کنید تا گفتگو را شروع کنید.</div>
+        </div>
+      </div>
+
+      <div class="attach-preview" id="attach-preview">
+        📎 <span id="attach-name"></span>
+        <button id="attach-clear">حذف</button>
+      </div>
+
+      <div class="composer" id="composer" style="display:none">
+        <button class="round-btn file" id="btn-attach" title="پیوست فایل">📎</button>
+        <input type="file" id="file-input">
+        <textarea id="msg-input" rows="1" placeholder="پیامی بنویسید…"></textarea>
+        <button class="round-btn send" id="btn-send" title="ارسال">➤</button>
+      </div>
+      <div class="channel-readonly" id="channel-readonly" style="display:none">
+        🔒 فقط سازنده‌ی این کانال می‌تواند پیام ارسال کند
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ===================== NEW GROUP / CHANNEL MODAL ===================== -->
+<div class="modal-back" id="group-modal">
+  <div class="modal">
+    <h3 id="group-modal-title">گفتگوی جدید</h3>
+    <p class="sub" id="group-modal-sub">نوع، نام و اعضا را مشخص کنید</p>
+
+    <div class="tabs" style="margin-bottom:18px">
+      <button type="button" id="type-tab-group" class="active">گروه</button>
+      <button type="button" id="type-tab-channel">کانال</button>
+    </div>
+
+    <div class="avatar-upload" id="group-avatar-upload">
+      <span id="group-avatar-placeholder">📷</span>
+      <img id="group-avatar-img" style="display:none">
+    </div>
+    <input type="file" id="group-avatar-input" accept="image/*" style="display:none">
+
+    <div class="field"><label id="group-name-label">نام گروه</label><input type="text" id="group-name"></div>
+    <div class="user-pick" id="group-user-pick"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="group-cancel">انصراف</button>
+      <button class="btn-primary" id="group-create" style="margin-top:0">ساخت</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== EDIT PROFILE MODAL ===================== -->
+<div class="modal-back" id="profile-modal">
+  <div class="modal">
+    <h3>ویرایش پروفایل</h3>
+    <p class="sub">عکس و نام نمایشی خود را تغییر دهید</p>
+
+    <div class="avatar-upload" id="profile-avatar-upload">
+      <span id="profile-avatar-placeholder">📷</span>
+      <img id="profile-avatar-img" style="display:none">
+    </div>
+    <input type="file" id="profile-avatar-input" accept="image/*" style="display:none">
+
+    <div class="field"><label>نام نمایشی</label><input type="text" id="profile-username"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="profile-cancel">انصراف</button>
+      <button class="btn-primary" id="profile-save" style="margin-top:0">ذخیره</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== ADD CONTACT MODAL ===================== -->
+<div class="modal-back" id="contact-modal">
+  <div class="modal">
+    <h3>افزودن مخاطب</h3>
+    <p class="sub">نام نمایشی فرد را جستجو کنید و او را به مخاطبین خود اضافه کنید</p>
+    <div class="field"><label>نام نمایشی</label><input type="text" id="contact-search" autocomplete="off" placeholder="مثلاً: علی"></div>
+    <div class="user-pick" id="contact-results"></div>
+    <div class="field" id="contact-alias-field" style="display:none">
+      <label>نام دلخواه برای این مخاطب (اختیاری)</label>
+      <input type="text" id="contact-alias" maxlength="60" autocomplete="off">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" id="contact-cancel" type="button">انصراف</button>
+      <button class="btn-primary" id="contact-add" type="button" style="margin-top:0" disabled>افزودن به مخاطبین</button>
+    </div>
+  </div>
+</div>
+
+<div class="ctx-menu" id="ctx-menu"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   کلید و آدرس Supabase از فایل config.js خوانده می‌شود
+   (config.js داخل Git/GitHub نمی‌رود — .gitignore را ببینید)
+========================================================= */
+const $ = (sel) => document.querySelector(sel);
+const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; };
+const initials = (name) => (name||"?").trim().slice(0,1).toUpperCase();
+const escapeHtml = (s) => (s||"").replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const CFG = window.APP_CONFIG || {};
+const BUCKET = CFG.BUCKET || 'chat-files';
+const MAX_FILE_MB = 20;
+const APP_TITLE = 'گپ‌یار | پیام‌رسان';
+
+function configProblem(){
+  const url = CFG.SUPABASE_URL || '', key = CFG.SUPABASE_ANON_KEY || '';
+  if(!url || !key || /YOUR-/i.test(url + key)){
+    return 'فایل config.js پیدا نشد یا مقداردهی نشده است. فایل config.example.js را با نام config.js کپی کنید و آدرس و کلید anon را در آن بگذارید.';
+  }
+  if(/^sb_secret_/.test(key)){
+    return 'کلید secret هرگز نباید در مرورگر استفاده شود. کلید anon/publishable را در config.js بگذارید.';
+  }
+  return null;
+}
+const cfgError = configProblem();
+const sb = cfgError ? null : supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+
+/* ---------------------- state ---------------------- */
+let me = null;            // { id, username, avatar_url }
+let contacts = [];        // مخاطبین من: [{contact_id, alias, profile}]
+const contactMap = new Map();   // contact_id -> همان ردیف
+const strangers = new Map();    // فرستنده‌هایی که مخاطب من نیستند: id -> profile
+const profileCache = new Map(); // id -> profile
+let allGroups = [];       // گروه‌ها و کانال‌های من (جدول groups؛ فیلد type)
+let current = null;       // { type:'dm'|'group'|'channel', id, title, avatarUrl, createdBy }
+let realtimeChannel = null;
+let pendingFile = null;
+let newConvType = 'group';
+let pendingGroupAvatarFile = null;
+let pendingProfileAvatarFile = null;
+
+let msgState = new Map();       // message id -> { m, receipts: [{user_id, delivered_at, read_at}] }
+let orphanReceipts = new Map(); // رسیدهایی که قبل از رندر پیام رسیده‌اند
+let groupRecipients = 0;        // تعداد اعضای دیگر گروه فعلی
+let loadToken = 0;
+let bootedFor = null;
+const unread = {};              // 'dm:<id>' | 'group:<id>' | 'channel:<id>' -> count
+
+/* ---------------------- helpers ---------------------- */
+// فقط آدرس‌های همین پروژه‌ی Supabase مجاز است (جلوگیری از javascript: و آدرس‌های مخرب)
+function safeUrl(u){
+  if(!u || !CFG.SUPABASE_URL) return null;
+  try{
+    const x = new URL(u), base = new URL(CFG.SUPABASE_URL);
+    return ((x.protocol==='https:' || x.protocol==='http:') && x.origin===base.origin) ? x.href : null;
+  }catch(e){ return null; }
+}
+
+function linkify(text){
+  const urlRe = /((https?:\/\/|www\.)[^\s<]+)/gi;
+  return escapeHtml(text).replace(urlRe, (m) => {
+    const href = m.startsWith('http') ? m : 'https://' + m;
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${m}</a>`;
+  });
+}
+
+function convKey(c){ return c.type + ':' + c.id; }
+const convFallback = (c) => c.type==='channel' ? '📣' : c.type==='group' ? '👥' : initials(c.title);
+const convLabel = (c) => c.type==='channel' ? 'کانال' : c.type==='group' ? 'گروه' : 'گفتگوی خصوصی';
+
+function avatarNode(url, fallback){
+  const box = el('div','avatar');
+  const u = safeUrl(url);
+  if(u){ const img = document.createElement('img'); img.src = u; img.alt = ''; box.appendChild(img); }
+  else { box.textContent = fallback; }
+  return box;
+}
+function setAvatar(holder, url, fallback){
+  holder.innerHTML = '';
+  const u = safeUrl(url);
+  if(u){ const img = document.createElement('img'); img.src = u; img.alt=''; holder.appendChild(img); }
+  else { holder.textContent = fallback; }
+}
+
+// نام فایل در Storage فقط انگلیسی/عدد (نام فارسی باعث خطای InvalidKey می‌شود)؛ نام اصلی در دیتابیس می‌ماند
+function storagePath(file, kind){
+  const ext = (file.name.split('.').pop() || '').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,8);
+  const rand = Math.random().toString(36).slice(2,8);
+  return `${me.id}/${kind}/${Date.now()}_${rand}${ext ? '.'+ext : ''}`;
+}
+async function uploadToStorage(file, kind){
+  if(file.size > MAX_FILE_MB*1024*1024) throw new Error(`حجم فایل نباید بیشتر از ${MAX_FILE_MB} مگابایت باشد.`);
+  const path = storagePath(file, kind);
+  const { error } = await sb.storage.from(BUCKET).upload(path, file, { contentType: file.type || undefined, upsert:false });
+  if(error) throw error;
+  return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+}
+function assertImage(file){
+  if(!file.type.startsWith('image/')) throw new Error('فقط فایل تصویری برای عکس پروفایل مجاز است.');
+  if(file.size > 5*1024*1024) throw new Error('حجم عکس پروفایل نباید بیشتر از ۵ مگابایت باشد.');
+}
+
+/* ---------------------- sound + notifications ---------------------- */
+let audioCtx = null;
+function unlockAudio(){
+  try{
+    if(!audioCtx){ audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+  }catch(e){}
+}
+// مرورگرها تا اولین کلیک/لمس کاربر اجازه‌ی پخش صدا نمی‌دهند
+['click','keydown','touchstart'].forEach(ev => document.addEventListener(ev, unlockAudio, { passive:true }));
+
+function playPing(){
+  try{
+    if(!audioCtx || audioCtx.state !== 'running') return;
+    const t = audioCtx.currentTime;
+    [[880, 0], [1318.5, 0.13]].forEach(([freq, delay]) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t + delay);
+      g.gain.exponentialRampToValueAtTime(0.28, t + delay + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + delay + 0.4);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t + delay); o.stop(t + delay + 0.45);
+    });
+  }catch(e){}
+}
+
+const notifySupported = 'Notification' in window;
+function updateNotifyBanner(){
+  const show = notifySupported && Notification.permission === 'default';
+  $('#notify-banner').style.display = show ? 'flex' : 'none';
+}
+$('#notify-enable').onclick = async () => {
+  unlockAudio();
+  try{ await Notification.requestPermission(); }catch(e){}
+  updateNotifyBanner();
+  setTimeout(playPing, 150); // پخش آزمایشی صدا
+};
+
+function previewText(m){
+  if(m.content) return m.content.length > 120 ? m.content.slice(0,120) + '…' : m.content;
+  return (m.file_type || '').startsWith('image/') ? '🖼 عکس' : '📎 فایل';
+}
+
+function notifyIncoming(title, body, conv){
+  playPing();
+  if(navigator.vibrate){ try{ navigator.vibrate([150, 80, 150]); }catch(e){} }
+  if(notifySupported && Notification.permission === 'granted' && (document.hidden || !document.hasFocus())){
+    try{
+      const n = new Notification(title, { body, icon: safeUrl(conv.avatarUrl) || undefined, tag: convKey(conv) });
+      n.onclick = () => { window.focus(); openConversation(conv); n.close(); };
+    }catch(e){ /* بعضی مرورگرهای موبایل اجازه‌ی این روش را نمی‌دهند */ }
+  }
+}
+
+/* ---------------------- unread badges ---------------------- */
+const totalUnread = () => Object.values(unread).reduce((a,b) => a+b, 0);
+function updateTitleBadge(){
+  const n = totalUnread();
+  document.title = (n ? `(${n}) ` : '') + APP_TITLE;
+}
+function bumpUnread(key){ unread[key] = (unread[key] || 0) + 1; updateTitleBadge(); renderConvList(); }
+
+async function loadUnreadCounts(){
+  Object.keys(unread).forEach(k => delete unread[k]);
+  const { data, error } = await sb.rpc('unread_counts');
+  if(error){ console.warn('unread_counts:', error.message); return; }
+  (data || []).forEach(r => {
+    const key = r.o_peer ? 'dm:' + r.o_peer : 'group:' + r.o_group;
+    unread[key] = Number(r.o_cnt);
+  });
+}
+
+/* ---------------------- AUTH UI ---------------------- */
+if(cfgError){
+  $('#form-login').style.display = 'none';
+  $('.tabs').style.display = 'none';
+  const box = $('#auth-msg'); box.textContent = cfgError; box.className = 'auth-msg err';
+}
+
+$('#tab-login').onclick = () => setTab('login');
+$('#tab-signup').onclick = () => setTab('signup');
+function setTab(which){
+  $('#tab-login').classList.toggle('active', which==='login');
+  $('#tab-signup').classList.toggle('active', which==='signup');
+  $('#form-login').style.display = which==='login' ? 'block':'none';
+  $('#form-signup').style.display = which==='signup' ? 'block':'none';
+  $('#auth-msg').textContent = '';
+}
+
+function showAuthMsg(msg, ok=false){
+  const box = $('#auth-msg');
+  box.textContent = msg;
+  box.className = 'auth-msg ' + (ok ? 'ok':'err');
+}
+
+$('#form-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if(!sb) return;
+  showAuthMsg('در حال ورود…', true);
+  const { error } = await sb.auth.signInWithPassword({
+    email: $('#login-email').value.trim(),
+    password: $('#login-pass').value
+  });
+  if(error){ showAuthMsg(translateErr(error.message)); return; }
+  showAuthMsg('');
+});
+
+$('#form-signup').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  if(!sb) return;
+  showAuthMsg('در حال ساخت حساب…', true);
+  const username = $('#signup-username').value.trim();
+  const { error } = await sb.auth.signUp({
+    email: $('#signup-email').value.trim(),
+    password: $('#signup-pass').value,
+    options: { data: { username } }
+  });
+  if(error){ showAuthMsg(translateErr(error.message)); return; }
+  showAuthMsg('حساب ساخته شد. اگر تأیید ایمیل فعال باشد، صندوق ایمیل خود را بررسی کنید.', true);
+});
+
+function translateErr(m){
+  if(/already registered/i.test(m)) return 'این ایمیل قبلاً ثبت شده است.';
+  if(/invalid login/i.test(m)) return 'ایمیل یا رمز عبور نادرست است.';
+  if(/password/i.test(m)) return 'رمز عبور باید حداقل ۶ کاراکتر باشد.';
+  return m;
+}
+
+$('#btn-logout').onclick = async () => { await sb.auth.signOut(); };
+
+function resetState(){
+  me = null; current = null; contacts = []; allGroups = [];
+  contactMap.clear(); strangers.clear(); profileCache.clear();
+  msgState = new Map(); orphanReceipts = new Map();
+  Object.keys(unread).forEach(k => delete unread[k]);
+  document.title = APP_TITLE;
+  if(realtimeChannel){ sb.removeChannel(realtimeChannel); realtimeChannel = null; }
+}
+
+if(sb){
+  sb.auth.onAuthStateChange((event, session) => {
+    if(session && session.user){
+      // این رویداد با هر بازگشت به تب دوباره می‌آید؛ فقط یک‌بار برای هر کاربر راه‌اندازی کن
+      if(bootedFor === session.user.id) return;
+      bootedFor = session.user.id;
+      setTimeout(() => boot(session.user), 0);
+    } else {
+      bootedFor = null;
+      resetState();
+      $('#auth-screen').style.display = 'flex';
+      $('#app').style.display = 'none';
+    }
+  });
+}
+
+/* ---------------------- BOOT ---------------------- */
+async function boot(authUser){
+  let { data: profile } = await sb.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
+  if(!profile){
+    const uname = authUser.user_metadata?.username || authUser.email.split('@')[0];
+    const { data: created } = await sb.from('profiles').insert({ id: authUser.id, username: uname }).select().maybeSingle();
+    profile = created;
+  }
+  if(!profile){ alert('ساخت پروفایل ممکن نشد. دوباره وارد شوید.'); await sb.auth.signOut(); return; }
+  me = profile;
+
+  $('#auth-screen').style.display = 'none';
+  $('#app').style.display = 'block';
+  renderMeHeader();
+  updateNotifyBanner();
+
+  await loadContactsAndGroups();
+  await loadUnreadCounts();
+  await loadStrangers();
+  renderConvList();
+  updateTitleBadge();
+  subscribeRealtime();
+
+  // پیام‌هایی که وقتی آفلاین بودم برایم آمده‌اند «رسیده» حساب شوند (تیک دوم فرستنده)
+  const { error } = await sb.rpc('mark_delivered');
+  if(error) console.warn('mark_delivered:', error.message);
+}
+
+function renderMeHeader(){
+  $('#me-name').textContent = me.username;
+  setAvatar($('#me-avatar'), me.avatar_url, initials(me.username));
+}
+
+const contactDisplay = (c) => c.alias || c.profile.username;
+const displayNameFor = (id, fallbackName) => {
+  const c = contactMap.get(id);
+  return c ? contactDisplay(c) : (fallbackName || 'کاربر');
+};
+function dmConv(c){
+  return { type:'dm', id:c.contact_id, title:contactDisplay(c), username:c.profile.username, avatarUrl:c.profile.avatar_url, isContact:true };
+}
+function strangerConv(p){
+  return { type:'dm', id:p.id, title:p.username, username:p.username, avatarUrl:p.avatar_url, isContact:false };
+}
+
+async function getProfile(id){
+  if(profileCache.has(id)) return profileCache.get(id);
+  const { data } = await sb.from('profiles').select('id, username, avatar_url').eq('id', id).maybeSingle();
+  if(data) profileCache.set(id, data);
+  return data || null;
+}
+
+async function loadContacts(){
+  const { data, error } = await sb.from('contacts')
+    .select('contact_id, alias, profiles:contact_id(id, username, avatar_url)')
+    .eq('owner_id', me.id);
+  if(error){ console.warn('contacts:', error.message); return; }
+  contacts = (data || [])
+    .filter(r => r.profiles)
+    .map(r => ({ contact_id:r.contact_id, alias:r.alias, profile:r.profiles }));
+  contacts.sort((a,b) => contactDisplay(a).localeCompare(contactDisplay(b), 'fa'));
+  contactMap.clear();
+  contacts.forEach(c => { contactMap.set(c.contact_id, c); profileCache.set(c.contact_id, c.profile); });
+}
+
+// فرستنده‌هایی که پیام خوانده‌نشده دارند ولی در مخاطبین من نیستند، در فهرست دیده شوند
+async function loadStrangers(){
+  strangers.clear();
+  const ids = Object.keys(unread).filter(k => k.startsWith('dm:')).map(k => k.slice(3)).filter(id => !contactMap.has(id));
+  if(!ids.length) return;
+  const { data } = await sb.from('profiles').select('id, username, avatar_url').in('id', ids);
+  (data || []).forEach(p => { strangers.set(p.id, p); profileCache.set(p.id, p); });
+}
+
+async function loadContactsAndGroups(){
+  await loadContacts();
+
+  const { data: memberships } = await sb.from('group_members').select('group_id').eq('user_id', me.id);
+  const groupIds = (memberships||[]).map(m=>m.group_id);
+  if(groupIds.length){
+    const { data: groups } = await sb.from('groups').select('*').in('id', groupIds);
+    allGroups = groups || [];
+  } else {
+    allGroups = [];
+  }
+}
+
+/* ---------------------- conversation list ---------------------- */
+function renderConvList(){
+  const list = $('#conv-list');
+  list.innerHTML = '';
+  const q = $('#user-search').value.trim().toLowerCase();
+  const has = (s) => (s || '').toLowerCase().includes(q);
+
+  const channels = allGroups.filter(g => g.type==='channel' && has(g.name));
+  const groups = allGroups.filter(g => g.type!=='channel' && has(g.name));
+  const cts = contacts.filter(c => has(contactDisplay(c)) || has(c.profile.username));
+  const strs = [...strangers.values()].filter(p => has(p.username));
+
+  if(channels.length){
+    list.appendChild(el('div','sidebar-section-title','کانال‌ها'));
+    channels.forEach(g => list.appendChild(convItem({
+      type:'channel', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by
+    })));
+  }
+
+  if(groups.length){
+    list.appendChild(el('div','sidebar-section-title','گروه‌ها'));
+    groups.forEach(g => list.appendChild(convItem({
+      type:'group', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by
+    })));
+  }
+
+  if(cts.length || !q){
+    list.appendChild(el('div','sidebar-section-title','مخاطبان'));
+    if(!cts.length) list.appendChild(el('div','list-hint','هنوز مخاطبی ندارید. با دکمه‌ی ➕ بالا، مخاطب اضافه کنید.'));
+    cts.forEach(c => list.appendChild(convItem(dmConv(c))));
+  }
+
+  if(strs.length){
+    list.appendChild(el('div','sidebar-section-title','پیام از افراد ذخیره‌نشده'));
+    strs.forEach(p => list.appendChild(convItem(strangerConv(p))));
+  }
+}
+
+function convItem(conv){
+  const item = el('div','conv-item');
+  if(current && current.type===conv.type && current.id===conv.id) item.classList.add('active');
+  const av = avatarNode(conv.avatarUrl, convFallback(conv));
+  const meta = el('div','conv-meta');
+  meta.appendChild(el('div','conv-name', escapeHtml(conv.title)));
+
+  let sub = convLabel(conv);
+  if(conv.type === 'dm'){
+    if(!conv.isContact) sub = 'مخاطب ذخیره‌نشده';
+    else if(conv.username && conv.username !== conv.title) sub = conv.username;
+  }
+  meta.appendChild(el('div','conv-sub', escapeHtml(sub)));
+  item.appendChild(av); item.appendChild(meta);
+
+  const n = unread[convKey(conv)];
+  if(n) item.appendChild(el('span','unread-badge', n > 99 ? '99+' : String(n)));
+
+  const mb = el('button','conv-menu-btn','⋯');
+  mb.type = 'button'; mb.title = 'گزینه‌ها';
+  mb.onclick = (e) => { e.stopPropagation(); const r = mb.getBoundingClientRect(); showCtxMenu(conv, r.left, r.bottom + 4); };
+  item.appendChild(mb);
+  item.oncontextmenu = (e) => { e.preventDefault(); showCtxMenu(conv, e.clientX, e.clientY); };
+
+  item.onclick = () => openConversation(conv);
+  return item;
+}
+
+$('#user-search').addEventListener('input', renderConvList);
+
+/* ---------------------- open conversation ---------------------- */
+async function openConversation(conv){
+  current = conv;
+  msgState = new Map(); orphanReceipts = new Map();
+  delete unread[convKey(conv)];
+  updateTitleBadge();
+  renderConvList();
+  document.getElementById('sidebar').classList.remove('open');
+
+  $('#chat-header').style.display = 'flex';
+  setAvatar($('#chat-avatar'), conv.avatarUrl, convFallback(conv));
+  $('#chat-title').textContent = conv.title;
+  $('#chat-sub').textContent = convLabel(conv);
+
+  // در کانال فقط سازنده می‌تواند پیام بفرستد
+  const canSend = conv.type !== 'channel' || conv.createdBy === me.id;
+  $('#composer').style.display = canSend ? 'flex' : 'none';
+  $('#channel-readonly').style.display = canSend ? 'none' : 'block';
+
+  await loadMessages();
+  markReadCurrent();
+}
+
+async function loadMessages(){
+  const token = ++loadToken;
+  const conv = current;
+  const box = $('#messages');
+  box.innerHTML = '';
+  msgState = new Map(); orphanReceipts = new Map();
+  groupRecipients = 0;
+
+  let query = sb.from('messages')
+    .select('*, profiles:sender_id(username), message_receipts(user_id, delivered_at, read_at)')
+    .order('created_at', { ascending: false })
+    .limit(200);
+
+  if(conv.type === 'dm'){
+    query = query.or(
+      `and(sender_id.eq.${me.id},receiver_id.eq.${conv.id}),and(sender_id.eq.${conv.id},receiver_id.eq.${me.id})`
+    );
+  } else {
+    query = query.eq('group_id', conv.id);
+  }
+
+  const reqs = [query];
+  if(conv.type === 'group'){
+    reqs.push(sb.from('group_members').select('user_id', { count:'exact', head:true }).eq('group_id', conv.id));
+  }
+  const [res, cnt] = await Promise.all(reqs);
+  if(token !== loadToken) return; // کاربر وسط بارگذاری گفتگوی دیگری را باز کرد
+
+  if(cnt && !cnt.error) groupRecipients = Math.max(0, (cnt.count || 1) - 1);
+  if(res.error){
+    box.appendChild(el('div','empty-state', 'خطا در بارگذاری پیام‌ها.'));
+    console.warn(res.error.message);
+    return;
+  }
+  (res.data || []).reverse().forEach(m => renderMessage(m, m.message_receipts));
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ---------------------- ticks ---------------------- */
+function statusFor(entry){
+  const m = entry.m;
+  if(!current || m.sender_id !== me.id || current.type === 'channel') return null;
+  const rs = entry.receipts || [];
+  if(current.type === 'dm'){
+    if(rs.some(r => r.read_at)) return 'read';
+    if(rs.length) return 'delivered';
+    return 'sent';
+  }
+  // گروه: وقتی همه‌ی اعضای دیگر دریافت/خوانده باشند
+  if(groupRecipients > 0){
+    if(rs.filter(r => r.read_at).length >= groupRecipients) return 'read';
+    if(rs.length >= groupRecipients) return 'delivered';
+  }
+  return 'sent';
+}
+
+function tickHtml(status){
+  if(!status) return '';
+  const label = { sent:'ارسال شد', delivered:'به مخاطب رسید', read:'خوانده شد' }[status];
+  const one = '<path d="M1 6.5L4 9.5L10.5 3"/>';
+  const two = one + '<path d="M6.7 7.5L8.5 9.3L15 3"/>';
+  return `<span class="tick ${status}" title="${label}"><svg viewBox="0 0 16 12" aria-hidden="true">${status==='sent' ? one : two}</svg></span>`;
+}
+
+function refreshTick(mid){
+  const entry = msgState.get(mid);
+  if(!entry) return;
+  const holder = document.querySelector(`[data-mid="${mid}"] .tick-holder`);
+  if(holder) holder.innerHTML = tickHtml(statusFor(entry));
+}
+
+function upsertReceipt(arr, r){
+  const row = { user_id:r.user_id, delivered_at:r.delivered_at, read_at:r.read_at };
+  const i = arr.findIndex(x => x.user_id === r.user_id);
+  if(i >= 0) arr[i] = row; else arr.push(row);
+}
+
+function onReceipt(r){
+  if(!me || r.user_id === me.id) return; // رسیدهای خودم مهم نیستند
+  const entry = msgState.get(r.message_id);
+  if(!entry){
+    const arr = orphanReceipts.get(r.message_id) || [];
+    upsertReceipt(arr, r);
+    orphanReceipts.set(r.message_id, arr);
+    return;
+  }
+  upsertReceipt(entry.receipts, r);
+  refreshTick(r.message_id);
+}
+
+/* ---------------------- render message ---------------------- */
+function renderMessage(m, receipts){
+  const box = $('#messages');
+  if(box.querySelector('.empty-state')) box.innerHTML = '';
+  if(msgState.has(m.id)) return; // جلوگیری از تکرار (رقابت بین بارگذاری و realtime)
+
+  const rs = (receipts || orphanReceipts.get(m.id) || []).slice();
+  orphanReceipts.delete(m.id);
+  const entry = { m, receipts: rs };
+  msgState.set(m.id, entry);
+
+  const mine = m.sender_id === me.id;
+  const row = el('div', 'bubble-row ' + (mine?'me':'them'));
+  row.dataset.mid = m.id;
+  const bubble = el('div','bubble');
+
+  if(!mine && (current.type==='group' || current.type==='channel')){
+    bubble.appendChild(el('span','sender-tag', escapeHtml(displayNameFor(m.sender_id, m.profiles?.username))));
+  }
+  if(m.content){
+    bubble.appendChild(el('div', null, linkify(m.content)));
+  }
+  const fileHref = safeUrl(m.file_url);
+  if(fileHref){
+    if((m.file_type||'').startsWith('image/')){
+      const img = el('img','msg-image');
+      img.src = fileHref;
+      img.onclick = () => window.open(fileHref, '_blank', 'noopener');
+      bubble.appendChild(img);
+    } else {
+      const a = el('a','file-chip', `📄 ${escapeHtml(m.file_name||'فایل')}`);
+      a.href = fileHref; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      bubble.appendChild(a);
+    }
+  }
+
+  const time = new Date(m.created_at).toLocaleTimeString('fa-IR', {hour:'2-digit', minute:'2-digit'});
+  const timeRow = el('div','bubble-time', `<span class="t">${time}</span><span class="tick-holder"></span>`);
+  if(mine) timeRow.querySelector('.tick-holder').innerHTML = tickHtml(statusFor(entry));
+  bubble.appendChild(timeRow);
+
+  row.appendChild(bubble);
+  box.appendChild(row);
+  box.scrollTop = box.scrollHeight;
+}
+
+/* ---------------------- read receipts (send) ---------------------- */
+async function markReadCurrent(){
+  if(!current || current.type === 'channel' || !me) return;
+  if(document.visibilityState !== 'visible' || !document.hasFocus()) return;
+  const args = current.type === 'dm'
+    ? { p_peer: current.id, p_group: null }
+    : { p_peer: null, p_group: current.id };
+  const { error } = await sb.rpc('mark_conversation_read', args);
+  if(error) console.warn('mark_conversation_read:', error.message);
+}
+document.addEventListener('visibilitychange', markReadCurrent);
+window.addEventListener('focus', markReadCurrent);
+
+/* ---------------------- REALTIME ---------------------- */
+function subscribeRealtime(){
+  if(realtimeChannel){ sb.removeChannel(realtimeChannel); }
+  realtimeChannel = sb.channel('app-realtime')
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'messages' }, p => onNewMessage(p.new))
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'message_receipts' }, p => onReceipt(p.new))
+    .on('postgres_changes', { event:'UPDATE', schema:'public', table:'message_receipts' }, p => onReceipt(p.new))
+    .on('postgres_changes', { event:'DELETE', schema:'public', table:'groups' }, p => onGroupDeleted(p.old?.id))
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'group_members' }, p => {
+      if(me && p.new.user_id === me.id) refreshLists();
+    })
+    .subscribe();
+}
+
+async function senderName(id){
+  const c = contactMap.get(id);
+  if(c) return contactDisplay(c);
+  const p = await getProfile(id);
+  return p?.username || 'کاربر';
+}
+
+async function convForMessage(m){
+  if(m.group_id){
+    let g = allGroups.find(x => x.id === m.group_id);
+    if(!g){ await loadContactsAndGroups(); renderConvList(); g = allGroups.find(x => x.id === m.group_id); }
+    if(!g) return null;
+    return { type: g.type==='channel' ? 'channel' : 'group', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by };
+  }
+  const c = contactMap.get(m.sender_id);
+  if(c) return dmConv(c);
+  const p = strangers.get(m.sender_id) || await getProfile(m.sender_id);
+  if(!p) return null;
+  if(!strangers.has(p.id)){ strangers.set(p.id, p); renderConvList(); }
+  return strangerConv(p);
+}
+
+async function onNewMessage(m){
+  if(!me) return;
+  const mine = m.sender_id === me.id;
+  const inCurrent = !!current && (
+    (current.type === 'dm' && ((mine && m.receiver_id === current.id) || (!mine && m.sender_id === current.id))) ||
+    ((current.type === 'group' || current.type === 'channel') && m.group_id === current.id)
+  );
+
+  if(inCurrent){
+    if(!mine && m.group_id) m.profiles = { username: await senderName(m.sender_id) };
+    renderMessage(m);
+  }
+  if(mine) return;
+
+  // ---- پیام تازه از طرف دیگران ----
+  const conv = await convForMessage(m);
+  if(!conv) return;
+  const viewing = inCurrent && document.visibilityState === 'visible' && document.hasFocus();
+
+  if(conv.type !== 'channel'){
+    if(viewing){
+      markReadCurrent(); // هم «رسیده» هم «خوانده شد»
+    } else {
+      sb.rpc('mark_delivered', { p_ids: [m.id] }).then(({error}) => { if(error) console.warn(error.message); });
+    }
+  }
+  if(viewing) return;
+
+  bumpUnread(convKey(conv));
+  const sender = m.group_id ? await senderName(m.sender_id) : conv.title;
+  const title = m.group_id ? `${sender} در ${conv.title}` : sender;
+  notifyIncoming(title, previewText(m), conv);
+}
+
+/* ---------------------- sending ---------------------- */
+$('#msg-input').addEventListener('keydown', (e) => {
+  if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendMessage(); }
+});
+$('#btn-send').onclick = sendMessage;
+
+$('#btn-attach').onclick = () => $('#file-input').click();
+$('#file-input').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if(!f) return;
+  if(f.size > MAX_FILE_MB*1024*1024){
+    alert(`حجم فایل نباید بیشتر از ${MAX_FILE_MB} مگابایت باشد.`);
+    e.target.value = '';
+    return;
+  }
+  pendingFile = f;
+  $('#attach-preview').style.display = 'flex';
+  $('#attach-name').textContent = f.name;
+});
+$('#attach-clear').onclick = () => {
+  pendingFile = null;
+  $('#file-input').value = '';
+  $('#attach-preview').style.display = 'none';
+};
+
+async function sendMessage(){
+  if(!current) return;
+  const text = $('#msg-input').value.trim();
+  if(!text && !pendingFile) return;
+  if(text.length > 4000){ alert('پیام نباید بیشتر از ۴۰۰۰ کاراکتر باشد.'); return; }
+
+  $('#btn-send').disabled = true;
+  let file_url=null, file_name=null, file_type=null;
+
+  try{
+    if(pendingFile){
+      file_url = await uploadToStorage(pendingFile, 'files');
+      file_name = pendingFile.name.slice(0, 200);
+      file_type = pendingFile.type || null;
+    }
+
+    const row = { sender_id: me.id, content: text || null, file_url, file_name, file_type };
+    if(current.type==='dm') row.receiver_id = current.id;
+    else row.group_id = current.id;
+
+    const { error } = await sb.from('messages').insert(row);
+    if(error) throw error;
+
+    $('#msg-input').value = '';
+    pendingFile = null;
+    $('#file-input').value = '';
+    $('#attach-preview').style.display = 'none';
+  } catch(err){
+    alert('خطا در ارسال پیام: ' + err.message);
+  } finally {
+    $('#btn-send').disabled = false;
+  }
+}
+
+/* ---------------------- group / channel creation ---------------------- */
+function setNewConvType(type){
+  newConvType = type;
+  $('#type-tab-group').classList.toggle('active', type==='group');
+  $('#type-tab-channel').classList.toggle('active', type==='channel');
+  $('#group-modal-title').textContent = type==='channel' ? 'کانال جدید' : 'گروه جدید';
+  $('#group-modal-sub').textContent = type==='channel'
+    ? 'نام کانال و مشترکین را مشخص کنید (فقط شما پیام می‌فرستید)'
+    : 'نام گروه و اعضا را مشخص کنید';
+  $('#group-name-label').textContent = type==='channel' ? 'نام کانال' : 'نام گروه';
+  $('#group-create').textContent = type==='channel' ? 'ساخت کانال' : 'ساخت گروه';
+}
+$('#type-tab-group').onclick = () => setNewConvType('group');
+$('#type-tab-channel').onclick = () => setNewConvType('channel');
+
+$('#btn-new-group').onclick = () => {
+  const pick = $('#group-user-pick');
+  pick.innerHTML = '';
+  if(!contacts.length){
+    pick.appendChild(el('div','pick-hint','هنوز مخاطبی ندارید. اول با دکمه‌ی ➕ مخاطب اضافه کنید (می‌توانید گروه را بدون عضو هم بسازید).'));
+  }
+  contacts.forEach(c => {
+    const label = el('label', null, `<input type="checkbox" value="${c.contact_id}"> ${escapeHtml(contactDisplay(c))}`);
+    pick.appendChild(label);
+  });
+  $('#group-name').value = '';
+  pendingGroupAvatarFile = null;
+  $('#group-avatar-img').style.display = 'none';
+  $('#group-avatar-placeholder').style.display = 'block';
+  setNewConvType('group');
+  $('#group-modal').style.display = 'flex';
+};
+$('#group-cancel').onclick = () => $('#group-modal').style.display = 'none';
+
+$('#group-avatar-upload').onclick = () => $('#group-avatar-input').click();
+$('#group-avatar-input').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if(!f) return;
+  try{ assertImage(f); }catch(err){ alert(err.message); e.target.value=''; return; }
+  pendingGroupAvatarFile = f;
+  const reader = new FileReader();
+  reader.onload = () => {
+    $('#group-avatar-img').src = reader.result;
+    $('#group-avatar-img').style.display = 'block';
+    $('#group-avatar-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(f);
+});
+
+$('#group-create').onclick = async () => {
+  const name = $('#group-name').value.trim();
+  const checked = [...document.querySelectorAll('#group-user-pick input:checked')].map(i=>i.value);
+  if(!name){ alert(newConvType==='channel' ? 'نام کانال را وارد کنید.' : 'نام گروه را وارد کنید.'); return; }
+
+  $('#group-create').disabled = true;
+  try{
+    let avatar_url = null;
+    if(pendingGroupAvatarFile) avatar_url = await uploadToStorage(pendingGroupAvatarFile, 'avatars');
+
+    const { data: group, error } = await sb.from('groups')
+      .insert({ name, created_by: me.id, type: newConvType, avatar_url })
+      .select().maybeSingle();
+    if(error) throw error;
+
+    // سازنده را تریگر پایگاه‌داده عضو می‌کند؛ بقیه را اینجا اضافه می‌کنیم
+    if(checked.length){
+      const members = checked.map(uid => ({ group_id: group.id, user_id: uid }));
+      const { error: memErr } = await sb.from('group_members').insert(members);
+      if(memErr) alert('ساخته شد اما افزودن برخی اعضا با خطا مواجه شد: ' + memErr.message);
+    }
+
+    $('#group-modal').style.display = 'none';
+    await loadContactsAndGroups();
+    renderConvList();
+    openConversation({ type:newConvType, id: group.id, title: group.name, avatarUrl: group.avatar_url, createdBy: group.created_by });
+  } catch(err){
+    alert('خطا در ساخت: ' + err.message);
+  } finally {
+    $('#group-create').disabled = false;
+  }
+};
+
+/* ---------------------- edit profile ---------------------- */
+$('#btn-my-profile').onclick = () => {
+  pendingProfileAvatarFile = null;
+  $('#profile-username').value = me.username;
+  const u = safeUrl(me.avatar_url);
+  if(u){
+    $('#profile-avatar-img').src = u;
+    $('#profile-avatar-img').style.display = 'block';
+    $('#profile-avatar-placeholder').style.display = 'none';
+  } else {
+    $('#profile-avatar-img').style.display = 'none';
+    $('#profile-avatar-placeholder').style.display = 'block';
+  }
+  $('#profile-modal').style.display = 'flex';
+};
+$('#profile-cancel').onclick = () => $('#profile-modal').style.display = 'none';
+
+$('#profile-avatar-upload').onclick = () => $('#profile-avatar-input').click();
+$('#profile-avatar-input').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if(!f) return;
+  try{ assertImage(f); }catch(err){ alert(err.message); e.target.value=''; return; }
+  pendingProfileAvatarFile = f;
+  const reader = new FileReader();
+  reader.onload = () => {
+    $('#profile-avatar-img').src = reader.result;
+    $('#profile-avatar-img').style.display = 'block';
+    $('#profile-avatar-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(f);
+});
+
+$('#profile-save').onclick = async () => {
+  const username = $('#profile-username').value.trim();
+  if(!username){ alert('نام نمایشی را وارد کنید.'); return; }
+
+  $('#profile-save').disabled = true;
+  try{
+    const update = { username };
+    if(pendingProfileAvatarFile) update.avatar_url = await uploadToStorage(pendingProfileAvatarFile, 'avatars');
+    const { data, error } = await sb.from('profiles').update(update).eq('id', me.id).select().maybeSingle();
+    if(error) throw error;
+
+    me = data;
+    renderMeHeader();
+    $('#profile-modal').style.display = 'none';
+  } catch(err){
+    alert('خطا در ذخیره پروفایل: ' + err.message);
+  } finally {
+    $('#profile-save').disabled = false;
+  }
+};
+
+/* ---------------------- toast ---------------------- */
+let toastTimer = null;
+function toast(msg, isErr=false){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 3400);
+}
+
+/* ---------------------- lists / current chat ---------------------- */
+async function refreshLists(){
+  await loadContactsAndGroups();
+  renderConvList();
+}
+
+function showEmptyState(){
+  $('#messages').innerHTML =
+    '<div class="empty-state"><div class="big">💬</div><div>یک مخاطب یا گروه را از فهرست کناری انتخاب کنید تا گفتگو را شروع کنید.</div></div>';
+}
+
+function closeCurrent(){
+  loadToken++; // بارگذاری‌های در جریان نادیده گرفته شوند
+  current = null;
+  msgState = new Map(); orphanReceipts = new Map();
+  pendingFile = null;
+  $('#file-input').value = '';
+  $('#attach-preview').style.display = 'none';
+  $('#chat-header').style.display = 'none';
+  $('#composer').style.display = 'none';
+  $('#channel-readonly').style.display = 'none';
+  showEmptyState();
+  renderConvList();
+}
+
+const isCurrentDm = (id) => !!current && current.type === 'dm' && current.id === id;
+
+/* ---------------------- context menu ---------------------- */
+function menuActions(conv){
+  if(conv.type === 'dm'){
+    if(conv.isContact) return [
+      { label:'✏️ تغییر نام مخاطب', fn:() => renameContact(conv) },
+      { label:'🗑 حذف مخاطب', danger:true, fn:() => deleteContact(conv) }
+    ];
+    return [
+      { label:'➕ افزودن به مخاطبین', fn:() => addStrangerAsContact(conv) },
+      { label:'🙈 پنهان کردن از فهرست', fn:() => hideStranger(conv) }
+    ];
+  }
+  const noun = conv.type === 'channel' ? 'کانال' : 'گروه';
+  return conv.createdBy === me.id
+    ? [{ label:`🗑 حذف ${noun} برای همه`, danger:true, fn:() => deleteGroupForAll(conv) }]
+    : [{ label:`🚪 ترک ${noun}`, danger:true, fn:() => leaveGroup(conv) }];
+}
+
+function showCtxMenu(conv, x, y){
+  const menu = $('#ctx-menu');
+  menu.innerHTML = '';
+  menuActions(conv).forEach(a => {
+    const b = el('button', a.danger ? 'danger' : '', a.label);
+    b.type = 'button';
+    b.onclick = () => { hideCtxMenu(); a.fn(); };
+    menu.appendChild(b);
+  });
+  menu.style.display = 'block';
+  const r = menu.getBoundingClientRect();
+  menu.style.left = Math.max(8, Math.min(x, window.innerWidth - r.width - 8)) + 'px';
+  menu.style.top = Math.max(8, Math.min(y, window.innerHeight - r.height - 8)) + 'px';
+}
+function hideCtxMenu(){ $('#ctx-menu').style.display = 'none'; }
+document.addEventListener('click', hideCtxMenu);
+document.addEventListener('keydown', (e) => { if(e.key === 'Escape') hideCtxMenu(); });
+$('#conv-list').addEventListener('scroll', hideCtxMenu);
+
+/* ---------------------- contact actions ---------------------- */
+async function renameContact(conv){
+  const name = prompt('نام دلخواه برای این مخاطب را بنویسید (خالی = نام نمایشی خود او):', conv.title);
+  if(name === null) return;
+  const alias = name.trim();
+  const stored = (alias && alias !== conv.username) ? alias.slice(0, 60) : null;
+  const { error } = await sb.from('contacts').update({ alias: stored }).eq('owner_id', me.id).eq('contact_id', conv.id);
+  if(error){ toast('خطا در تغییر نام: ' + error.message, true); return; }
+  await refreshLists();
+  if(isCurrentDm(conv.id)){
+    const c = contactMap.get(conv.id);
+    if(c){ current = dmConv(c); $('#chat-title').textContent = current.title; renderConvList(); }
+  }
+  toast('نام مخاطب تغییر کرد');
+}
+
+async function deleteContact(conv){
+  if(!confirm(`«${conv.title}» از مخاطبین شما حذف شود؟\nتاریخچه‌ی پیام‌ها پاک نمی‌شود؛ فقط از فهرست شما برداشته می‌شود.`)) return;
+  const { error } = await sb.from('contacts').delete().eq('owner_id', me.id).eq('contact_id', conv.id);
+  if(error){ toast('خطا در حذف مخاطب: ' + error.message, true); return; }
+  delete unread['dm:' + conv.id]; updateTitleBadge();
+  if(isCurrentDm(conv.id)) closeCurrent();
+  await refreshLists();
+  toast('مخاطب حذف شد');
+}
+
+async function addStrangerAsContact(conv){
+  const { error } = await sb.from('contacts').insert({ owner_id: me.id, contact_id: conv.id });
+  if(error && error.code !== '23505'){ toast('خطا در افزودن مخاطب: ' + error.message, true); return; }
+  strangers.delete(conv.id);
+  await refreshLists();
+  if(isCurrentDm(conv.id)){ const c = contactMap.get(conv.id); if(c) current = dmConv(c); renderConvList(); }
+  toast('به مخاطبین اضافه شد');
+}
+
+function hideStranger(conv){
+  strangers.delete(conv.id);
+  delete unread['dm:' + conv.id]; updateTitleBadge();
+  if(isCurrentDm(conv.id)) closeCurrent(); else renderConvList();
+}
+
+/* ---------------------- group / channel removal ---------------------- */
+function afterGroupRemoved(id){
+  allGroups = allGroups.filter(g => g.id !== id);
+  delete unread['group:' + id]; delete unread['channel:' + id];
+  updateTitleBadge();
+  if(current && current.type !== 'dm' && current.id === id) closeCurrent(); else renderConvList();
+}
+
+async function leaveGroup(conv){
+  const noun = conv.type === 'channel' ? 'کانال' : 'گروه';
+  if(!confirm(`${noun} «${conv.title}» را ترک می‌کنید؟\nدیگر پیام‌های آن را نخواهید دید.`)) return;
+  const { data, error } = await sb.from('group_members').delete().eq('group_id', conv.id).eq('user_id', me.id).select();
+  if(error || !data || !data.length){ toast(`ترک ${noun} ممکن نشد` + (error ? ': ' + error.message : ''), true); return; }
+  afterGroupRemoved(conv.id);
+  toast(`${noun} ترک شد`);
+}
+
+async function deleteGroupForAll(conv){
+  const noun = conv.type === 'channel' ? 'کانال' : 'گروه';
+  if(!confirm(`${noun} «${conv.title}» برای همه‌ی اعضا حذف می‌شود و تمام پیام‌های آن پاک خواهد شد.\nاین کار قابل بازگشت نیست. ادامه می‌دهید؟`)) return;
+  const { data, error } = await sb.from('groups').delete().eq('id', conv.id).select();
+  if(error || !data || !data.length){ toast(`حذف ${noun} ممکن نشد` + (error ? ': ' + error.message : ''), true); return; }
+  afterGroupRemoved(conv.id);
+  toast(`${noun} حذف شد`);
+}
+
+// وقتی سازنده گروه/کانالی را حذف کند، برای بقیه‌ی اعضا هم از فهرست برداشته می‌شود
+function onGroupDeleted(id){
+  if(!id || !allGroups.some(g => g.id === id)) return;
+  const wasCurrent = !!current && current.type !== 'dm' && current.id === id;
+  afterGroupRemoved(id);
+  if(wasCurrent) toast('این گفتگو توسط سازنده‌اش حذف شد.', true);
+}
+
+/* ---------------------- add contact (search by display name) ---------------------- */
+let contactSearchTimer = null, contactSearchSeq = 0, selectedProfile = null;
+
+function updateContactAddState(){
+  $('#contact-add').disabled = !selectedProfile;
+  $('#contact-alias-field').style.display = selectedProfile ? 'block' : 'none';
+}
+
+$('#btn-add-contact').onclick = () => {
+  selectedProfile = null;
+  $('#contact-search').value = '';
+  $('#contact-alias').value = '';
+  $('#contact-results').innerHTML = '<div class="pick-hint">حداقل ۲ حرف از نام نمایشی فرد را بنویسید.</div>';
+  updateContactAddState();
+  $('#contact-modal').style.display = 'flex';
+  setTimeout(() => $('#contact-search').focus(), 50);
+};
+$('#contact-cancel').onclick = () => { $('#contact-modal').style.display = 'none'; };
+
+$('#contact-search').addEventListener('input', () => {
+  clearTimeout(contactSearchTimer);
+  contactSearchTimer = setTimeout(runContactSearch, 300);
+});
+
+async function runContactSearch(){
+  const q = $('#contact-search').value.trim();
+  const box = $('#contact-results');
+  selectedProfile = null; updateContactAddState();
+  if(q.length < 2){
+    box.innerHTML = '<div class="pick-hint">حداقل ۲ حرف از نام نمایشی فرد را بنویسید.</div>';
+    return;
+  }
+  const seq = ++contactSearchSeq;
+  const pattern = q.replace(/[\\%_]/g, (m) => '\\' + m);
+  const { data, error } = await sb.from('profiles')
+    .select('id, username, avatar_url')
+    .ilike('username', `%${pattern}%`)
+    .neq('id', me.id)
+    .order('username')
+    .limit(20);
+  if(seq !== contactSearchSeq) return; // جستجوی جدیدتری شروع شده
+  box.innerHTML = '';
+  if(error){ box.appendChild(el('div','pick-hint','خطا در جستجو: ' + escapeHtml(error.message))); return; }
+  if(!data || !data.length){ box.appendChild(el('div','pick-hint','کاربری با این نام پیدا نشد.')); return; }
+
+  data.forEach(p => {
+    const already = contactMap.has(p.id);
+    const row = el('div', 'pick-item' + (already ? ' disabled' : ''));
+    row.appendChild(avatarNode(p.avatar_url, initials(p.username)));
+    row.appendChild(el('span', null, escapeHtml(p.username)));
+    if(already) row.appendChild(el('span','tag','در مخاطبین شما'));
+    else row.onclick = () => {
+      selectedProfile = p;
+      box.querySelectorAll('.pick-item').forEach(x => x.classList.remove('selected'));
+      row.classList.add('selected');
+      $('#contact-alias').value = '';
+      $('#contact-alias').placeholder = p.username;
+      updateContactAddState();
+    };
+    box.appendChild(row);
+  });
+}
+
+$('#contact-add').onclick = async () => {
+  if(!selectedProfile) return;
+  const p = selectedProfile;
+  const alias = $('#contact-alias').value.trim();
+  const stored = (alias && alias !== p.username) ? alias.slice(0, 60) : null;
+
+  $('#contact-add').disabled = true;
+  const { error } = await sb.from('contacts').insert({ owner_id: me.id, contact_id: p.id, alias: stored });
+  if(error && error.code !== '23505'){
+    toast('خطا در افزودن مخاطب: ' + error.message, true);
+    $('#contact-add').disabled = false;
+    return;
+  }
+  profileCache.set(p.id, p);
+  strangers.delete(p.id);
+  await refreshLists();
+  $('#contact-modal').style.display = 'none';
+  toast('مخاطب اضافه شد');
+  const c = contactMap.get(p.id);
+  if(c) openConversation(dmConv(c));
+};
+
+/* ---------------------- mobile ---------------------- */
+$('#btn-back')?.addEventListener('click', () => $('#sidebar').classList.add('open'));
+
+</script>
+</body>
+</html>
