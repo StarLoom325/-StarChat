@@ -367,8 +367,63 @@
   }
   .empty-state p{margin:0;font-size:14.5px;line-height:1.7}
 
-  .bubble-row{display:flex;max-width:75%;animation: msgIn .25s cubic-bezier(.2,.8,.2,1);transition: filter .15s;}
-  .bubble-row.me{align-self:flex-end;flex-direction:row-reverse}
+  /* ---------- Bubble Row with Avatar ---------- */
+  .bubble-row{
+    display:flex;
+    align-items:flex-end;
+    gap:8px;
+    max-width:78%;
+    animation: msgIn .25s cubic-bezier(.2,.8,.2,1);
+    transition: filter .15s;
+  }
+  .bubble-row.me{
+    align-self:flex-end;
+    flex-direction:row-reverse;
+  }
+  .bubble-row.them{
+    align-self:flex-start;
+    flex-direction:row;
+  }
+
+  /* آواتار کنار پیام */
+  .bubble-avatar{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    flex:none;
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-weight:800;
+    font-size:12.5px;
+    overflow:hidden;
+    box-shadow: 0 2px 6px -2px rgba(0,0,0,.25);
+    user-select:none;
+    -webkit-user-select:none;
+    cursor:pointer;
+    transition: var(--transition);
+  }
+  .bubble-avatar:hover{ transform: scale(1.08); }
+  .bubble-avatar img{
+    width:100%;height:100%;object-fit:cover;border-radius:50%;
+  }
+  /* آواتار من: مخفی (چون سمت راست خودم هستم) */
+  .bubble-row.me .bubble-avatar{
+    visibility:hidden;
+  }
+  /* در چت خصوصی، مخاطب آواتار نداره (چون توی هدر هست) */
+  .bubble-row.no-avatar .bubble-avatar{
+    visibility:hidden;
+    width:0;
+    margin:0;
+  }
+  /* فاصله‌ی پیام‌های متوالی از یک کاربر - آواتار خالی */
+  .bubble-row.same-sender .bubble-avatar{
+    visibility:hidden;
+  }
+
   .bubble-row.holding{ filter: brightness(.9); }
   .bubble{
     padding:10px 15px;border-radius:18px;
@@ -963,7 +1018,7 @@
   @media (max-width:1024px){
     .sidebar{width:290px}
     .messages{padding:20px 22px}
-    .bubble-row{max-width:78%}
+    .bubble-row{max-width:82%}
   }
 
   @media (max-width:900px){
@@ -1226,8 +1281,9 @@
     .chat-title{ font-size: 15px; }
     .chat-sub{ font-size: 11.5px; }
 
-    .messages{ padding: 16px 12px;gap: 8px; }
-    .bubble-row{ max-width: 85%; }
+    .messages{ padding: 16px 10px;gap: 8px; }
+    .bubble-row{ max-width: 88%; gap: 6px; }
+    .bubble-avatar{ width: 30px; height: 30px; font-size: 11.5px; }
     .bubble{ font-size: 14.5px;padding: 10px 14px;line-height: 1.65; }
     .bubble img.msg-image{ max-height: 300px; }
 
@@ -1286,7 +1342,8 @@
     .conv-item .avatar{ width: 48px;height: 48px; }
     .messages{ padding: 12px 8px;gap: 6px; }
     .bubble{ font-size: 14px;padding: 9px 13px; }
-    .bubble-row{ max-width: 90%; }
+    .bubble-row{ max-width: 90%; gap: 5px; }
+    .bubble-avatar{ width: 28px; height: 28px; font-size: 11px; }
     .chat-header{ padding: 8px 10px;padding-top: calc(8px + var(--safe-top)); }
     .composer{ padding: 8px 10px;padding-bottom: calc(8px + var(--safe-bottom)); }
     .round-btn{ width: 42px;height: 42px;font-size: 15px; }
@@ -1310,6 +1367,7 @@
     .mobile-header .title{ font-size: 17px; }
     .mobile-header button{ width: 38px;height: 38px; }
     .mtab{ padding: 7px 11px;font-size: 12.5px; }
+    .bubble-avatar{ width: 26px; height: 26px; font-size: 10.5px; }
   }
 
   @media (max-width:900px) and (orientation:landscape){
@@ -1721,7 +1779,7 @@
 
 <script>
 /* =========================================================
-   THEME MANAGEMENT
+   THEME
 ========================================================= */
 const THEME_KEY = 'gapyar_theme';
 
@@ -1753,14 +1811,10 @@ mobileThemeBtn?.addEventListener('click', (e) => {
   themePanel.classList.toggle('show');
 });
 document.querySelectorAll('.theme-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    applyTheme(chip.dataset.theme);
-  });
+  chip.addEventListener('click', () => applyTheme(chip.dataset.theme));
 });
 document.addEventListener('click', (e) => {
-  if(!e.target.closest('#theme-panel') &&
-     !e.target.closest('#theme-btn') &&
-     !e.target.closest('#mobile-theme-btn')){
+  if(!e.target.closest('#theme-panel') && !e.target.closest('#theme-btn') && !e.target.closest('#mobile-theme-btn')){
     themePanel?.classList.remove('show');
   }
 });
@@ -1773,7 +1827,6 @@ document.addEventListener('keydown', (e) => {
 ========================================================= */
 const splash = document.getElementById('splash');
 const splashProgress = document.getElementById('splash-progress');
-
 let splashProgressValue = 0;
 function splashTick(target, duration){
   const start = splashProgressValue;
@@ -1787,7 +1840,6 @@ function splashTick(target, duration){
   }
   requestAnimationFrame(step);
 }
-
 function hideSplash(delay=0){
   splashTick(100, 400);
   setTimeout(() => {
@@ -1797,7 +1849,7 @@ function hideSplash(delay=0){
 }
 
 /* =========================================================
-   SUPABASE INIT
+   SUPABASE
 ========================================================= */
 const $ = (sel) => document.querySelector(sel);
 const el = (tag, cls, html) => { const e=document.createElement(tag); if(cls) e.className=cls; if(html!==undefined) e.innerHTML=html; return e; };
@@ -1812,7 +1864,7 @@ const APP_TITLE = 'گپ‌یار | پیام‌رسان';
 function configProblem(){
   const url = CFG.SUPABASE_URL || '', key = CFG.SUPABASE_ANON_KEY || '';
   if(!url || !key || /YOUR-/i.test(url + key)){
-    return 'فایل config.js پیدا نشد یا مقداردهی نشده است. فایل config.example.js را با نام config.js کپی کنید و آدرس و کلید anon را در آن بگذارید.';
+    return 'فایل config.js پیدا نشد یا مقداردهی نشده است. فایل config.example.js را با نام config.js کپی کنید.';
   }
   if(/^sb_secret_/.test(key)){
     return 'کلید secret هرگز نباید در مرورگر استفاده شود. کلید anon/publishable را در config.js بگذارید.';
@@ -1822,7 +1874,6 @@ function configProblem(){
 const cfgError = configProblem();
 const sb = cfgError ? null : supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
 
-/* ---------------------- state ---------------------- */
 let me = null;
 let contacts = [];
 const contactMap = new Map();
@@ -1838,6 +1889,7 @@ let newVisibility = 'public';
 let pendingGroupAvatarFile = null;
 let pendingProfileAvatarFile = null;
 let editingGroupId = null;
+let editingMessage = null;
 
 let msgState = new Map();
 let orphanReceipts = new Map();
@@ -1858,7 +1910,6 @@ function safeUrl(u){
     return ((x.protocol==='https:' || x.protocol==='http:') && x.origin===base.origin) ? x.href : null;
   }catch(e){ return null; }
 }
-
 function linkify(text){
   const urlRe = /((https?:\/\/|www\.)[^\s<]+)/gi;
   return escapeHtml(text).replace(urlRe, (m) => {
@@ -1866,7 +1917,6 @@ function linkify(text){
     return `<a href="${href}" target="_blank" rel="noopener noreferrer">${m}</a>`;
   });
 }
-
 function convKey(c){ return c.type + ':' + c.id; }
 const convFallback = (c) => c.type==='channel' ? '📣' : c.type==='group' ? '👥' : initials(c.title);
 const convLabel = (c) => c.type==='channel' ? 'کانال' : c.type==='group' ? 'گروه' : 'گفتگوی خصوصی';
@@ -1902,14 +1952,12 @@ function assertImage(file){
   if(!file.type.startsWith('image/')) throw new Error('فقط فایل تصویری برای عکس پروفایل مجاز است.');
   if(file.size > 5*1024*1024) throw new Error('حجم عکس پروفایل نباید بیشتر از ۵ مگابایت باشد.');
 }
-
 function fmtDur(sec){
   const s = Math.max(0, Math.floor(sec || 0));
   const m = Math.floor(s / 60);
   const r = s % 60;
   return `${m}:${String(r).padStart(2,'0')}`;
 }
-
 function fmtBytes(b){
   if(!b) return '';
   const u = ['B','KB','MB','GB'];
@@ -1917,7 +1965,6 @@ function fmtBytes(b){
   while(b >= 1024 && i < u.length-1){ b /= 1024; i++; }
   return b.toFixed(b < 10 && i > 0 ? 1 : 0) + ' ' + u[i];
 }
-
 function fileIconFor(name, type){
   const ext = (name.split('.').pop() || '').toLowerCase();
   const ft = (type || '').toLowerCase();
@@ -1935,7 +1982,6 @@ function fileIconFor(name, type){
   };
   return map[ext] || '📄';
 }
-
 function lockBadgeHtml(){
   return '<span class="grp-badge"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>قفل</span>';
 }
@@ -1966,11 +2012,8 @@ function playPing(){
   }catch(e){}
 }
 
-/* =========================================================
-   NOTIFICATIONS — اجازه + نمایش
-========================================================= */
+/* ---------------------- notifications ---------------------- */
 const notifySupported = 'Notification' in window;
-let swRegistration = null;
 
 function updateNotifyBanner(){
   const banner = $('#notify-banner');
@@ -1981,7 +2024,6 @@ function updateNotifyBanner(){
   banner.style.display = showBanner ? 'flex' : 'none';
 }
 
-// درخواست اجازه‌ی اعلان
 async function requestNotifyPermission(){
   if(!notifySupported){
     toast('مرورگر شما از اعلان پشتیبانی نمی‌کند.', true);
@@ -1999,35 +2041,22 @@ async function requestNotifyPermission(){
     }
   }catch(err){
     console.warn('requestNotifyPermission:', err);
-    toast('خطا در درخواست اجازه‌ی اعلان', true);
   }
 }
-
 $('#notify-enable')?.addEventListener('click', requestNotifyPermission);
 
-// نمایش اعلان از طریق Service Worker یا مستقیم
 function showAppNotification(title, body, conv){
   if(!notifySupported || Notification.permission !== 'granted') return;
-
   const tagKey = conv ? convKey(conv) : 'gapyar-msg';
 
-  // اولویت با Service Worker
   if(navigator.serviceWorker && navigator.serviceWorker.controller){
     navigator.serviceWorker.controller.postMessage({
       type: 'SHOW_NOTIFICATION',
-      title,
-      body,
-      tag: tagKey,
-      data: {
-        url: location.href,
-        convId: conv?.id,
-        convType: conv?.type
-      }
+      title, body, tag: tagKey,
+      data: { url: location.href, convId: conv?.id, convType: conv?.type }
     });
     return;
   }
-
-  // فالبک
   try{
     const n = new Notification(title, {
       body,
@@ -2037,14 +2066,8 @@ function showAppNotification(title, body, conv){
       dir: 'rtl',
       lang: 'fa'
     });
-    n.onclick = () => {
-      window.focus();
-      if(conv) openConversation(conv);
-      try{ n.close(); }catch(e){}
-    };
-  }catch(err){
-    console.warn('showAppNotification:', err);
-  }
+    n.onclick = () => { window.focus(); if(conv) openConversation(conv); try{ n.close(); }catch(e){} };
+  }catch(err){}
 }
 
 function previewText(m){
@@ -2055,17 +2078,10 @@ function previewText(m){
 }
 
 function notifyIncoming(title, body, conv){
-  // صدا و ویبره همیشه
   playPing();
-  if(navigator.vibrate){
-    try{ navigator.vibrate([150, 80, 150]); }catch(e){}
-  }
-
-  // اعلان سیستمی وقتی کاربر روی تب دیگه‌ست یا صفحه مخفیه
+  if(navigator.vibrate){ try{ navigator.vibrate([150, 80, 150]); }catch(e){} }
   const shouldNotify = document.hidden || !document.hasFocus();
-  if(shouldNotify){
-    showAppNotification(title, body, conv);
-  }
+  if(shouldNotify) showAppNotification(title, body, conv);
 }
 
 /* ---------------------- unread ---------------------- */
@@ -2092,10 +2108,7 @@ if(cfgError){
   $('.tabs').style.display = 'none';
   const box = $('#auth-msg'); box.textContent = cfgError; box.className = 'auth-msg err';
   splashTick(100, 400);
-  setTimeout(() => {
-    $('#auth-screen').style.display = 'flex';
-    hideSplash(200);
-  }, 400);
+  setTimeout(() => { $('#auth-screen').style.display = 'flex'; hideSplash(200); }, 400);
 } else {
   splashTick(30, 500);
   setTimeout(() => {
@@ -2115,13 +2128,11 @@ function setTab(which){
   $('#form-signup').style.display = which==='signup' ? 'block':'none';
   $('#auth-msg').textContent = '';
 }
-
 function showAuthMsg(msg, ok=false){
   const box = $('#auth-msg');
   box.textContent = msg;
   box.className = 'auth-msg ' + (ok ? 'ok':'err');
 }
-
 function setBtnLoading(btn, loading, text){
   if(!btn) return;
   if(loading){
@@ -2165,7 +2176,6 @@ $('#form-signup').addEventListener('submit', async (e) => {
   if(error){ showAuthMsg(translateErr(error.message)); return; }
   showAuthMsg('حساب ساخته شد. اگر تأیید ایمیل فعال باشد، صندوق ایمیل خود را بررسی کنید.', true);
 });
-
 function translateErr(m){
   if(/already registered/i.test(m)) return 'این ایمیل قبلاً ثبت شده است.';
   if(/invalid login/i.test(m)) return 'ایمیل یا رمز عبور نادرست است.';
@@ -2205,30 +2215,22 @@ if(sb){
   });
 }
 
-/* ---------------------- BOOT ---------------------- */
 async function boot(authUser){
   splashTick(60, 300);
-
   let { data: profile } = await sb.from('profiles').select('*').eq('id', authUser.id).maybeSingle();
   if(!profile){
     const uname = authUser.user_metadata?.username || authUser.email.split('@')[0];
     const { data: created } = await sb.from('profiles').insert({ id: authUser.id, username: uname }).select().maybeSingle();
     profile = created;
   }
-  if(!profile){
-    alert('ساخت پروفایل ممکن نشد. دوباره وارد شوید.');
-    await sb.auth.signOut();
-    return;
-  }
+  if(!profile){ alert('ساخت پروفایل ممکن نشد.'); await sb.auth.signOut(); return; }
   me = profile;
   splashTick(80, 300);
 
   renderMeHeader();
   updateNotifyBanner();
-
   await loadContactsAndGroups();
   splashTick(92, 300);
-
   await loadUnreadCounts();
   await loadStrangers();
   renderConvList();
@@ -2239,14 +2241,7 @@ async function boot(authUser){
   $('#app').style.display = 'block';
   hideSplash(150);
 
-  // ثبت Service Worker و بررسی اعلان
-  setTimeout(() => {
-    updateNotifyBanner();
-    if(notifySupported && Notification.permission === 'default' && !sessionStorage.getItem('gapyar_notify_asked')){
-      // یک بار در هر نشست به کاربر یادآوری می‌کنیم
-      sessionStorage.setItem('gapyar_notify_asked', '1');
-    }
-  }, 2000);
+  setTimeout(updateNotifyBanner, 2000);
 
   const { error } = await sb.rpc('mark_delivered');
   if(error) console.warn('mark_delivered:', error.message);
@@ -2269,14 +2264,12 @@ function dmConv(c){
 function strangerConv(p){
   return { type:'dm', id:p.id, title:p.username, username:p.username, avatarUrl:p.avatar_url, isContact:false };
 }
-
 async function getProfile(id){
   if(profileCache.has(id)) return profileCache.get(id);
   const { data } = await sb.from('profiles').select('id, username, avatar_url').eq('id', id).maybeSingle();
   if(data) profileCache.set(id, data);
   return data || null;
 }
-
 async function loadContacts(){
   const { data, error } = await sb.from('contacts')
     .select('contact_id, alias, profiles:contact_id(id, username, avatar_url)')
@@ -2289,7 +2282,6 @@ async function loadContacts(){
   contactMap.clear();
   contacts.forEach(c => { contactMap.set(c.contact_id, c); profileCache.set(c.contact_id, c.profile); });
 }
-
 async function loadStrangers(){
   strangers.clear();
   const ids = Object.keys(unread).filter(k => k.startsWith('dm:')).map(k => k.slice(3)).filter(id => !contactMap.has(id));
@@ -2297,10 +2289,8 @@ async function loadStrangers(){
   const { data } = await sb.from('profiles').select('id, username, avatar_url').in('id', ids);
   (data || []).forEach(p => { strangers.set(p.id, p); profileCache.set(p.id, p); });
 }
-
 async function loadContactsAndGroups(){
   await loadContacts();
-
   const { data: memberships } = await sb.from('group_members').select('group_id').eq('user_id', me.id);
   const groupIds = (memberships||[]).map(m=>m.group_id);
   if(groupIds.length){
@@ -2320,12 +2310,10 @@ async function searchPublicGroups(q){
     .select('id, name, avatar_url, created_by, type, visibility')
     .eq('visibility', 'public')
     .ilike('name', `%${pattern}%`)
-    .order('name')
-    .limit(30);
+    .order('name').limit(30);
   if(error){ console.warn('search public groups:', error.message); return []; }
   return (data || []).filter(g => !allGroups.some(ag => ag.id === g.id));
 }
-
 async function joinPublicGroup(g){
   if(!g) return;
   try{
@@ -2339,9 +2327,7 @@ async function joinPublicGroup(g){
       type: g.type === 'channel' ? 'channel' : 'group',
       id: g.id, title: g.name, avatarUrl: g.avatar_url, createdBy: g.created_by
     });
-  }catch(err){
-    toast('خطا در پیوستن: ' + err.message, true);
-  }
+  }catch(err){ toast('خطا در پیوستن: ' + err.message, true); }
 }
 
 /* ---------------------- conversation list ---------------------- */
@@ -2350,19 +2336,12 @@ function renderConvList(){
   list.innerHTML = '';
   const q = $('#user-search').value.trim().toLowerCase();
   const has = (s) => (s || '').toLowerCase().includes(q);
-
   const tab = isMobile() ? currentTab : 'all';
 
   if(tab === 'discover'){
     list.appendChild(el('div','sidebar-section-title','کشف گروه‌های آزاد'));
-    if(q.length < 2){
-      list.appendChild(el('div','list-hint','نام گروه را در کادر جستجو تایپ کنید (حداقل ۲ حرف).'));
-      return;
-    }
-    if(!discoverGroups.length){
-      list.appendChild(el('div','list-hint','گروهی با این نام پیدا نشد.'));
-      return;
-    }
+    if(q.length < 2){ list.appendChild(el('div','list-hint','نام گروه را تایپ کنید (حداقل ۲ حرف).')); return; }
+    if(!discoverGroups.length){ list.appendChild(el('div','list-hint','گروهی با این نام پیدا نشد.')); return; }
     discoverGroups.forEach(g => list.appendChild(discoverItem(g)));
     return;
   }
@@ -2381,9 +2360,9 @@ function renderConvList(){
   if(totalShown === 0){
     const msgs = {
       all: q ? 'نتیجه‌ای یافت نشد.' : 'هنوز گفتگویی ندارید. با دکمه‌ی + پایین، مخاطب یا گروه اضافه کنید.',
-      dm: q ? 'مخاطبی با این نام پیدا نشد.' : 'هنوز مخاطبی ندارید. با دکمه‌ی + مخاطب اضافه کنید.',
-      group: q ? 'گروهی با این نام پیدا نشد.' : 'هنوز گروهی ندارید. با دکمه‌ی + گروه بسازید.',
-      channel: q ? 'کانالی با این نام پیدا نشد.' : 'هنوز کانالی ندارید. با دکمه‌ی + کانال بسازید.'
+      dm: q ? 'مخاطبی پیدا نشد.' : 'هنوز مخاطبی ندارید. با دکمه‌ی + مخاطب اضافه کنید.',
+      group: q ? 'گروهی پیدا نشد.' : 'هنوز گروهی ندارید.',
+      channel: q ? 'کانالی پیدا نشد.' : 'هنوز کانالی ندارید.'
     };
     list.appendChild(el('div','list-hint', msgs[tab] || 'موردی یافت نشد.'));
     return;
@@ -2395,19 +2374,16 @@ function renderConvList(){
       type:'channel', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by, visibility:g.visibility
     })));
   }
-
   if(groups.length){
     list.appendChild(el('div','sidebar-section-title','گروه‌ها'));
     groups.forEach(g => list.appendChild(convItem({
       type:'group', id:g.id, title:g.name, avatarUrl:g.avatar_url, createdBy:g.created_by, visibility:g.visibility
     })));
   }
-
   if(cts.length){
     list.appendChild(el('div','sidebar-section-title','مخاطبان'));
     cts.forEach(c => list.appendChild(convItem(dmConv(c))));
   }
-
   if(strs.length){
     list.appendChild(el('div','sidebar-section-title','پیام از افراد ذخیره‌نشده'));
     strs.forEach(p => list.appendChild(convItem(strangerConv(p))));
@@ -2419,7 +2395,6 @@ function convItem(conv){
   if(current && current.type===conv.type && current.id===conv.id) item.classList.add('active');
   const av = avatarNode(conv.avatarUrl, convFallback(conv));
   const meta = el('div','conv-meta');
-
   const nameEl = el('div','conv-name');
   nameEl.innerHTML = escapeHtml(conv.title) +
     (conv.visibility === 'private' && (conv.type==='group' || conv.type==='channel') ? lockBadgeHtml() : '');
@@ -2441,7 +2416,7 @@ function convItem(conv){
   if(n) item.appendChild(el('span','unread-badge', n > 99 ? '99+' : String(n)));
 
   const mb = el('button','conv-menu-btn','⋯');
-  mb.type = 'button'; mb.title = 'گزینه‌ها';
+  mb.type = 'button';
   mb.onclick = (e) => { e.stopPropagation(); const r = mb.getBoundingClientRect(); showCtxMenu(conv, r.left, r.bottom + 4); };
   item.appendChild(mb);
   item.oncontextmenu = (e) => { e.preventDefault(); showCtxMenu(conv, e.clientX, e.clientY); };
@@ -2456,17 +2431,14 @@ function discoverItem(g){
   const meta = el('div','conv-meta');
   meta.appendChild(el('div','conv-name', escapeHtml(g.name)));
   meta.appendChild(el('div','conv-sub', 'گروه آزاد • برای پیوستن ضربه بزنید'));
-  item.appendChild(av);
-  item.appendChild(meta);
+  item.appendChild(av); item.appendChild(meta);
 
   const joinBtn = el('button','icon-btn');
-  joinBtn.type = 'button';
-  joinBtn.title = 'پیوستن';
+  joinBtn.type = 'button'; joinBtn.title = 'پیوستن';
   joinBtn.style.cssText = 'width:auto;padding:0 14px;height:34px;border-radius:10px;background:var(--accent);color:#fff;font-family:inherit;font-size:12.5px;font-weight:800;';
   joinBtn.textContent = 'پیوستن';
   joinBtn.onclick = (e) => { e.stopPropagation(); joinPublicGroup(g); };
   item.appendChild(joinBtn);
-
   item.onclick = () => joinPublicGroup(g);
   return item;
 }
@@ -2485,16 +2457,13 @@ $('#user-search').addEventListener('input', async () => {
 /* ---------------------- open conversation ---------------------- */
 async function openConversation(conv){
   if(editingMessage) cancelEditMessage();
-
   current = conv;
   msgState = new Map(); orphanReceipts = new Map();
   delete unread[convKey(conv)];
   updateTitleBadge();
   renderConvList();
 
-  if(isMobile()){
-    $('#shell').classList.add('chat-open');
-  }
+  if(isMobile()) $('#shell').classList.add('chat-open');
 
   $('#chat-header').style.display = 'flex';
   setAvatar($('#chat-avatar'), conv.avatarUrl, convFallback(conv));
@@ -2510,10 +2479,7 @@ async function openConversation(conv){
 
   await loadMessages();
   markReadCurrent();
-
-  if(typeof updateMicVisibility === 'function'){
-    setTimeout(updateMicVisibility, 100);
-  }
+  if(typeof updateMicVisibility === 'function') setTimeout(updateMicVisibility, 100);
 }
 
 async function loadMessages(){
@@ -2526,16 +2492,13 @@ async function loadMessages(){
 
   let hiddenIds = [];
   try{
-    const { data: hides } = await sb.from('message_hides')
-      .select('message_id')
-      .eq('user_id', me.id);
+    const { data: hides } = await sb.from('message_hides').select('message_id').eq('user_id', me.id);
     hiddenIds = (hides || []).map(h => h.message_id);
   }catch(e){}
 
   let query = sb.from('messages')
     .select('*, profiles:sender_id(username), message_receipts(user_id, delivered_at, read_at)')
-    .order('created_at', { ascending: false })
-    .limit(200);
+    .order('created_at', { ascending: false }).limit(200);
 
   if(hiddenIds.length){
     query = query.not('id', 'in', `(${hiddenIds.join(',')})`);
@@ -2559,7 +2522,6 @@ async function loadMessages(){
   if(cnt && !cnt.error) groupRecipients = Math.max(0, (cnt.count || 1) - 1);
   if(res.error){
     box.appendChild(el('div','empty-state', 'خطا در بارگذاری پیام‌ها.'));
-    console.warn(res.error.message);
     return;
   }
   (res.data || []).reverse().forEach(m => renderMessage(m, m.message_receipts));
@@ -2582,7 +2544,6 @@ function statusFor(entry){
   }
   return 'sent';
 }
-
 function tickHtml(status){
   if(!status) return '';
   const label = { sent:'ارسال شد', delivered:'به مخاطب رسید', read:'خوانده شد' }[status];
@@ -2590,20 +2551,17 @@ function tickHtml(status){
   const two = one + '<path d="M6.7 7.5L8.5 9.3L15 3"/>';
   return `<span class="tick ${status}" title="${label}"><svg viewBox="0 0 16 12" aria-hidden="true">${status==='sent' ? one : two}</svg></span>`;
 }
-
 function refreshTick(mid){
   const entry = msgState.get(mid);
   if(!entry) return;
   const holder = document.querySelector(`[data-mid="${mid}"] .tick-holder`);
   if(holder) holder.innerHTML = tickHtml(statusFor(entry));
 }
-
 function upsertReceipt(arr, r){
   const row = { user_id:r.user_id, delivered_at:r.delivered_at, read_at:r.read_at };
   const i = arr.findIndex(x => x.user_id === r.user_id);
   if(i >= 0) arr[i] = row; else arr.push(row);
 }
-
 function onReceipt(r){
   if(!me || r.user_id === me.id) return;
   const entry = msgState.get(r.message_id);
@@ -2620,25 +2578,14 @@ function onReceipt(r){
 /* =========================================================
    MESSAGE EDIT
 ========================================================= */
-let editingMessage = null;
-
 const editBar = $('#edit-bar');
 const editPreview = $('#edit-preview');
 
 function startEditMessage(m){
   if(!me) return;
-  if(m.sender_id !== me.id){
-    toast('فقط پیام‌های خودت را می‌توانی ویرایش کنی.', true);
-    return;
-  }
-  if(!m.content){
-    toast('فقط پیام متنی قابل ویرایش است.', true);
-    return;
-  }
-  if(m.file_url){
-    toast('پیام‌های دارای فایل قابل ویرایش نیستند.', true);
-    return;
-  }
+  if(m.sender_id !== me.id){ toast('فقط پیام‌های خودت را می‌توانی ویرایش کنی.', true); return; }
+  if(!m.content){ toast('فقط پیام متنی قابل ویرایش است.', true); return; }
+  if(m.file_url){ toast('پیام‌های دارای فایل قابل ویرایش نیستند.', true); return; }
 
   if(editingMessage) cancelEditMessage();
 
@@ -2697,7 +2644,6 @@ async function submitEditMessage(){
     editBar.classList.remove('show');
     $('#msg-input').value = '';
     updateMicVisibility();
-
     toast('پیام ویرایش شد');
   }catch(err){
     toast('خطا در ویرایش: ' + err.message, true);
@@ -2711,27 +2657,60 @@ function updateMessageInDom(mid, newText){
   if(!row) return;
   const bubble = row.querySelector('.bubble');
   if(!bubble) return;
-
   const contentEl = bubble.querySelector('.msg-text');
-  if(contentEl){
-    contentEl.innerHTML = linkify(newText);
-  }
+  if(contentEl) contentEl.innerHTML = linkify(newText);
 
   const timeRow = bubble.querySelector('.bubble-time');
   if(timeRow && !timeRow.querySelector('.edited-tag')){
     const tag = el('span', 'edited-tag', 'ویرایش‌شده');
     timeRow.appendChild(tag);
   }
-
   const entry = msgState.get(mid);
   if(entry){ entry.m.content = newText; entry.m.edited_at = new Date().toISOString(); }
 }
 
 $('#edit-cancel')?.addEventListener('click', cancelEditMessage);
-
 document.addEventListener('keydown', (e) => {
   if(e.key === 'Escape' && editingMessage) cancelEditMessage();
 });
+
+/* =========================================================
+   COPY MESSAGE
+========================================================= */
+async function copyMessageText(m){
+  if(!m || !m.content){
+    toast('چیزی برای کپی وجود ندارد.', true);
+    return;
+  }
+  const text = m.content;
+
+  // تلاش با Clipboard API مدرن
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text);
+      toast('📋 پیام کپی شد');
+      return;
+    }
+  }catch(e){}
+
+  // فالبک قدیمی
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if(ok){ toast('📋 پیام کپی شد'); return; }
+    throw new Error('execCommand failed');
+  }catch(err){
+    toast('خطا در کپی: ' + err.message, true);
+  }
+}
 
 /* =========================================================
    MESSAGE DELETE
@@ -2739,14 +2718,22 @@ document.addEventListener('keydown', (e) => {
 function getMsgMenuActions(m){
   const mine = m.sender_id === me.id;
   const inGroup = !!m.group_id;
-
-  if(current && current.type === 'channel'){
-    return [];
-  }
+  const isChannel = current && current.type === 'channel';
 
   const isGroupOwner = inGroup && allGroups.some(g => g.id === m.group_id && g.created_by === me.id);
 
   const actions = [];
+
+  // کپی — همیشه برای پیام متنی (هم در کانال هم خارج کانال)
+  if(m.content){
+    actions.push({
+      label:'📋 کپی متن',
+      fn:() => copyMessageText(m)
+    });
+  }
+
+  // بقیه عملیات در کانال ممنوع
+  if(isChannel) return actions;
 
   if(mine && m.content && !m.file_url){
     actions.push({
@@ -2792,10 +2779,7 @@ function showMsgMenu(m, x, y){
 async function deleteMessageForMe(m){
   if(!confirm('این پیام فقط از فهرست شما حذف می‌شود. ادامه می‌دهید؟')) return;
   try{
-    const { error } = await sb.from('message_hides').insert({
-      message_id: m.id,
-      user_id: me.id
-    });
+    const { error } = await sb.from('message_hides').insert({ message_id: m.id, user_id: me.id });
     if(error && error.code !== '23505') throw error;
 
     const row = document.querySelector(`[data-mid="${m.id}"]`);
@@ -2806,45 +2790,29 @@ async function deleteMessageForMe(m){
       setTimeout(() => row.remove(), 250);
     }
     msgState.delete(m.id);
-
     setTimeout(() => {
       const box = $('#messages');
       if(box && !box.querySelector('.bubble-row')) showEmptyState();
     }, 300);
-
     toast('پیام برای شما حذف شد');
   }catch(err){
-    console.warn('deleteMessageForMe:', err);
     const row = document.querySelector(`[data-mid="${m.id}"]`);
-    if(row){
-      row.style.opacity = '0';
-      setTimeout(() => row.remove(), 250);
-    }
+    if(row){ row.style.opacity = '0'; setTimeout(() => row.remove(), 250); }
     msgState.delete(m.id);
     toast('پیام از نمای شما حذف شد');
   }
 }
 
 async function deleteMessageForAll(m){
-  if(current && current.type === 'channel'){
-    toast('در کانال نمی‌توان پیام را حذف کرد.', true);
-    return;
-  }
-
+  if(current && current.type === 'channel'){ toast('در کانال نمی‌توان پیام را حذف کرد.', true); return; }
   const mine = m.sender_id === me.id;
   const isGroupOwner = !!m.group_id && allGroups.some(g => g.id === m.group_id && g.created_by === me.id);
-
-  if(!mine && !isGroupOwner){
-    toast('فقط فرستنده یا مدیر گروه می‌تواند برای همه حذف کند.', true);
-    return;
-  }
-
+  if(!mine && !isGroupOwner){ toast('اجازه‌ی حذف برای همه را ندارید.', true); return; }
   if(!confirm('این پیام برای همه‌ی اعضا حذف می‌شود. ادامه می‌دهید؟')) return;
 
   try{
     const { error } = await sb.from('messages').delete().eq('id', m.id);
     if(error) throw error;
-
     const row = document.querySelector(`[data-mid="${m.id}"]`);
     if(row){
       row.style.transition = 'opacity .25s, transform .25s';
@@ -2853,12 +2821,10 @@ async function deleteMessageForAll(m){
       setTimeout(() => row.remove(), 250);
     }
     msgState.delete(m.id);
-
     setTimeout(() => {
       const box = $('#messages');
       if(box && !box.querySelector('.bubble-row')) showEmptyState();
     }, 300);
-
     toast('پیام برای همه حذف شد');
   }catch(err){
     toast('خطا در حذف: ' + err.message, true);
@@ -2891,22 +2857,15 @@ async function downloadFile(url, filename){
     const blob = await res.blob();
     const blobUrl = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = blobUrl;
-    a.download = filename || 'file';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = blobUrl; a.download = filename || 'file';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
     toast('دانلود شروع شد');
   }catch(err){
     try{
       const a = document.createElement('a');
-      a.href = url;
-      a.download = filename || 'file';
-      a.rel = 'noopener';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      a.href = url; a.download = filename || 'file'; a.rel = 'noopener';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
       toast('دانلود شروع شد');
     }catch(e2){
       toast('خطا در دانلود: ' + err.message, true);
@@ -2921,17 +2880,13 @@ const lbDownload = $('#lb-download');
 let lbCurrentUrl = null, lbCurrentName = null;
 
 function openLightbox(url, name){
-  lbCurrentUrl = url;
-  lbCurrentName = name || 'image';
+  lbCurrentUrl = url; lbCurrentName = name || 'image';
   lbImg.src = url;
   lbDownload.href = url;
   lbDownload.setAttribute('download', lbCurrentName);
   lightbox.classList.add('show');
 }
-function closeLightbox(){
-  lightbox.classList.remove('show');
-  lbImg.src = '';
-}
+function closeLightbox(){ lightbox.classList.remove('show'); lbImg.src = ''; }
 $('#lb-close')?.addEventListener('click', closeLightbox);
 lightbox?.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
 document.addEventListener('keydown', (e) => {
@@ -2956,24 +2911,17 @@ function voiceNode(href, m){
     b.style.height = (30 + Math.random()*70) + '%';
     wave.appendChild(b);
   }
-
   const dur = el('span', 'voice-dur', '0:00');
 
   const audio = document.createElement('audio');
-  audio.src = href;
-  audio.preload = 'metadata';
-  audio.style.display = 'none';
+  audio.src = href; audio.preload = 'metadata'; audio.style.display = 'none';
 
-  audio.addEventListener('loadedmetadata', () => {
-    dur.textContent = fmtDur(audio.duration || 0);
-  });
+  audio.addEventListener('loadedmetadata', () => { dur.textContent = fmtDur(audio.duration || 0); });
   audio.addEventListener('timeupdate', () => {
     if(!audio.duration) return;
     const p = audio.currentTime / audio.duration;
     const active = Math.floor(p * bars);
-    wave.querySelectorAll('span').forEach((s,i) => {
-      s.classList.toggle('active', i < active);
-    });
+    wave.querySelectorAll('span').forEach((s,i) => s.classList.toggle('active', i < active));
     dur.textContent = fmtDur(audio.currentTime) + ' / ' + fmtDur(audio.duration);
   });
   audio.addEventListener('ended', () => {
@@ -2981,15 +2929,10 @@ function voiceNode(href, m){
     wave.querySelectorAll('span').forEach(s => s.classList.remove('active'));
     dur.textContent = fmtDur(audio.duration || 0);
   });
-  audio.addEventListener('error', () => {
-    dur.textContent = 'خطا';
-    btn.disabled = true;
-  });
+  audio.addEventListener('error', () => { dur.textContent = 'خطا'; btn.disabled = true; });
 
   btn.addEventListener('click', () => {
-    document.querySelectorAll('audio').forEach(a => {
-      if(a !== audio && !a.paused) a.pause();
-    });
+    document.querySelectorAll('audio').forEach(a => { if(a !== audio && !a.paused) a.pause(); });
     if(audio.paused){
       audio.play().catch(()=>{});
       btn.innerHTML = '<svg viewBox="0 0 24 24"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>';
@@ -2999,10 +2942,7 @@ function voiceNode(href, m){
     }
   });
 
-  wrap.appendChild(btn);
-  wrap.appendChild(wave);
-  wrap.appendChild(dur);
-  wrap.appendChild(audio);
+  wrap.appendChild(btn); wrap.appendChild(wave); wrap.appendChild(dur); wrap.appendChild(audio);
   return wrap;
 }
 
@@ -3013,12 +2953,10 @@ function fileCardNode(href, m){
   const meta = el('div', 'fc-meta');
   const nm = el('div', 'fc-name', escapeHtml(m.file_name || 'فایل'));
   const info = el('div', 'fc-info', fmtBytes(m.file_size) || 'فایل');
-  meta.appendChild(nm);
-  meta.appendChild(info);
+  meta.appendChild(nm); meta.appendChild(info);
 
   const dl = el('button', 'fc-dl');
-  dl.type = 'button';
-  dl.title = 'دانلود';
+  dl.type = 'button'; dl.title = 'دانلود';
   dl.innerHTML = '<svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   dl.onclick = (e) => { e.stopPropagation(); downloadFile(href, m.file_name || 'file'); };
 
@@ -3031,10 +2969,62 @@ function fileCardNode(href, m){
     }
   };
 
-  card.appendChild(icon);
-  card.appendChild(meta);
-  card.appendChild(dl);
+  card.appendChild(icon); card.appendChild(meta); card.appendChild(dl);
   return card;
+}
+
+/* ---------------------- Avatar Helper ---------- */
+function buildBubbleAvatar(senderId, senderName){
+  const holder = el('div', 'bubble-avatar');
+  const p = profileCache.get(senderId);
+
+  if(p && p.avatar_url){
+    const img = document.createElement('img');
+    img.src = safeUrl(p.avatar_url) || '';
+    img.alt = '';
+    img.onerror = () => {
+      holder.innerHTML = '';
+      holder.textContent = initials(senderName);
+    };
+    holder.appendChild(img);
+  } else {
+    holder.textContent = initials(senderName);
+  }
+
+  // کلیک روی آواتار → نمایش پروفایل
+  holder.title = senderName;
+  holder.onclick = async (e) => {
+    e.stopPropagation();
+    await showUserProfile(senderId, senderName);
+  };
+
+  // اگر پروفایل کش نشده، در پس‌زمینه لود کن
+  if(!p){
+    getProfile(senderId).then(prof => {
+      if(prof && prof.avatar_url){
+        holder.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = safeUrl(prof.avatar_url) || '';
+        img.alt = '';
+        holder.appendChild(img);
+      }
+    }).catch(()=>{});
+  }
+
+  return holder;
+}
+
+async function showUserProfile(userId, fallbackName){
+  const p = await getProfile(userId);
+  const name = p?.username || fallbackName || 'کاربر';
+  const av = p?.avatar_url ? safeUrl(p.avatar_url) : null;
+  // نمایش سریع با alert ساده یا می‌تونیم یک مودال بسازیم
+  if(av){
+    // نمایش تصویر در Lightbox
+    openLightbox(av, `profile-${name}.jpg`);
+  } else {
+    toast(`👤 ${name}`);
+  }
 }
 
 /* ---------------------- render message ---------------------- */
@@ -3051,6 +3041,25 @@ function renderMessage(m, receipts){
   const mine = m.sender_id === me.id;
   const row = el('div', 'bubble-row ' + (mine?'me':'them'));
   row.dataset.mid = m.id;
+
+  // در چت خصوصی آواتار نمایش داده نمی‌شود (چون توی هدر هست)
+  const isDM = current && current.type === 'dm';
+  if(isDM){
+    row.classList.add('no-avatar');
+  }
+
+  // آواتار فرستنده (فقط در گروه/کانال و برای پیام دیگران)
+  if(!isDM && !mine){
+    const senderLabel = displayNameFor(m.sender_id, m.profiles?.username);
+    const av = buildBubbleAvatar(m.sender_id, senderLabel);
+    row.appendChild(av);
+  } else if(!isDM && mine){
+    // آواتار مخفی برای پیام خودم (نگه‌داشتن layout)
+    const placeholder = el('div', 'bubble-avatar');
+    placeholder.style.visibility = 'hidden';
+    row.appendChild(placeholder);
+  }
+
   const bubble = el('div','bubble');
 
   if(!mine && (current.type==='group' || current.type==='channel')){
@@ -3065,17 +3074,14 @@ function renderMessage(m, receipts){
     const ft = (m.file_type || '').toLowerCase();
     if(ft.startsWith('image/')){
       const img = el('img','msg-image');
-      img.src = fileHref;
-      img.loading = 'lazy';
+      img.src = fileHref; img.loading = 'lazy';
       img.onclick = () => openLightbox(fileHref, m.file_name || 'image.jpg');
       bubble.appendChild(img);
     } else if(ft.startsWith('audio/')){
       bubble.appendChild(voiceNode(fileHref, m));
     } else if(ft.startsWith('video/')){
       const vid = document.createElement('video');
-      vid.src = fileHref;
-      vid.controls = true;
-      vid.playsInline = true;
+      vid.src = fileHref; vid.controls = true; vid.playsInline = true;
       vid.style.cssText = 'max-width:100%;border-radius:12px;margin-top:4px;display:block';
       bubble.appendChild(vid);
     } else {
@@ -3091,31 +3097,29 @@ function renderMessage(m, receipts){
 
   row.appendChild(bubble);
 
-  const isChannel = current && current.type === 'channel';
-  if(!isChannel){
-    row.addEventListener('contextmenu', (e) => {
-      e.preventDefault();
-      showMsgMenu(m, e.clientX, e.clientY);
-    });
+  // منوی زمینه‌ای روی پیام
+  row.addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    showMsgMenu(m, e.clientX, e.clientY);
+  });
 
-    let pressTimer = null;
-    row.addEventListener('touchstart', (e) => {
-      const t = e.touches[0];
-      row.classList.add('holding');
-      pressTimer = setTimeout(() => {
-        pressTimer = null;
-        if(navigator.vibrate){ try{ navigator.vibrate(30); }catch(err){} }
-        showMsgMenu(m, t.clientX, t.clientY);
-      }, 500);
-    }, { passive:true });
-    const cancelPress = () => {
-      if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; }
-      row.classList.remove('holding');
-    };
-    ['touchend','touchmove','touchcancel'].forEach(ev => {
-      row.addEventListener(ev, cancelPress, { passive:true });
-    });
-  }
+  let pressTimer = null;
+  row.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    row.classList.add('holding');
+    pressTimer = setTimeout(() => {
+      pressTimer = null;
+      if(navigator.vibrate){ try{ navigator.vibrate(30); }catch(err){} }
+      showMsgMenu(m, t.clientX, t.clientY);
+    }, 500);
+  }, { passive:true });
+  const cancelPress = () => {
+    if(pressTimer){ clearTimeout(pressTimer); pressTimer = null; }
+    row.classList.remove('holding');
+  };
+  ['touchend','touchmove','touchcancel'].forEach(ev => {
+    row.addEventListener(ev, cancelPress, { passive:true });
+  });
 
   box.appendChild(row);
   box.scrollTop = box.scrollHeight;
@@ -3153,9 +3157,7 @@ function subscribeRealtime(){
 function onMessageUpdated(m){
   if(!m) return;
   const entry = msgState.get(m.id);
-  if(entry){
-    entry.m = { ...entry.m, ...m };
-  }
+  if(entry){ entry.m = { ...entry.m, ...m }; }
   const row = document.querySelector(`[data-mid="${m.id}"]`);
   if(!row) return;
   const contentEl = row.querySelector('.bubble .msg-text');
@@ -3210,11 +3212,8 @@ async function onNewMessage(m){
   const viewing = inCurrent && document.visibilityState === 'visible' && document.hasFocus();
 
   if(conv.type !== 'channel'){
-    if(viewing){
-      markReadCurrent();
-    } else {
-      sb.rpc('mark_delivered', { p_ids: [m.id] }).then(({error}) => { if(error) console.warn(error.message); });
-    }
+    if(viewing){ markReadCurrent(); }
+    else { sb.rpc('mark_delivered', { p_ids: [m.id] }).then(({error}) => { if(error) console.warn(error.message); }); }
   }
   if(viewing) return;
 
@@ -3256,10 +3255,7 @@ function handleFiles(files){
   if(!files || !files.length) return;
   if(editingMessage){ toast('در حالت ویرایش نمی‌توان فایل پیوست کرد.', true); return; }
   const f = files[0];
-  if(f.size > MAX_FILE_MB*1024*1024){
-    alert(`حجم فایل نباید بیشتر از ${MAX_FILE_MB} مگابایت باشد.`);
-    return;
-  }
+  if(f.size > MAX_FILE_MB*1024*1024){ alert(`حجم فایل نباید بیشتر از ${MAX_FILE_MB} مگابایت باشد.`); return; }
   pendingFile = f;
   $('#attach-preview').style.display = 'flex';
   $('#attach-name').textContent = f.name;
@@ -3278,11 +3274,7 @@ $('#attach-clear').onclick = () => {
 
 async function sendMessage(){
   if(!current) return;
-
-  if(editingMessage){
-    await submitEditMessage();
-    return;
-  }
+  if(editingMessage){ await submitEditMessage(); return; }
 
   const text = $('#msg-input').value.trim();
   if(!text && !pendingFile) return;
@@ -3298,7 +3290,6 @@ async function sendMessage(){
       file_name = pendingFile.name.slice(0, 200);
       file_type = pendingFile.type || null;
     }
-
     const row = { sender_id: me.id, content: text || null, file_url, file_name, file_type, file_size };
     if(current.type==='dm') row.receiver_id = current.id;
     else row.group_id = current.id;
@@ -3349,7 +3340,7 @@ function openNewConvModal(type){
   const pick = $('#group-user-pick');
   pick.innerHTML = '';
   if(!contacts.length){
-    pick.appendChild(el('div','pick-hint','هنوز مخاطبی ندارید. اول با دکمه‌ی ➕ مخاطب اضافه کنید (می‌توانید گروه را بدون عضو هم بسازید).'));
+    pick.appendChild(el('div','pick-hint','هنوز مخاطبی ندارید. اول با دکمه‌ی ➕ مخاطب اضافه کنید.'));
   }
   contacts.forEach(c => {
     const label = el('label', null, `<input type="checkbox" value="${c.contact_id}"> ${escapeHtml(contactDisplay(c))}`);
@@ -3411,8 +3402,7 @@ $('#group-create').onclick = async () => {
       avatar_url, visibility: newVisibility || 'public'
     };
 
-    const { data: group, error } = await sb.from('groups')
-      .insert(insertRow).select().maybeSingle();
+    const { data: group, error } = await sb.from('groups').insert(insertRow).select().maybeSingle();
     if(error) throw error;
 
     if(checked.length){
@@ -3441,15 +3431,10 @@ async function manageMembers(conv){
   const pick = $('#group-user-pick');
   pick.innerHTML = '';
 
-  const { data: members } = await sb.from('group_members')
-    .select('user_id')
-    .eq('group_id', conv.id);
-
+  const { data: members } = await sb.from('group_members').select('user_id').eq('group_id', conv.id);
   const memberIds = new Set((members||[]).map(m => m.user_id));
 
-  if(!contacts.length){
-    pick.appendChild(el('div','pick-hint','هنوز مخاطبی ندارید.'));
-  }
+  if(!contacts.length) pick.appendChild(el('div','pick-hint','هنوز مخاطبی ندارید.'));
   contacts.forEach(c => {
     const checked = memberIds.has(c.contact_id) ? 'checked' : '';
     const label = el('label', null, `<input type="checkbox" value="${c.contact_id}" ${checked}> ${escapeHtml(contactDisplay(c))}`);
@@ -3554,7 +3539,6 @@ $('#profile-save').onclick = async () => {
     if(pendingProfileAvatarFile) update.avatar_url = await uploadToStorage(pendingProfileAvatarFile, 'avatars');
     const { data, error } = await sb.from('profiles').update(update).eq('id', me.id).select().maybeSingle();
     if(error) throw error;
-
     me = data;
     renderMeHeader();
     $('#profile-modal').style.display = 'none';
@@ -3650,7 +3634,7 @@ $('#conv-list').addEventListener('scroll', hideCtxMenu);
 
 /* ---------------------- contact actions ---------------------- */
 async function renameContact(conv){
-  const name = prompt('نام دلخواه برای این مخاطب را بنویسید (خالی = نام نمایشی خود او):', conv.title);
+  const name = prompt('نام دلخواه برای این مخاطب:', conv.title);
   if(name === null) return;
   const alias = name.trim();
   const stored = (alias && alias !== conv.username) ? alias.slice(0, 60) : null;
@@ -3665,9 +3649,9 @@ async function renameContact(conv){
 }
 
 async function deleteContact(conv){
-  if(!confirm(`«${conv.title}» از مخاطبین شما حذف شود؟\nتاریخچه‌ی پیام‌ها پاک نمی‌شود؛ فقط از فهرست شما برداشته می‌شود.`)) return;
+  if(!confirm(`«${conv.title}» از مخاطبین شما حذف شود؟`)) return;
   const { error } = await sb.from('contacts').delete().eq('owner_id', me.id).eq('contact_id', conv.id);
-  if(error){ toast('خطا در حذف مخاطب: ' + error.message, true); return; }
+  if(error){ toast('خطا: ' + error.message, true); return; }
   delete unread['dm:' + conv.id]; updateTitleBadge();
   if(isCurrentDm(conv.id)) closeCurrent();
   await refreshLists();
@@ -3676,7 +3660,7 @@ async function deleteContact(conv){
 
 async function addStrangerAsContact(conv){
   const { error } = await sb.from('contacts').insert({ owner_id: me.id, contact_id: conv.id });
-  if(error && error.code !== '23505'){ toast('خطا در افزودن مخاطب: ' + error.message, true); return; }
+  if(error && error.code !== '23505'){ toast('خطا: ' + error.message, true); return; }
   strangers.delete(conv.id);
   await refreshLists();
   if(isCurrentDm(conv.id)){ const c = contactMap.get(conv.id); if(c) current = dmConv(c); renderConvList(); }
@@ -3699,18 +3683,18 @@ function afterGroupRemoved(id){
 
 async function leaveGroup(conv){
   const noun = conv.type === 'channel' ? 'کانال' : 'گروه';
-  if(!confirm(`${noun} «${conv.title}» را ترک می‌کنید؟\nدیگر پیام‌های آن را نخواهید دید.`)) return;
+  if(!confirm(`${noun} «${conv.title}» را ترک می‌کنید؟`)) return;
   const { data, error } = await sb.from('group_members').delete().eq('group_id', conv.id).eq('user_id', me.id).select();
-  if(error || !data || !data.length){ toast(`ترک ${noun} ممکن نشد` + (error ? ': ' + error.message : ''), true); return; }
+  if(error || !data || !data.length){ toast(`ترک ${noun} ممکن نشد`, true); return; }
   afterGroupRemoved(conv.id);
   toast(`${noun} ترک شد`);
 }
 
 async function deleteGroupForAll(conv){
   const noun = conv.type === 'channel' ? 'کانال' : 'گروه';
-  if(!confirm(`${noun} «${conv.title}» برای همه‌ی اعضا حذف می‌شود و تمام پیام‌های آن پاک خواهد شد.\nاین کار قابل بازگشت نیست. ادامه می‌دهید؟`)) return;
+  if(!confirm(`${noun} «${conv.title}» برای همه حذف می‌شود؟ این کار قابل بازگشت نیست.`)) return;
   const { data, error } = await sb.from('groups').delete().eq('id', conv.id).select();
-  if(error || !data || !data.length){ toast(`حذف ${noun} ممکن نشد` + (error ? ': ' + error.message : ''), true); return; }
+  if(error || !data || !data.length){ toast(`حذف ${noun} ممکن نشد`, true); return; }
   afterGroupRemoved(conv.id);
   toast(`${noun} حذف شد`);
 }
@@ -3751,7 +3735,7 @@ async function runContactSearch(){
   const box = $('#contact-results');
   selectedProfile = null; updateContactAddState();
   if(q.length < 2){
-    box.innerHTML = '<div class="pick-hint">حداقل ۲ حرف از نام نمایشی فرد را بنویسید.</div>';
+    box.innerHTML = '<div class="pick-hint">حداقل ۲ حرف بنویسید.</div>';
     return;
   }
   const seq = ++contactSearchSeq;
@@ -3759,13 +3743,11 @@ async function runContactSearch(){
   const { data, error } = await sb.from('profiles')
     .select('id, username, avatar_url')
     .ilike('username', `%${pattern}%`)
-    .neq('id', me.id)
-    .order('username')
-    .limit(20);
+    .neq('id', me.id).order('username').limit(20);
   if(seq !== contactSearchSeq) return;
   box.innerHTML = '';
-  if(error){ box.appendChild(el('div','pick-hint','خطا در جستجو: ' + escapeHtml(error.message))); return; }
-  if(!data || !data.length){ box.appendChild(el('div','pick-hint','کاربری با این نام پیدا نشد.')); return; }
+  if(error){ box.appendChild(el('div','pick-hint','خطا: ' + escapeHtml(error.message))); return; }
+  if(!data || !data.length){ box.appendChild(el('div','pick-hint','کاربری پیدا نشد.')); return; }
 
   data.forEach(p => {
     const already = contactMap.has(p.id);
@@ -3795,7 +3777,7 @@ $('#contact-add').onclick = async () => {
   setBtnLoading(btn, true, 'در حال افزودن…');
   const { error } = await sb.from('contacts').insert({ owner_id: me.id, contact_id: p.id, alias: stored });
   if(error && error.code !== '23505'){
-    toast('خطا در افزودن مخاطب: ' + error.message, true);
+    toast('خطا: ' + error.message, true);
     setBtnLoading(btn, false);
     return;
   }
@@ -3864,7 +3846,7 @@ async function startRecording(){
     mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
   }catch(err){
     const msg = (err && err.name === 'NotAllowedError')
-      ? 'دسترسی به میکروفون رد شد. از تنظیمات مرورگر اجازه بدهید.'
+      ? 'دسترسی به میکروفون رد شد.'
       : 'دسترسی به میکروفون ممکن نشد.';
     toast(msg, true);
     return;
@@ -3972,7 +3954,6 @@ async function sendVoiceMessage(){
     resetRecUI();
     toast('صدا ارسال شد');
   }catch(err){
-    console.error(err);
     toast('خطا در ارسال صدا: ' + err.message, true);
   }finally{
     recAcceptBtn.disabled = false;
@@ -4098,7 +4079,6 @@ if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js', { scope: './' })
       .then(reg => {
-        swRegistration = reg;
         console.log('SW registered:', reg.scope);
         reg.addEventListener('updatefound', () => {
           const sw = reg.installing;
