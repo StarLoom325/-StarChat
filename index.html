@@ -83,7 +83,8 @@
     </div>
     <div class="field">
       <label>نام کاربری</label>
-      <input name="username" placeholder="ali_reza" style="text-align:left;direction:ltr">
+      <input name="username" placeholder="هرچی می‌خوای…" autocomplete="username">
+      <div class="hint">می‌تونی فارسی، انگلیسی، عدد یا ایموجی استفاده کنی</div>
     </div>
     <div class="field">
       <label>رمز عبور</label>
@@ -101,7 +102,24 @@ let sb = null;
 let busy = false;
 
 // ═══════════════════════════════════════════════════════
-//  بارگذاری SDK از چند CDN (برای ایران)
+//  🔑 تبدیل نام کاربری دلخواه به ایمیل امن
+//  از hash استفاده می‌کنیم تا هرچی کاربر وارد کنه قابل قبول باشه
+// ═══════════════════════════════════════════════════════
+function makeEmail(username) {
+  // hash ساده و قطعی (djb2)
+  let h = 5381;
+  const u = username.toLowerCase().trim();
+  for (let i = 0; i < u.length; i++) {
+    h = ((h << 5) + h) + u.charCodeAt(i);
+    h = h & 0xffffffff;
+  }
+  const hash = Math.abs(h).toString(36);
+  const len = u.length.toString(36);
+  return `u${len}_${hash}@messenger.local`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  بارگذاری SDK
 // ═══════════════════════════════════════════════════════
 function loadScript(src, timeout = 8000) {
   return new Promise((resolve, reject) => {
@@ -117,25 +135,16 @@ function loadScript(src, timeout = 8000) {
 
 async function loadSDK() {
   if (window.supabase) return true;
-
-  // لیست CDN هایی که معمولاً در ایران بازن
   const cdns = [
     'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
     'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js',
     'https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.0/supabase.min.js',
-    'https://esm.sh/@supabase/supabase-js@2',
   ];
-
   for (const url of cdns) {
     try {
       await loadScript(url);
-      if (window.supabase && window.supabase.createClient) {
-        console.log('✅ SDK loaded from:', url);
-        return true;
-      }
-    } catch (e) {
-      console.warn('CDN failed:', url);
-    }
+      if (window.supabase && window.supabase.createClient) return true;
+    } catch (e) {}
   }
   throw new Error('CDN ها در دسترس نیستن');
 }
@@ -145,30 +154,22 @@ async function loadSDK() {
 // ═══════════════════════════════════════════════════════
 (async () => {
   try {
-    // چک config
     if (typeof window.SUPABASE_URL === 'undefined') {
-      showMsg('❌ فایل config.js پیدا نشد', 'err');
-      return;
+      showMsg('❌ فایل config.js پیدا نشد', 'err'); return;
     }
     if (!window.SUPABASE_URL || window.SUPABASE_URL.includes('YOUR_')) {
-      showMsg('❌ SUPABASE_URL در config.js پر نشده', 'err');
-      return;
+      showMsg('❌ SUPABASE_URL در config.js پر نشده', 'err'); return;
     }
     if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY.includes('YOUR_')) {
-      showMsg('❌ SUPABASE_ANON_KEY در config.js پر نشده', 'err');
-      return;
+      showMsg('❌ SUPABASE_ANON_KEY در config.js پر نشده', 'err'); return;
     }
 
-    // لود SDK
     await loadSDK();
-
-    // ساخت کلاینت
     const { createClient } = window.supabase;
     sb = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
       auth: { persistSession: true, autoRefreshToken: true, storageKey: 'messenger-auth' }
     });
 
-    // چک نشست قبلی
     const { data } = await sb.auth.getSession();
     if (data && data.session) {
       window.location.replace('chat.html');
@@ -176,10 +177,9 @@ async function loadSDK() {
     }
 
     setMode('login');
-
   } catch (e) {
     console.error(e);
-    showMsg('خطا در اتصال به سرور. لطفاً اینترنت خود را بررسی کنید.', 'err');
+    showMsg('خطا در اتصال به سرور. لطفاً اینترنت خود را بررسی کن.', 'err');
   }
 })();
 
@@ -227,14 +227,14 @@ async function submitForm(e) {
   busy = true;
 
   const fd = new FormData(e.target);
-  const username = (fd.get('username') || '').trim().toLowerCase();
+  const username = (fd.get('username') || '').trim();
   const password = fd.get('password') || '';
 
   try {
     if (mode === 'login') {
       if (!username || !password) throw new Error('نام کاربری و رمز عبور لازم است');
 
-      const email = username + '@' + (window.EMAIL_DOMAIN || 'messenger.local');
+      const email = makeEmail(username);
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
       if (error) {
@@ -251,19 +251,26 @@ async function submitForm(e) {
       const name = (fd.get('name') || '').trim();
       const phone = (fd.get('phone') || '').trim();
 
+      // ✅ فقط چک حداقلی
       if (!name) throw new Error('نام را وارد کن');
-      if (!/^09\d{9}$/.test(phone)) throw new Error('شماره موبایل معتبر نیست');
-      if (!/^[a-z0-9_]{3,20}$/.test(username)) throw new Error('نام کاربری: فقط a-z، 0-9 و _ (۳-۲۰ کاراکتر)');
+      if (!phone) throw new Error('شماره موبایل را وارد کن');
+      if (!/^09\d{9}$/.test(phone)) throw new Error('شماره موبایل معتبر نیست (۱۱ رقم، شروع با ۰۹)');
+      if (!username) throw new Error('نام کاربری را وارد کن');
+      if (username.length < 2) throw new Error('نام کاربری حداقل ۲ کاراکتر');
+      if (username.length > 40) throw new Error('نام کاربری حداکثر ۴۰ کاراکتر');
       if (password.length < 6) throw new Error('رمز عبور حداقل ۶ کاراکتر');
 
-      // چک تکراری
-      const { data: exist } = await sb.from('profiles').select('id').eq('phone', phone).maybeSingle();
-      if (exist) throw new Error('این شماره موبایل قبلاً ثبت شده');
+      // چک تکراری بودن نام کاربری
+      const { data: exist } = await sb.from('profiles')
+        .select('id').eq('username', username).maybeSingle();
+      if (exist) throw new Error('این نام کاربری قبلاً گرفته شده');
 
-      const { data: exist2 } = await sb.from('profiles').select('id').eq('username', username).maybeSingle();
-      if (exist2) throw new Error('این نام کاربری قبلاً گرفته شده');
+      // چک تکراری بودن شماره موبایل
+      const { data: existPhone } = await sb.from('profiles')
+        .select('id').eq('phone', phone).maybeSingle();
+      if (existPhone) throw new Error('این شماره موبایل قبلاً ثبت شده');
 
-      const email = username + '@' + (window.EMAIL_DOMAIN || 'messenger.local');
+      const email = makeEmail(username);
       const { data, error } = await sb.auth.signUp({
         email, password,
         options: { data: { username, name, phone } }
@@ -273,10 +280,11 @@ async function submitForm(e) {
         const m = error.message || '';
         if (m.includes('already')) throw new Error('این نام کاربری قبلاً ثبت شده');
         if (m.includes('Password')) throw new Error('رمز عبور ضعیف است');
+        if (m.includes('rate')) throw new Error('تعداد تلاش زیاد — چند دقیقه صبر کن');
         throw new Error(m);
       }
 
-      // اگه session نداشت، خودکار وارد کن
+      // اگه session نداشت (Confirm email روشن)، خودکار وارد کن
       if (!data.session) {
         const r = await sb.auth.signInWithPassword({ email, password });
         if (r.error) {
