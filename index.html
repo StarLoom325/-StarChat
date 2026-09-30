@@ -7,55 +7,27 @@
 <script src="config.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  body{
-    font-family:-apple-system,'Segoe UI',Tahoma,sans-serif;
-    min-height:100vh;display:flex;align-items:center;justify-content:center;
-    background:linear-gradient(135deg,#6366f1,#8b5cf6,#a855f7);
-    padding:16px;
-  }
-  .card{
-    background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:400px;
-    box-shadow:0 20px 60px rgba(0,0,0,.3);
-  }
-  .logo{
-    width:72px;height:72px;margin:0 auto 16px;border-radius:22px;
-    background:linear-gradient(135deg,#6366f1,#a855f7);
-    display:flex;align-items:center;justify-content:center;font-size:36px;
-    box-shadow:0 8px 24px rgba(99,102,241,.4);
-  }
+  body{font-family:-apple-system,'Segoe UI',Tahoma,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6366f1,#8b5cf6,#a855f7);padding:16px}
+  .card{background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+  .logo{width:72px;height:72px;margin:0 auto 16px;border-radius:22px;background:linear-gradient(135deg,#6366f1,#a855f7);display:flex;align-items:center;justify-content:center;font-size:36px}
   h1{font-size:22px;text-align:center;color:#1e293b;margin-bottom:6px}
   .sub{text-align:center;color:#64748b;font-size:13px;margin-bottom:24px}
   .tabs{display:flex;gap:8px;background:#f1f5f9;padding:4px;border-radius:12px;margin-bottom:20px}
-  .tabs button{
-    flex:1;padding:10px;border:none;background:transparent;border-radius:10px;
-    font-size:14px;font-weight:600;color:#64748b;cursor:pointer;transition:.2s;font-family:inherit;
-  }
+  .tabs button{flex:1;padding:10px;border:none;background:transparent;border-radius:10px;font-size:14px;font-weight:600;color:#64748b;cursor:pointer;transition:.2s;font-family:inherit}
   .tabs button.active{background:#fff;color:#6366f1;box-shadow:0 2px 8px rgba(0,0,0,.08)}
   .field{margin-bottom:14px}
   .field label{display:block;font-size:12px;color:#64748b;margin-bottom:6px;font-weight:600}
-  .field input{
-    width:100%;padding:13px 14px;border:2px solid #e2e8f0;border-radius:12px;
-    font-size:14px;font-family:inherit;transition:.2s;background:#f8fafc;
-  }
+  .field input{width:100%;padding:13px 14px;border:2px solid #e2e8f0;border-radius:12px;font-size:14px;font-family:inherit;transition:.2s;background:#f8fafc}
   .field input:focus{outline:none;border-color:#6366f1;background:#fff}
   .field .hint{font-size:11px;color:#94a3b8;margin-top:4px}
-  .btn{
-    width:100%;padding:14px;border:none;border-radius:12px;
-    background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;
-    font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
-    margin-top:8px;transition:.2s;
-  }
+  .btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#6366f1,#8b5cf6);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px;transition:.2s}
   .btn:disabled{opacity:.6;cursor:not-allowed}
   .msg{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none;line-height:1.6}
   .msg.err{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;display:block}
   .msg.ok{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;display:block}
   .msg.info{background:#eff6ff;color:#2563eb;border:1px solid #bfdbfe;display:block}
   .hint{text-align:center;font-size:12px;color:#94a3b8;margin-top:14px}
-  .loading{
-    display:inline-block;width:14px;height:14px;border:2px solid #fff;
-    border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;
-    vertical-align:middle;margin-right:6px;
-  }
+  .loading{display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px}
   @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
@@ -102,30 +74,25 @@ let sb = null;
 let busy = false;
 
 // ═══════════════════════════════════════════════════════
-//  🔑 تبدیل نام کاربری دلخواه به ایمیل امن
-//  از hash استفاده می‌کنیم تا هرچی کاربر وارد کنه قابل قبول باشه
+//  تبدیل نام کاربری به ایمیل امن (hash قطعی)
 // ═══════════════════════════════════════════════════════
 function makeEmail(username) {
-  // hash ساده و قطعی (djb2)
   let h = 5381;
   const u = username.toLowerCase().trim();
   for (let i = 0; i < u.length; i++) {
     h = ((h << 5) + h) + u.charCodeAt(i);
     h = h & 0xffffffff;
   }
-  const hash = Math.abs(h).toString(36);
-  const len = u.length.toString(36);
-  return `u${len}_${hash}@messenger.local`;
+  return `u${u.length.toString(36)}_${Math.abs(h).toString(36)}@messenger.local`;
 }
 
 // ═══════════════════════════════════════════════════════
-//  بارگذاری SDK
+//  بارگذاری SDK از چند CDN
 // ═══════════════════════════════════════════════════════
 function loadScript(src, timeout = 8000) {
   return new Promise((resolve, reject) => {
     const s = document.createElement('script');
-    s.src = src;
-    s.async = true;
+    s.src = src; s.async = true;
     const t = setTimeout(() => reject(new Error('timeout')), timeout);
     s.onload = () => { clearTimeout(t); resolve(); };
     s.onerror = () => { clearTimeout(t); reject(new Error('error')); };
@@ -134,17 +101,14 @@ function loadScript(src, timeout = 8000) {
 }
 
 async function loadSDK() {
-  if (window.supabase) return true;
+  if (window.supabase && window.supabase.createClient) return true;
   const cdns = [
     'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js',
     'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js',
     'https://cdnjs.cloudflare.com/ajax/libs/supabase-js/2.45.0/supabase.min.js',
   ];
   for (const url of cdns) {
-    try {
-      await loadScript(url);
-      if (window.supabase && window.supabase.createClient) return true;
-    } catch (e) {}
+    try { await loadScript(url); if (window.supabase && window.supabase.createClient) return true; } catch (e) {}
   }
   throw new Error('CDN ها در دسترس نیستن');
 }
@@ -154,15 +118,9 @@ async function loadSDK() {
 // ═══════════════════════════════════════════════════════
 (async () => {
   try {
-    if (typeof window.SUPABASE_URL === 'undefined') {
-      showMsg('❌ فایل config.js پیدا نشد', 'err'); return;
-    }
-    if (!window.SUPABASE_URL || window.SUPABASE_URL.includes('YOUR_')) {
-      showMsg('❌ SUPABASE_URL در config.js پر نشده', 'err'); return;
-    }
-    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY.includes('YOUR_')) {
-      showMsg('❌ SUPABASE_ANON_KEY در config.js پر نشده', 'err'); return;
-    }
+    if (typeof window.SUPABASE_URL === 'undefined') { showMsg('❌ فایل config.js پیدا نشد', 'err'); return; }
+    if (!window.SUPABASE_URL || window.SUPABASE_URL.includes('YOUR_')) { showMsg('❌ SUPABASE_URL پر نشده', 'err'); return; }
+    if (!window.SUPABASE_ANON_KEY || window.SUPABASE_ANON_KEY.includes('YOUR_')) { showMsg('❌ SUPABASE_ANON_KEY پر نشده', 'err'); return; }
 
     await loadSDK();
     const { createClient } = window.supabase;
@@ -171,15 +129,11 @@ async function loadSDK() {
     });
 
     const { data } = await sb.auth.getSession();
-    if (data && data.session) {
-      window.location.replace('chat.html');
-      return;
-    }
-
+    if (data && data.session) { window.location.replace('chat.html'); return; }
     setMode('login');
   } catch (e) {
     console.error(e);
-    showMsg('خطا در اتصال به سرور. لطفاً اینترنت خود را بررسی کن.', 'err');
+    showMsg('خطا در اتصال به سرور. اینترنت خود را بررسی کن.', 'err');
   }
 })();
 
@@ -200,12 +154,9 @@ function setMode(m) {
 
 function showMsg(text, type = 'err') {
   const m = document.getElementById('msg');
-  m.textContent = text;
-  m.className = 'msg ' + type;
+  m.textContent = text; m.className = 'msg ' + type;
 }
-function hideMsg() {
-  document.getElementById('msg').className = 'msg';
-}
+function hideMsg() { document.getElementById('msg').className = 'msg'; }
 
 // ═══════════════════════════════════════════════════════
 //  Submit
@@ -213,11 +164,7 @@ function hideMsg() {
 async function submitForm(e) {
   e.preventDefault();
   if (busy) return;
-
-  if (!sb) {
-    showMsg('اتصال به سرور برقرار نیست. لطفاً صفحه را دوباره باز کن.', 'err');
-    return;
-  }
+  if (!sb) { showMsg('اتصال به سرور برقرار نیست. صفحه را دوباره باز کن.', 'err'); return; }
 
   hideMsg();
   const btn = document.getElementById('submitBtn');
@@ -229,18 +176,34 @@ async function submitForm(e) {
   const fd = new FormData(e.target);
   const username = (fd.get('username') || '').trim();
   const password = fd.get('password') || '';
+  const email = makeEmail(username);
 
   try {
     if (mode === 'login') {
+      // ═══════ ورود ═══════
       if (!username || !password) throw new Error('نام کاربری و رمز عبور لازم است');
 
-      const email = makeEmail(username);
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      // ۱) از profiles ایمیل لاگین رو پیدا کن
+      let loginEmail = email; // پیش‌فرض: hash
+      try {
+        const { data: prof } = await sb.from('profiles')
+          .select('login_email').eq('username', username).maybeSingle();
+        if (prof && prof.login_email) loginEmail = prof.login_email;
+      } catch (e) { /* ignore */ }
+
+      // ۲) تلاش برای ورود
+      let { error } = await sb.auth.signInWithPassword({ email: loginEmail, password });
+
+      // ۳) اگه ایمیل از profiles نبود، با hash امتحان کن
+      if (error && loginEmail !== email) {
+        const r2 = await sb.auth.signInWithPassword({ email, password });
+        if (!r2.error) error = null;
+      }
 
       if (error) {
         const m = error.message || '';
         if (m.includes('Invalid login')) throw new Error('نام کاربری یا رمز عبور اشتباه است');
-        if (m.includes('Email not confirmed')) throw new Error('ایمیل تأیید نشده');
+        if (m.includes('Email not confirmed')) throw new Error('ایمیل تأیید نشده — در Supabase Confirm email را خاموش کن');
         throw new Error(m);
       }
 
@@ -248,64 +211,101 @@ async function submitForm(e) {
       setTimeout(() => window.location.replace('chat.html'), 400);
 
     } else {
+      // ═══════ ثبت‌نام ═══════
       const name = (fd.get('name') || '').trim();
       const phone = (fd.get('phone') || '').trim();
 
-      // ✅ فقط چک حداقلی
       if (!name) throw new Error('نام را وارد کن');
-      if (!phone) throw new Error('شماره موبایل را وارد کن');
       if (!/^09\d{9}$/.test(phone)) throw new Error('شماره موبایل معتبر نیست (۱۱ رقم، شروع با ۰۹)');
       if (!username) throw new Error('نام کاربری را وارد کن');
       if (username.length < 2) throw new Error('نام کاربری حداقل ۲ کاراکتر');
       if (username.length > 40) throw new Error('نام کاربری حداکثر ۴۰ کاراکتر');
       if (password.length < 6) throw new Error('رمز عبور حداقل ۶ کاراکتر');
 
-      // چک تکراری بودن نام کاربری
-      const { data: exist } = await sb.from('profiles')
-        .select('id').eq('username', username).maybeSingle();
-      if (exist) throw new Error('این نام کاربری قبلاً گرفته شده');
+      // چک تکراری (در profiles)
+      try {
+        const { data: existU } = await sb.from('profiles')
+          .select('id').eq('username', username).maybeSingle();
+        if (existU) throw new Error('این نام کاربری قبلاً گرفته شده');
 
-      // چک تکراری بودن شماره موبایل
-      const { data: existPhone } = await sb.from('profiles')
-        .select('id').eq('phone', phone).maybeSingle();
-      if (existPhone) throw new Error('این شماره موبایل قبلاً ثبت شده');
+        const { data: existP } = await sb.from('profiles')
+          .select('id').eq('phone', phone).maybeSingle();
+        if (existP) throw new Error('این شماره موبایل قبلاً ثبت شده');
+      } catch (e) {
+        if (e.message && e.message.includes('قبلاً')) throw e;
+        // اگه RLS بلاک کرد، بی‌خیال شو — signUp نهایی تصمیم می‌گیره
+      }
 
-      const email = makeEmail(username);
+      // ثبت‌نام
       const { data, error } = await sb.auth.signUp({
         email, password,
         options: { data: { username, name, phone } }
       });
 
+      // اگه نام کاربری تو auth.users هست ولی profiles خالیه → کاربر قدیمی
       if (error) {
         const m = error.message || '';
-        if (m.includes('already')) throw new Error('این نام کاربری قبلاً ثبت شده');
+
+        if (m.includes('already') || m.includes('registered')) {
+          // شاید کاربر قدیمیه که profiles پاک شده.
+          // تلاش برای ورود مستقیم با همین رمز
+          const loginRes = await sb.auth.signInWithPassword({ email, password });
+          if (!loginRes.error) {
+            // ورود موفق → شاید profiles پاک شده بود، خودمون بسازیم
+            showMsg('حساب قدیمی پیدا شد! در حال بازیابی…', 'info');
+            try {
+              await sb.from('profiles').insert({
+                id: loginRes.data.user.id,
+                phone, username, name,
+                login_email: email
+              });
+            } catch (e) { /* ممکنه از قبل باشه */ }
+            setTimeout(() => window.location.replace('chat.html'), 600);
+            return;
+          }
+          throw new Error('این نام کاربری قبلاً ثبت شده — رمز دیگه‌ای داری؟ با ورود امتحان کن');
+        }
+
         if (m.includes('Password')) throw new Error('رمز عبور ضعیف است');
         if (m.includes('rate')) throw new Error('تعداد تلاش زیاد — چند دقیقه صبر کن');
         throw new Error(m);
       }
 
-      // اگه session نداشت (Confirm email روشن)، خودکار وارد کن
+      // اگه session نداشت (Confirm email روشن) → خودکار وارد کن
       if (!data.session) {
         const r = await sb.auth.signInWithPassword({ email, password });
         if (r.error) {
           showMsg('حساب ساخته شد. حالا وارد شو.', 'info');
           setMode('login');
-          btn.disabled = false;
-          btn.textContent = oldText;
-          busy = false;
+          btn.disabled = false; btn.textContent = oldText; busy = false;
           return;
         }
       }
 
+      // صبر کن تا trigger پروفایل رو بسازه
       showMsg('ثبت‌نام موفق!', 'ok');
-      setTimeout(() => window.location.replace('chat.html'), 600);
+      let tries = 0;
+      const t = setInterval(async () => {
+        tries++;
+        const uid = (await sb.auth.getUser()).data.user?.id;
+        if (!uid) { clearInterval(t); setTimeout(() => window.location.replace('chat.html'), 400); return; }
+
+        const { data: p } = await sb.from('profiles').select('id').eq('id', uid).maybeSingle();
+        if (p) { clearInterval(t); setTimeout(() => window.location.replace('chat.html'), 300); }
+        else if (tries > 8) {
+          clearInterval(t);
+          // ساخت دستی پروفایل
+          try {
+            await sb.from('profiles').insert({ id: uid, phone, username, name, login_email: email });
+          } catch(e){}
+          setTimeout(() => window.location.replace('chat.html'), 300);
+        }
+      }, 400);
     }
 
   } catch (err) {
     showMsg(err.message || 'خطای ناشناخته', 'err');
-    btn.disabled = false;
-    btn.textContent = oldText;
-    busy = false;
+    btn.disabled = false; btn.textContent = oldText; busy = false;
   }
 }
 </script>
