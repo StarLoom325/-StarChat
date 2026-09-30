@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>در حال بارگذاری…</title>
+<script src="config.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    font-family:-apple-system,'Segoe UI',Tahoma,sans-serif;
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6,#a855f7);
+    color:#fff;overflow:hidden;
+  }
+  .wrap{text-align:center}
+  .logo{
+    width:100px;height:100px;margin:0 auto 24px;border-radius:32px;
+    background:rgba(255,255,255,.15);backdrop-filter:blur(20px);
+    display:flex;align-items:center;justify-content:center;
+    font-size:48px;box-shadow:0 8px 32px rgba(0,0,0,.2);
+    animation:pop .6s cubic-bezier(.5,0,.3,1.5);
+  }
+  @keyframes pop{0%{transform:scale(.3);opacity:0}100%{transform:scale(1);opacity:1}}
+  h1{font-size:22px;margin-bottom:8px;font-weight:600}
+  p{opacity:.8;font-size:14px;margin-bottom:32px}
+  .spinner{width:50px;height:50px;margin:0 auto;position:relative}
+  .spinner::before,.spinner::after{
+    content:'';position:absolute;inset:0;border-radius:50%;
+    border:3px solid transparent;border-top-color:#fff;
+    animation:spin 1s linear infinite;
+  }
+  .spinner::after{animation-delay:-.5s;opacity:.5;inset:8px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .progress{
+    width:220px;height:4px;background:rgba(255,255,255,.2);
+    border-radius:4px;margin:24px auto 0;overflow:hidden;
+  }
+  .progress-bar{
+    height:100%;background:#fff;width:0%;border-radius:4px;
+    transition:width .3s ease;
+  }
+  .status{margin-top:12px;font-size:12px;opacity:.7;height:16px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="logo">💬</div>
+    <h1 id="appName">پیام‌رسان</h1>
+    <p>لطفاً منتظر بمانید…</p>
+    <div class="spinner"></div>
+    <div class="progress"><div class="progress-bar" id="bar"></div></div>
+    <div class="status" id="status">راه‌اندازی…</div>
+  </div>
+
+<script>
+document.getElementById('appName').textContent = window.APP_NAME || 'پیام‌رسان';
+const bar = document.getElementById('bar');
+const status = document.getElementById('status');
+
+const steps = [
+  { p: 20, t: 'اتصال به سرور…' },
+  { p: 50, t: 'بارگذاری کتابخانه…' },
+  { p: 80, t: 'بررسی نشست…' },
+  { p: 100, t: 'آماده!' }
+];
+let i = 0;
+function next() {
+  if (i >= steps.length) return;
+  bar.style.width = steps[i].p + '%';
+  status.textContent = steps[i].t;
+  i++;
+  setTimeout(next, 350);
+}
+next();
+
+// بارگذاری SDK
+function loadSDK() {
+  return new Promise((resolve, reject) => {
+    if (window.supabase) return resolve();
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+(async () => {
+  try {
+    await loadSDK();
+    const { createClient } = window.supabase;
+    const client = createClient(window.SUPABASE_URL, window.SUPABASE_ANON_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true, storageKey: 'messenger-auth' }
+    });
+    window._sb = client;
+
+    // بررسی نشست فعلی
+    const { data } = await client.auth.getSession();
+
+    setTimeout(() => {
+      if (data?.session) {
+        window.location.replace('chat.html');
+      } else {
+        window.location.replace('index.html');
+      }
+    }, 400);
+
+  } catch (e) {
+    status.textContent = 'خطا در اتصال!';
+    bar.style.background = '#ef4444';
+    console.error(e);
+    setTimeout(() => window.location.replace('index.html'), 1500);
+  }
+})();
+</script>
+</body>
+</html>
