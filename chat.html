@@ -7,52 +7,29 @@
 <script src="config.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{
-  --bg:#f1f5f9; --panel:#fff; --panel2:#f8fafc; --text:#1e293b; --text2:#64748b;
-  --border:#e2e8f0; --primary:#6366f1; --primary2:#8b5cf6; --bubble-in:#fff; --bubble-out:#6366f1;
-}
-.dark{
-  --bg:#0f172a; --panel:#1e293b; --panel2:#334155; --text:#f1f5f9; --text2:#94a3b8;
-  --border:#334155; --bubble-in:#334155; --bubble-out:#6366f1;
-}
+:root{--bg:#f1f5f9;--panel:#fff;--panel2:#f8fafc;--text:#1e293b;--text2:#64748b;--border:#e2e8f0;--primary:#6366f1;--primary2:#8b5cf6;--bubble-in:#fff;--bubble-out:#6366f1}
+.dark{--bg:#0f172a;--panel:#1e293b;--panel2:#334155;--text:#f1f5f9;--text2:#94a3b8;--border:#334155;--bubble-in:#334155;--bubble-out:#6366f1}
 html,body{height:100%;overflow:hidden}
-body{
-  font-family:-apple-system,'Segoe UI',Tahoma,sans-serif;
-  background:var(--bg);color:var(--text);
-  transition:background .2s,color .2s;
-}
+body{font-family:-apple-system,'Segoe UI',Tahoma,sans-serif;background:var(--bg);color:var(--text);transition:background .2s,color .2s}
 button,input,textarea{font-family:inherit}
 button{cursor:pointer;border:none;background:none;color:inherit}
 input,textarea{outline:none;font-family:inherit}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:6px}
 .dark ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15)}
-
 #app{display:flex;height:100vh;height:100dvh}
-#sidebar{
-  width:340px;flex-shrink:0;background:var(--panel);
-  border-left:1px solid var(--border);display:flex;flex-direction:column;
-}
+#sidebar{width:340px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column}
 #main{flex:1;display:flex;flex-direction:column;background:var(--bg);position:relative}
-
 .hdr{padding:12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);flex-shrink:0}
-.avatar{
-  width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);
-  color:#fff;display:flex;align-items:center;justify-content:center;
-  font-weight:700;font-size:16px;overflow:hidden;flex-shrink:0;position:relative;
-}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a855f7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;overflow:hidden;flex-shrink:0;position:relative}
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .avatar.sm{width:36px;height:36px;font-size:13px}
 .avatar.lg{width:88px;height:88px;font-size:34px}
-.online-dot{
-  position:absolute;bottom:1px;left:1px;width:12px;height:12px;
-  background:#22c55e;border-radius:50%;border:2px solid var(--panel);
-}
+.online-dot{position:absolute;bottom:1px;left:1px;width:12px;height:12px;background:#22c55e;border-radius:50%;border:2px solid var(--panel)}
 .search-inp{flex:1;padding:10px 14px;border-radius:22px;border:none;background:var(--panel2);color:var(--text);font-size:14px}
 .icon-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;transition:.15s;flex-shrink:0}
 .icon-btn:hover{background:var(--panel2)}
 .primary-btn{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
-
 #chatList{flex:1;overflow-y:auto;overflow-x:hidden}
 .chat-item{display:flex;align-items:center;gap:12px;padding:12px;cursor:pointer;transition:.15s;border-bottom:1px solid var(--border)}
 .chat-item:hover{background:var(--panel2)}
@@ -63,7 +40,6 @@ input,textarea{outline:none;font-family:inherit}
 .chat-item .time{font-size:11px;color:var(--text2);flex-shrink:0}
 .chat-item .last{font-size:13px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}
 .badge{background:var(--primary);color:#fff;font-size:11px;font-weight:700;border-radius:10px;padding:2px 7px;min-width:20px;text-align:center}
-
 #chatWin{flex:1;display:flex;flex-direction:column;height:100%;overflow:hidden}
 #chatHeader{padding:10px 12px;display:flex;align-items:center;gap:10px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
 #chatHeader .info{flex:1;min-width:0;cursor:pointer}
@@ -80,40 +56,25 @@ input,textarea{outline:none;font-family:inherit}
 .msg-row.self .bubble .meta{color:rgba(255,255,255,.9)}
 .bubble img,.bubble video{max-width:280px;max-height:320px;border-radius:10px;display:block;margin:2px 0;cursor:pointer}
 .bubble audio{width:260px;max-width:100%;display:block;margin:4px 0}
-.msg-row.self .bubble audio{filter:brightness(1.1)}
 .bubble .file-link{display:flex;align-items:center;gap:8px;padding:8px;background:rgba(0,0,0,.05);border-radius:8px;text-decoration:none;color:inherit;font-size:13px}
 .msg-row.self .bubble .file-link{background:rgba(255,255,255,.15)}
 .bubble.deleted{opacity:.6;font-style:italic}
 .msg-actions{display:flex;gap:4px;opacity:0;transition:.15s}
 .msg-row:hover .msg-actions{opacity:1}
 .msg-actions button{width:28px;height:28px;border-radius:50%;background:var(--panel2);font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text2)}
-.msg-actions button:hover{background:var(--border);color:var(--text)}
-
 #composer{padding:10px 12px;background:var(--panel);border-top:1px solid var(--border);display:flex;align-items:flex-end;gap:8px;flex-shrink:0;position:relative}
 #composer textarea{flex:1;padding:10px 14px;border-radius:20px;border:none;resize:none;background:var(--panel2);color:var(--text);font-size:14px;max-height:120px;min-height:40px;line-height:1.4}
-.send-btn{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center;transition:.15s}
-.send-btn:hover:not(:disabled){transform:scale(1.05)}
-.send-btn:disabled{opacity:.5;cursor:not-allowed}
-
-.mic-btn{color:var(--primary);transition:.15s}
+.send-btn{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-size:20px;display:flex;align-items:center;justify-content:center}
+.mic-btn{color:var(--primary)}
 .mic-btn:hover{background:var(--panel2)}
 .mic-btn.recording{background:#ef4444;color:#fff;animation:pulse 1.2s infinite}
-@keyframes pulse{
-  0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}
-  50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}
-}
-#recordingBar{
-  position:absolute;inset:0;background:var(--panel);display:none;
-  align-items:center;gap:12px;padding:0 16px;z-index:10;
-}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.7)}50%{box-shadow:0 0 0 12px rgba(239,68,68,0)}}
+#recordingBar{position:absolute;inset:0;background:var(--panel);display:none;align-items:center;gap:12px;padding:0 16px;z-index:10}
 #recordingBar.show{display:flex}
 .rec-dot{width:12px;height:12px;border-radius:50%;background:#ef4444;animation:pulse 1.2s infinite;flex-shrink:0}
-.rec-timer{font-size:16px;font-weight:700;color:#ef4444;font-variant-numeric:tabular-nums;min-width:60px}
+.rec-timer{font-size:16px;font-weight:700;color:#ef4444;min-width:60px}
 .rec-wave{flex:1;display:flex;align-items:center;justify-content:center;gap:3px;height:40px}
-.rec-wave span{
-  width:3px;background:var(--primary);border-radius:3px;height:20%;
-  animation:wave 1s infinite ease-in-out;
-}
+.rec-wave span{width:3px;background:var(--primary);border-radius:3px;height:20%;animation:wave 1s infinite ease-in-out}
 .rec-wave span:nth-child(2){animation-delay:.1s}
 .rec-wave span:nth-child(3){animation-delay:.2s}
 .rec-wave span:nth-child(4){animation-delay:.3s}
@@ -121,57 +82,43 @@ input,textarea{outline:none;font-family:inherit}
 .rec-wave span:nth-child(6){animation-delay:.5s}
 .rec-wave span:nth-child(7){animation-delay:.6s}
 @keyframes wave{0%,100%{height:20%}50%{height:100%}}
-.rec-btn{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;transition:.15s;flex-shrink:0}
+.rec-btn{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .rec-btn.cancel{background:var(--panel2);color:#ef4444}
 .rec-btn.send{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
-
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text2);gap:12px;padding:30px;text-align:center}
 .empty .big{font-size:60px;opacity:.4}
-
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .2s}
-@keyframes fade{from{opacity:0}to{opacity:1}}
-.modal{background:var(--panel);border-radius:20px;width:100%;max-width:440px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;animation:pop .25s cubic-bezier(.4,0,.2,1)}
-@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal{background:var(--panel);border-radius:20px;width:100%;max-width:440px;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
 .modal-hdr{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .modal-hdr h3{font-size:17px}
 .modal-body{padding:16px;overflow-y:auto;flex:1}
 .modal-ftr{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
 .field{margin-bottom:12px}
 .field label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px;font-weight:600}
-.field input,.field textarea,.field select{width:100%;padding:11px 14px;border-radius:10px;border:2px solid var(--border);background:var(--panel2);color:var(--text);font-size:14px;transition:.15s}
-.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--primary);background:var(--panel)}
-.btn{padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.field input,.field textarea{width:100%;padding:11px 14px;border-radius:10px;border:2px solid var(--border);background:var(--panel2);color:var(--text);font-size:14px}
+.field input:focus,.field textarea:focus{border-color:var(--primary);background:var(--panel)}
+.btn{padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.4)}
 .btn-ghost{background:var(--panel2);color:var(--text)}
-.btn-ghost:hover{background:var(--border)}
 .btn-danger{background:#ef4444;color:#fff}
-.btn-danger:hover{background:#dc2626}
-
 .tabs{display:flex;gap:6px;background:var(--panel2);padding:4px;border-radius:12px;margin-bottom:14px}
-.tabs button{flex:1;padding:9px;border-radius:9px;font-size:13px;font-weight:600;color:var(--text2);transition:.15s}
-.tabs button.active{background:var(--panel);color:var(--primary);box-shadow:0 2px 8px rgba(0,0,0,.06)}
-
+.tabs button{flex:1;padding:9px;border-radius:9px;font-size:13px;font-weight:600;color:var(--text2)}
+.tabs button.active{background:var(--panel);color:var(--primary)}
 .result-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:10px;cursor:pointer;transition:.15s}
 .result-item:hover{background:var(--panel2)}
 .result-item.selected{background:rgba(99,102,241,.1);border:1px solid var(--primary)}
 .result-item .info{flex:1;min-width:0}
 .result-item .n{font-weight:600;font-size:14px}
 .result-item .u{font-size:12px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--text);color:var(--panel);padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;transition:.3s;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:90vw;text-align:center}
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-100px);background:var(--text);color:var(--panel);padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:9999;transition:.3s;max-width:90vw;text-align:center}
 #toast.show{transform:translateX(-50%) translateY(0)}
-
-.upload-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--border);overflow:hidden;border-radius:3px 3px 0 0;z-index:20}
+.upload-bar{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--border);overflow:hidden;z-index:20}
 .upload-bar .fill{height:100%;background:var(--primary);width:0%;transition:width .2s}
-
 #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
 #lightbox img,#lightbox video{max-width:100%;max-height:90vh;border-radius:8px}
 #lightbox .close{position:absolute;top:16px;left:16px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.15);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center}
-
 #backBtn{display:none}
 .typing-indicator{padding:6px 14px;font-size:12px;color:var(--text2);height:22px;flex-shrink:0}
-
 @media(max-width:768px){
   #sidebar{width:100%}
   #main{position:fixed;inset:0;z-index:50;display:none}
@@ -207,7 +154,6 @@ input,textarea{outline:none;font-family:inherit}
       <div class="big">💬</div>
       <div>یک چت انتخاب کن یا چت جدید بساز</div>
     </div>
-
     <div id="chatWin" style="display:none">
       <div id="chatHeader">
         <button class="icon-btn" id="backBtn" onclick="closeChat()">→</button>
@@ -216,27 +162,22 @@ input,textarea{outline:none;font-family:inherit}
           <div class="name" id="chatName">—</div>
           <div class="sub" id="chatSub">—</div>
         </div>
-        <button class="icon-btn" onclick="openChatInfo()" title="اطلاعات">ⓘ</button>
+        <button class="icon-btn" onclick="openChatInfo()">ⓘ</button>
       </div>
       <div id="messages"></div>
       <div class="typing-indicator" id="typingBox"></div>
-
       <div id="composer">
         <div id="recordingBar">
           <div class="rec-dot"></div>
           <div class="rec-timer" id="recTimer">00:00</div>
-          <div class="rec-wave">
-            <span></span><span></span><span></span><span></span>
-            <span></span><span></span><span></span>
-          </div>
-          <button class="rec-btn cancel" onclick="cancelRecording()" title="لغو">🗑</button>
-          <button class="rec-btn send" onclick="stopRecording(true)" title="ارسال">➤</button>
+          <div class="rec-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <button class="rec-btn cancel" onclick="cancelRecording()">🗑</button>
+          <button class="rec-btn send" onclick="stopRecording(true)">➤</button>
         </div>
-
-        <button class="icon-btn" onclick="openAttach()" title="پیوست">📎</button>
-        <button class="icon-btn mic-btn" id="micBtn" onclick="startRecording()" title="ضبط صدا">🎤</button>
+        <button class="icon-btn" onclick="openAttach()">📎</button>
+        <button class="icon-btn mic-btn" id="micBtn" onclick="startRecording()">🎤</button>
         <textarea id="msgInput" placeholder="پیام…" rows="1" oninput="autoGrow(this)" onkeydown="composerKey(event)"></textarea>
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+        <button class="send-btn" onclick="sendMessage()">➤</button>
       </div>
     </div>
   </main>
@@ -250,44 +191,25 @@ input,textarea{outline:none;font-family:inherit}
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════
-//  State
-// ═══════════════════════════════════════════════════════
-let sb = null;
-let me = null;
-let chats = [];
-let activeChat = null;
-let activeMessages = [];
-let onlineUsers = new Set();
-let realtimeChans = [];
-let unread = {};
-let groupSelected = [];
-let typingTimeout = null;
-let typingChannel = null;
-let typingTimers = {};
+let sb = null, me = null, chats = [], activeChat = null, activeMessages = [];
+let onlineUsers = new Set(), realtimeChans = [], unread = {}, groupSelected = [];
+let typingTimeout = null, typingChannel = null, typingTimers = {};
+let mediaRecorder = null, recordedChunks = [], recordStartTime = 0, recordTimerInterval = null, recordStream = null;
 
-// 🎤 Recording state
-let mediaRecorder = null;
-let recordedChunks = [];
-let recordStartTime = 0;
-let recordTimerInterval = null;
-let recordStream = null;
-
-// ═══════════════════════════════════════════════════════
-//  SDK Load
-// ═══════════════════════════════════════════════════════
 (function loadSDK(){
-  if (window.supabase) return init();
+  if (window.supabase && window.supabase.createClient) return init();
   const s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+  s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
   s.onload = init;
-  s.onerror = () => alert('خطا در بارگذاری SDK');
+  s.onerror = () => {
+    const s2 = document.createElement('script');
+    s2.src = 'https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js';
+    s2.onload = init;
+    document.head.appendChild(s2);
+  };
   document.head.appendChild(s);
 })();
 
-// ═══════════════════════════════════════════════════════
-//  Init
-// ═══════════════════════════════════════════════════════
 async function init(){
   try {
     const { createClient } = window.supabase;
@@ -300,19 +222,14 @@ async function init(){
     if (!session) return location.replace('index.html');
 
     const { data: prof, error } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-    if (error || !prof) {
-      console.error('Profile load error:', error);
-      await sb.auth.signOut();
-      return location.replace('index.html');
-    }
+    if (error || !prof) { await sb.auth.signOut(); return location.replace('index.html'); }
     me = prof;
 
     if ('Notification' in window && Notification.permission === 'default') {
       setTimeout(() => Notification.requestPermission(), 2000);
     }
 
-    const savedTheme = me.theme || localStorage.getItem('theme') || 'light';
-    if (savedTheme === 'dark') {
+    if (me.theme === 'dark' || localStorage.getItem('theme') === 'dark') {
       document.body.classList.add('dark');
       document.getElementById('themeBtn').textContent = '☀️';
     }
@@ -321,43 +238,28 @@ async function init(){
     setupPresence();
     await loadChats();
     setupRealtime();
-
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
     window.addEventListener('beforeunload', () => { try { sb.removeAllChannels(); } catch(e){} });
-
   } catch (e) {
-    console.error('Init error:', e);
+    console.error(e);
     alert('خطا: ' + e.message);
   }
 }
 
-// ═══════════════════════════════════════════════════════
-//  Presence
-// ═══════════════════════════════════════════════════════
 async function setupPresence(){
-  const ch = sb.channel('presence:global:' + me.id, {
-    config: { presence: { key: me.id } }
-  });
+  const ch = sb.channel('presence:global:' + me.id, { config: { presence: { key: me.id } } });
   ch.on('presence', { event: 'sync' }, () => {
     onlineUsers = new Set(Object.keys(ch.presenceState()));
-    renderChats();
-    updateChatHeaderStatus();
+    renderChats(); updateChatHeaderStatus();
   });
-  await ch.subscribe(async (status) => {
-    if (status === 'SUBSCRIBED') await ch.track({ at: Date.now() });
-  });
+  await ch.subscribe(async (status) => { if (status === 'SUBSCRIBED') await ch.track({ at: Date.now() }); });
   realtimeChans.push(ch);
 }
 
-// ═══════════════════════════════════════════════════════
-//  Load chats
-// ═══════════════════════════════════════════════════════
 async function loadChats(){
-  const { data: rawChats, error } = await sb
-    .from('chats').select('*')
-    .contains('members', [me.id])
-    .order('updated_at', { ascending: false });
-  if (error) { console.error('loadChats:', error); return; }
+  const { data: rawChats, error } = await sb.from('chats').select('*')
+    .contains('members', [me.id]).order('updated_at', { ascending: false });
+  if (error) return;
   if (!rawChats || !rawChats.length) { chats = []; renderChats(); return; }
 
   const userIds = new Set();
@@ -366,8 +268,7 @@ async function loadChats(){
   let profilesMap = {};
   if (userIds.size) {
     const { data: profs } = await sb.from('profiles')
-      .select('id,name,username,avatar,online,last_seen')
-      .in('id', [...userIds]);
+      .select('id,name,username,avatar,online,last_seen').in('id', [...userIds]);
     (profs || []).forEach(p => profilesMap[p.id] = p);
   }
 
@@ -376,8 +277,7 @@ async function loadChats(){
   if (chatIds.length) {
     const { data: msgs } = await sb.from('messages')
       .select('id,chat_id,sender,text,type,media,media_meta,deleted_for_everyone,created_at')
-      .in('chat_id', chatIds)
-      .order('created_at', { ascending: false });
+      .in('chat_id', chatIds).order('created_at', { ascending: false });
     (msgs || []).forEach(m => { if (!lastMsgs[m.chat_id]) lastMsgs[m.chat_id] = m; });
   }
 
@@ -386,113 +286,75 @@ async function loadChats(){
     if (c.type === 'private') {
       otherId = (c.members || []).find(m => m !== me.id);
       const p = profilesMap[otherId];
-      title = p?.name || 'کاربر';
-      avatar = p?.avatar || '';
+      title = p?.name || 'کاربر'; avatar = p?.avatar || '';
     }
-    return {
-      ...c,
-      _title: title || 'بدون نام',
-      _avatar: avatar || '',
-      _otherId: otherId,
-      _lastMessage: lastMsgs[c.id] || null
-    };
+    return { ...c, _title: title || 'بدون نام', _avatar: avatar || '', _otherId: otherId, _lastMessage: lastMsgs[c.id] || null };
   });
   renderChats();
 }
 
-// ═══════════════════════════════════════════════════════
-//  Realtime
-// ═══════════════════════════════════════════════════════
 function setupRealtime(){
   realtimeChans.forEach(c => { try { sb.removeChannel(c); } catch(e){} });
-  realtimeChans = [];
-  setupPresence();
-
+  realtimeChans = []; setupPresence();
   const ch = sb.channel('rt:messages:' + me.id);
 
-  ch.on('postgres_changes',
-    { event: 'INSERT', schema: 'public', table: 'messages' },
-    async (payload) => {
-      const m = payload.new;
-      if (m.deleted_for && m.deleted_for.includes(me.id)) return;
+  ch.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, async (payload) => {
+    const m = payload.new;
+    if (m.deleted_for && m.deleted_for.includes(me.id)) return;
+    let chat = chats.find(c => c.id === m.chat_id);
+    if (!chat) { await loadChats(); chat = chats.find(c => c.id === m.chat_id); if (!chat) return; }
 
-      let chat = chats.find(c => c.id === m.chat_id);
-      if (!chat) {
-        // چت جدید — ممکنه عضوم کرده باشن، پس دوباره بارگذاری کن
-        await loadChats();
-        chat = chats.find(c => c.id === m.chat_id);
-        if (!chat) return;
+    let sender = m.sender === me.id
+      ? { id: me.id, name: me.name, username: me.username, avatar: me.avatar }
+      : (await sb.from('profiles').select('id,name,username,avatar').eq('id', m.sender).single()).data
+        || { id: m.sender, name: 'کاربر', username: '' };
+    m._sender = sender;
+    chat._lastMessage = m; chat.updated_at = new Date().toISOString();
+
+    if (!activeChat || m.chat_id !== activeChat.id) {
+      if (m.sender !== me.id) unread[m.chat_id] = (unread[m.chat_id] || 0) + 1;
+      chats = [chat, ...chats.filter(c => c.id !== chat.id)];
+      if (m.sender !== me.id) notifyNewMessage(chat, m);
+    }
+    renderChats();
+
+    if (activeChat && m.chat_id === activeChat.id && !activeMessages.find(x => x.id === m.id)) {
+      activeMessages.push(m); appendMessage(m); scrollToBottom();
+    }
+  });
+
+  ch.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, (payload) => {
+    const m = payload.new;
+    const idx = activeMessages.findIndex(x => x.id === m.id);
+    if (idx !== -1) {
+      activeMessages[idx] = { ...activeMessages[idx], ...m };
+      if (m.deleted_for_everyone) {
+        const el = document.querySelector(`[data-msg="${m.id}"]`);
+        if (el) el.outerHTML = deletedBubbleHTML(m);
       }
+    }
+    const c = chats.find(c => c.id === m.chat_id);
+    if (c && c._lastMessage?.id === m.id) { c._lastMessage = m; renderChats(); }
+  });
 
-      let sender = null;
-      if (m.sender === me.id) sender = { id: me.id, name: me.name, username: me.username, avatar: me.avatar };
+  ch.on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chats' }, async (payload) => {
+    const c = payload.new;
+    if (c.members.includes(me.id)) {
+      const exists = chats.find(x => x.id === c.id);
+      if (!exists) await loadChats();
       else {
-        const { data: p } = await sb.from('profiles').select('id,name,username,avatar').eq('id', m.sender).single();
-        sender = p || { id: m.sender, name: 'کاربر', username: '' };
-      }
-      m._sender = sender;
-
-      chat._lastMessage = m;
-      chat.updated_at = new Date().toISOString();
-
-      if (!activeChat || m.chat_id !== activeChat.id) {
-        if (m.sender !== me.id) unread[m.chat_id] = (unread[m.chat_id] || 0) + 1;
-        chats = [chat, ...chats.filter(c => c.id !== chat.id)];
-        if (m.sender !== me.id) notifyNewMessage(chat, m);
-      }
-      renderChats();
-
-      if (activeChat && m.chat_id === activeChat.id) {
-        if (!activeMessages.find(x => x.id === m.id)) {
-          activeMessages.push(m);
-          appendMessage(m);
-          scrollToBottom();
-        }
-      }
-    });
-
-  ch.on('postgres_changes',
-    { event: 'UPDATE', schema: 'public', table: 'messages' },
-    (payload) => {
-      const m = payload.new;
-      const idx = activeMessages.findIndex(x => x.id === m.id);
-      if (idx !== -1) {
-        activeMessages[idx] = { ...activeMessages[idx], ...m };
-        if (m.deleted_for_everyone) {
-          const el = document.querySelector(`[data-msg="${m.id}"]`);
-          if (el) el.outerHTML = deletedBubbleHTML(m);
-        }
-      }
-      const c = chats.find(c => c.id === m.chat_id);
-      if (c && c._lastMessage?.id === m.id) { c._lastMessage = m; renderChats(); }
-    });
-
-  // تغییرات چت‌ها (وقتی عضوی اضافه/حذف می‌شه)
-  ch.on('postgres_changes',
-    { event: 'UPDATE', schema: 'public', table: 'chats' },
-    async (payload) => {
-      const c = payload.new;
-      // اگه من عضو شدم، دوباره بارگذاری
-      if (c.members.includes(me.id)) {
-        const exists = chats.find(x => x.id === c.id);
-        if (!exists) await loadChats();
-        else {
-          const idx = chats.findIndex(x => x.id === c.id);
-          if (idx !== -1) {
-            chats[idx] = { ...chats[idx], ...c };
-            renderChats();
-          }
-        }
-      } else {
-        // اگه من حذف شدم، از لیست بردار
         const idx = chats.findIndex(x => x.id === c.id);
-        if (idx !== -1) {
-          chats.splice(idx, 1);
-          if (activeChat?.id === c.id) closeChat();
-          renderChats();
-        }
+        if (idx !== -1) { chats[idx] = { ...chats[idx], ...c }; renderChats(); }
       }
-    });
+    } else {
+      const idx = chats.findIndex(x => x.id === c.id);
+      if (idx !== -1) {
+        chats.splice(idx, 1);
+        if (activeChat?.id === c.id) closeChat();
+        renderChats();
+      }
+    }
+  });
 
   ch.subscribe();
   realtimeChans.push(ch);
@@ -501,19 +363,14 @@ function setupRealtime(){
 function notifyNewMessage(chat, m){
   if (!('Notification' in window) || Notification.permission !== 'granted') return;
   if (document.visibilityState === 'visible' && activeChat?.id === chat.id) return;
-  let body = '';
-  if (m.deleted_for_everyone) body = 'پیام حذف شد';
-  else if (m.type === 'text') body = (m.text || '').slice(0, 80);
-  else if (m.type === 'image') body = '🖼 تصویر';
-  else if (m.type === 'video') body = '🎬 ویدیو';
-  else if (m.type === 'audio') body = '🎤 پیام صوتی';
-  else body = '📎 فایل';
+  let body = m.deleted_for_everyone ? 'پیام حذف شد' :
+    m.type === 'text' ? (m.text || '').slice(0, 80) :
+    m.type === 'image' ? '🖼 تصویر' :
+    m.type === 'video' ? '🎬 ویدیو' :
+    m.type === 'audio' ? '🎤 پیام صوتی' : '📎 فایل';
   try { new Notification(chat._title || 'پیام جدید', { body }); } catch(e){}
 }
 
-// ═══════════════════════════════════════════════════════
-//  Render chat list
-// ═══════════════════════════════════════════════════════
 function renderChats(){
   const q = (document.getElementById('searchChats').value || '').toLowerCase().trim();
   const list = document.getElementById('chatList');
@@ -521,8 +378,7 @@ function renderChats(){
 
   if (!filtered.length) {
     list.innerHTML = `<div class="empty" style="padding:40px 20px">
-      <div class="big">🔍</div>
-      <div>چتی پیدا نشد</div>
+      <div class="big">🔍</div><div>چتی پیدا نشد</div>
       <button class="btn btn-primary" onclick="openNewChat()" style="margin-top:8px">شروع چت جدید</button>
     </div>`;
     return;
@@ -543,25 +399,15 @@ function renderChats(){
     const isOnline = c.type === 'private' && c._otherId && onlineUsers.has(c._otherId);
     const isActive = activeChat?.id === c.id;
     const cnt = unread[c.id] || 0;
-    const avHTML = c._avatar
-      ? `<img src="${escapeAttr(c._avatar)}" onerror="this.replaceWith(document.createTextNode('${escapeHtml((c._title||'?')[0])}'))">`
-      : escapeHtml((c._title || '?')[0] || '?');
+    const avHTML = c._avatar ? `<img src="${escapeAttr(c._avatar)}">` : escapeHtml((c._title || '?')[0] || '?');
     const typeIcon = c.type === 'group' ? '👥 ' : c.type === 'channel' ? '📢 ' : '';
-
-    return `
-      <div class="chat-item ${isActive ? 'active' : ''}" onclick="openChat('${c.id}')">
-        <div class="avatar">${avHTML}${isOnline ? '<span class="online-dot"></span>' : ''}</div>
-        <div class="info">
-          <div class="top">
-            <div class="name">${typeIcon}${escapeHtml(c._title)}</div>
-            <div class="time">${time}</div>
-          </div>
-          <div class="top" style="margin-top:3px">
-            <div class="last">${escapeHtml(lastText).slice(0, 50)}</div>
-            ${cnt > 0 ? `<div class="badge">${cnt > 99 ? '99+' : cnt}</div>` : ''}
-          </div>
-        </div>
-      </div>`;
+    return `<div class="chat-item ${isActive ? 'active' : ''}" onclick="openChat('${c.id}')">
+      <div class="avatar">${avHTML}${isOnline ? '<span class="online-dot"></span>' : ''}</div>
+      <div class="info">
+        <div class="top"><div class="name">${typeIcon}${escapeHtml(c._title)}</div><div class="time">${time}</div></div>
+        <div class="top" style="margin-top:3px"><div class="last">${escapeHtml(lastText).slice(0, 50)}</div>
+        ${cnt > 0 ? `<div class="badge">${cnt > 99 ? '99+' : cnt}</div>` : ''}</div>
+      </div></div>`;
   }).join('');
 }
 
@@ -571,20 +417,13 @@ function renderMyAvatar(){
   else el.textContent = (me.name || '?')[0];
 }
 
-// ═══════════════════════════════════════════════════════
-//  Open chat
-// ═══════════════════════════════════════════════════════
 async function openChat(chatId){
   const chat = chats.find(c => c.id === chatId);
   if (!chat) return;
-
   if (typingChannel) { try { sb.removeChannel(typingChannel); } catch(e){} typingChannel = null; }
 
-  activeChat = chat;
-  unread[chatId] = 0;
-  renderChats();
+  activeChat = chat; unread[chatId] = 0; renderChats();
   document.body.classList.add('chat-open');
-
   document.getElementById('emptyMain').style.display = 'none';
   document.getElementById('chatWin').style.display = 'flex';
 
@@ -594,26 +433,20 @@ async function openChat(chatId){
   document.getElementById('chatName').textContent = chat._title;
   updateChatHeaderStatus();
 
-  const { data: msgs, error } = await sb.from('messages')
-    .select('*').eq('chat_id', chatId)
-    .order('created_at', { ascending: true })
-    .limit(500);
+  const { data: msgs, error } = await sb.from('messages').select('*').eq('chat_id', chatId)
+    .order('created_at', { ascending: true }).limit(500);
   if (error) { toast('خطا: ' + error.message); return; }
 
   const senderIds = new Set(msgs.map(m => m.sender).filter(Boolean));
   let senders = {};
   if (senderIds.size) {
-    const { data: profs } = await sb.from('profiles')
-      .select('id,name,username,avatar').in('id', [...senderIds]);
+    const { data: profs } = await sb.from('profiles').select('id,name,username,avatar').in('id', [...senderIds]);
     (profs || []).forEach(p => senders[p.id] = p);
   }
 
-  activeMessages = msgs
-    .map(m => ({ ...m, _sender: senders[m.sender] || { id: m.sender, name: 'کاربر' } }))
+  activeMessages = msgs.map(m => ({ ...m, _sender: senders[m.sender] || { id: m.sender, name: 'کاربر' } }))
     .filter(m => !(m.deleted_for || []).includes(me.id));
-
-  renderMessages();
-  scrollToBottom();
+  renderMessages(); scrollToBottom();
 
   typingChannel = sb.channel('typing:' + chatId);
   typingChannel.on('broadcast', { event: 'typing' }, ({ payload }) => {
@@ -629,8 +462,7 @@ async function openChat(chatId){
 function closeChat(){
   if (typingChannel) { try { sb.removeChannel(typingChannel); } catch(e){} typingChannel = null; }
   document.body.classList.remove('chat-open');
-  activeChat = null;
-  activeMessages = [];
+  activeChat = null; activeMessages = [];
   document.getElementById('chatWin').style.display = 'none';
   document.getElementById('emptyMain').style.display = 'flex';
   renderChats();
@@ -639,24 +471,14 @@ function closeChat(){
 function updateChatHeaderStatus(){
   if (!activeChat) return;
   const el = document.getElementById('chatSub');
-  if (activeChat.type === 'private') {
-    el.textContent = onlineUsers.has(activeChat._otherId) ? 'آنلاین' : 'آفلاین';
-  } else if (activeChat.type === 'group') {
-    el.textContent = `${activeChat.members.length} عضو${activeChat.is_locked ? ' • 🔒' : ''}`;
-  } else {
-    el.textContent = `${activeChat.members.length} عضو • کانال`;
-  }
+  if (activeChat.type === 'private') el.textContent = onlineUsers.has(activeChat._otherId) ? 'آنلاین' : 'آفلاین';
+  else if (activeChat.type === 'group') el.textContent = `${activeChat.members.length} عضو${activeChat.is_locked ? ' • 🔒' : ''}`;
+  else el.textContent = `${activeChat.members.length} عضو • کانال`;
 }
 
-// ═══════════════════════════════════════════════════════
-//  Render messages
-// ═══════════════════════════════════════════════════════
 function renderMessages(){
   const el = document.getElementById('messages');
-  if (!activeMessages.length) {
-    el.innerHTML = `<div class="empty"><div class="big">👋</div><div>هنوز پیامی نیست</div></div>`;
-    return;
-  }
+  if (!activeMessages.length) { el.innerHTML = `<div class="empty"><div class="big">👋</div><div>هنوز پیامی نیست</div></div>`; return; }
   el.innerHTML = activeMessages.map(m => messageHTML(m)).join('');
 }
 
@@ -665,63 +487,37 @@ function messageHTML(m){
   const self = m.sender === me.id;
   const sender = m._sender || {};
   const time = formatClock(m.created_at);
-
   let content = '';
-  if (m.type === 'text') {
-    content = `<div>${linkify(escapeHtml(m.text || ''))}</div>`;
-  } else if (m.type === 'image') {
-    content = `<img src="${escapeAttr(m.media)}" onclick="openLightbox('image','${escapeAttr(m.media)}')" loading="lazy">`;
-    if (m.text) content += `<div style="margin-top:4px">${escapeHtml(m.text)}</div>`;
-  } else if (m.type === 'video') {
-    content = `<video src="${escapeAttr(m.media)}" controls preload="metadata" onclick="event.stopPropagation()"></video>`;
-    if (m.text) content += `<div style="margin-top:4px">${escapeHtml(m.text)}</div>`;
-  } else if (m.type === 'audio') {
-    const dur = m.media_meta?.duration ? formatDuration(m.media_meta.duration) : '';
-    content = `<div style="display:flex;align-items:center;gap:8px">
-      <span style="font-size:20px">🎤</span>
-      <audio src="${escapeAttr(m.media)}" controls preload="metadata" style="flex:1"></audio>
-    </div>`;
-    if (dur) content += `<div style="font-size:11px;opacity:.7;margin-top:2px">${dur}</div>`;
-  } else {
-    content = `<a href="${escapeAttr(m.media)}" download class="file-link" target="_blank">
-      📎 <span>${escapeHtml(m.media_meta?.name || 'فایل')}</span>
-      <span style="opacity:.6;font-size:11px">${formatSize(m.media_meta?.size)}</span>
-    </a>`;
-  }
+  if (m.type === 'text') content = `<div>${linkify(escapeHtml(m.text || ''))}</div>`;
+  else if (m.type === 'image') content = `<img src="${escapeAttr(m.media)}" onclick="openLightbox('image','${escapeAttr(m.media)}')" loading="lazy">${m.text ? `<div style="margin-top:4px">${escapeHtml(m.text)}</div>` : ''}`;
+  else if (m.type === 'video') content = `<video src="${escapeAttr(m.media)}" controls preload="metadata" onclick="event.stopPropagation()"></video>`;
+  else if (m.type === 'audio') content = `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎤</span><audio src="${escapeAttr(m.media)}" controls preload="metadata" style="flex:1"></audio></div>`;
+  else content = `<a href="${escapeAttr(m.media)}" download class="file-link" target="_blank">📎 <span>${escapeHtml(m.media_meta?.name || 'فایل')}</span></a>`;
 
-  const actions = `
-    <div class="msg-actions">
-      ${m.text ? `<button onclick="event.stopPropagation();copyMsg('${m.id}')" title="کپی">📋</button>` : ''}
-      <button onclick="event.stopPropagation();deleteForMe('${m.id}')" title="حذف برای من">🗑</button>
-      ${self ? `<button onclick="event.stopPropagation();deleteForAll('${m.id}')" title="حذف برای همه">🗑️</button>` : ''}
-    </div>`;
+  const actions = `<div class="msg-actions">
+    ${m.text ? `<button onclick="event.stopPropagation();copyMsg('${m.id}')" title="کپی">📋</button>` : ''}
+    <button onclick="event.stopPropagation();deleteForMe('${m.id}')" title="حذف برای من">🗑</button>
+    ${self ? `<button onclick="event.stopPropagation();deleteForAll('${m.id}')" title="حذف برای همه">🗑️</button>` : ''}
+  </div>`;
 
   const senderName = (!self && activeChat.type !== 'private' && sender.name)
     ? `<span class="sender">${escapeHtml(sender.name)}</span>` : '';
 
-  return `
-    <div class="msg-row ${self ? 'self' : ''}" data-msg="${m.id}">
-      ${!self ? `<div class="avatar sm">${sender.avatar ? `<img src="${escapeAttr(sender.avatar)}">` : escapeHtml((sender.name || '?')[0])}</div>` : ''}
-      <div class="bubble">
-        ${senderName}
-        ${content}
-        <div class="meta">${time}</div>
-      </div>
-      ${actions}
-    </div>`;
+  return `<div class="msg-row ${self ? 'self' : ''}" data-msg="${m.id}">
+    ${!self ? `<div class="avatar sm">${sender.avatar ? `<img src="${escapeAttr(sender.avatar)}">` : escapeHtml((sender.name || '?')[0])}</div>` : ''}
+    <div class="bubble">${senderName}${content}<div class="meta">${time}</div></div>
+    ${actions}
+  </div>`;
 }
 
 function deletedBubbleHTML(m){
-  return `
-    <div class="msg-row ${m.sender === me.id ? 'self' : ''}" data-msg="${m.id}">
-      <div class="bubble deleted">🚫 این پیام حذف شد</div>
-    </div>`;
+  return `<div class="msg-row ${m.sender === me.id ? 'self' : ''}" data-msg="${m.id}">
+    <div class="bubble deleted">🚫 این پیام حذف شد</div></div>`;
 }
 
 function appendMessage(m){
   const el = document.getElementById('messages');
-  const emp = el.querySelector('.empty');
-  if (emp) emp.remove();
+  const emp = el.querySelector('.empty'); if (emp) emp.remove();
   const wrap = document.createElement('div');
   wrap.innerHTML = messageHTML(m);
   el.appendChild(wrap.firstElementChild);
@@ -732,16 +528,12 @@ function scrollToBottom(){
   requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
 }
 
-// ═══════════════════════════════════════════════════════
-//  Send message
-// ═══════════════════════════════════════════════════════
 async function sendMessage(){
   if (!activeChat) return;
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
   if (!text) return;
-  input.value = '';
-  autoGrow(input);
+  input.value = ''; autoGrow(input);
   await sendPayload({ text, type: 'text', media: '', media_meta: {} });
 }
 
@@ -751,15 +543,9 @@ async function sendPayload({ text, type, media, media_meta }){
   const tempId = 'temp_' + clientId;
   const now = new Date().toISOString();
 
-  const optimistic = {
-    id: tempId, chat_id: activeChat.id, sender: me.id,
-    text, type, media, media_meta,
-    deleted_for_everyone: false, deleted_for: [], read_by: [],
-    created_at: now, _sender: me
-  };
-  activeMessages.push(optimistic);
-  appendMessage(optimistic);
-  scrollToBottom();
+  const optimistic = { id: tempId, chat_id: activeChat.id, sender: me.id, text, type, media, media_meta,
+    deleted_for_everyone: false, deleted_for: [], created_at: now, _sender: me };
+  activeMessages.push(optimistic); appendMessage(optimistic); scrollToBottom();
 
   const chatId = activeChat.id;
   const { data, error } = await sb.from('messages').insert({
@@ -769,189 +555,88 @@ async function sendPayload({ text, type, media, media_meta }){
   if (error) {
     toast('ارسال نشد: ' + error.message);
     activeMessages = activeMessages.filter(m => m.id !== tempId);
-    const node = document.querySelector(`[data-msg="${tempId}"]`);
-    if (node) node.remove();
+    const node = document.querySelector(`[data-msg="${tempId}"]`); if (node) node.remove();
     return;
   }
 
   const idx = activeMessages.findIndex(m => m.id === tempId);
   if (idx !== -1) {
-    data._sender = me;
-    activeMessages[idx] = data;
+    data._sender = me; activeMessages[idx] = data;
     const node = document.querySelector(`[data-msg="${tempId}"]`);
-    if (node) {
-      const wrap = document.createElement('div');
-      wrap.innerHTML = messageHTML(data);
-      node.replaceWith(wrap.firstElementChild);
-    }
+    if (node) { const w = document.createElement('div'); w.innerHTML = messageHTML(data); node.replaceWith(w.firstElementChild); }
   }
 
   const c = chats.find(c => c.id === chatId);
-  if (c) {
-    c._lastMessage = data;
-    c.updated_at = now;
-    chats = [c, ...chats.filter(x => x.id !== c.id)];
-    renderChats();
-  }
+  if (c) { c._lastMessage = data; c.updated_at = now; chats = [c, ...chats.filter(x => x.id !== c.id)]; renderChats(); }
 }
 
 function composerKey(e){
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   if (activeChat && typingChannel && !typingTimeout) {
-    typingChannel.send({ type: 'broadcast', event: 'typing', payload: { userId: me.id, chatId: activeChat.id } });
+    typingChannel.send({ type: 'broadcast', event: 'typing', payload: { userId: me.id } });
     typingTimeout = setTimeout(() => { typingTimeout = null; }, 1500);
   }
 }
 
-function autoGrow(el){
-  el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
-}
+function autoGrow(el){ el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 
-// ═══════════════════════════════════════════════════════
-//  🎤 ضبط صدا
-// ═══════════════════════════════════════════════════════
 async function startRecording(){
   if (!activeChat) return toast('اول یک چت انتخاب کن');
   if (mediaRecorder && mediaRecorder.state === 'recording') return;
-
   try {
-    recordStream = await navigator.mediaDevices.getUserMedia({
-      audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true
-      }
-    });
-
-    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
-      ? 'audio/webm;codecs=opus'
-      : MediaRecorder.isTypeSupported('audio/webm')
-        ? 'audio/webm'
-        : MediaRecorder.isTypeSupported('audio/mp4')
-          ? 'audio/mp4'
-          : '';
-
-    const opts = mimeType ? { mimeType } : {};
-    mediaRecorder = new MediaRecorder(recordStream, opts);
+    recordStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') ? 'audio/webm;codecs=opus'
+      : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm'
+      : MediaRecorder.isTypeSupported('audio/mp4') ? 'audio/mp4' : '';
+    mediaRecorder = new MediaRecorder(recordStream, mimeType ? { mimeType } : {});
     recordedChunks = [];
-
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data && e.data.size > 0) recordedChunks.push(e.data);
-    };
-
-    mediaRecorder.onstop = async () => {
-      if (recordStream) {
-        recordStream.getTracks().forEach(t => t.stop());
-        recordStream = null;
-      }
-    };
-
+    mediaRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = () => { if (recordStream) { recordStream.getTracks().forEach(t => t.stop()); recordStream = null; } };
     mediaRecorder.start(100);
-
     recordStartTime = Date.now();
     document.getElementById('recordingBar').classList.add('show');
     document.getElementById('micBtn').classList.add('recording');
     document.getElementById('recTimer').textContent = '00:00';
-
     recordTimerInterval = setInterval(() => {
-      const elapsed = Math.floor((Date.now() - recordStartTime) / 1000);
-      const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
-      const s = String(elapsed % 60).padStart(2, '0');
-      document.getElementById('recTimer').textContent = `${m}:${s}`;
-      if (elapsed >= 300) stopRecording(true);
+      const e = Math.floor((Date.now() - recordStartTime) / 1000);
+      document.getElementById('recTimer').textContent = `${String(Math.floor(e/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`;
+      if (e >= 300) stopRecording(true);
     }, 200);
-
-  } catch (e) {
-    console.error('Recording error:', e);
-    if (e.name === 'NotAllowedError') toast('دسترسی به میکروفون داده نشد');
-    else if (e.name === 'NotFoundError') toast('میکروفون پیدا نشد');
-    else toast('خطا: ' + e.message);
-  }
+  } catch (e) { toast('خطا: ' + e.message); }
 }
 
 async function stopRecording(send){
-  if (!mediaRecorder) return;
-  const wasRecording = mediaRecorder.state === 'recording';
-  if (!wasRecording) return;
-
+  if (!mediaRecorder || mediaRecorder.state !== 'recording') return;
   const duration = Math.floor((Date.now() - recordStartTime) / 1000);
   mediaRecorder.stop();
-
-  clearInterval(recordTimerInterval);
-  recordTimerInterval = null;
+  clearInterval(recordTimerInterval); recordTimerInterval = null;
   document.getElementById('recordingBar').classList.remove('show');
   document.getElementById('micBtn').classList.remove('recording');
-  document.getElementById('recTimer').textContent = '00:00';
-
   if (!send) { recordedChunks = []; return; }
   if (duration < 1) { toast('ضبط خیلی کوتاه است'); recordedChunks = []; return; }
-
   await new Promise(r => setTimeout(r, 150));
-
-  if (!recordedChunks.length) { toast('صدایی ضبط نشد'); return; }
-
+  if (!recordedChunks.length) return toast('صدایی ضبط نشد');
   const mimeType = mediaRecorder.mimeType || 'audio/webm';
-  const ext = mimeType.includes('mp4') ? 'm4a' : mimeType.includes('ogg') ? 'ogg' : 'webm';
+  const ext = mimeType.includes('mp4') ? 'm4a' : 'webm';
   const blob = new Blob(recordedChunks, { type: mimeType });
   recordedChunks = [];
-
   await uploadAudio(blob, ext, duration);
 }
 
-function cancelRecording(){
-  stopRecording(false);
-  toast('لغو شد');
-}
+function cancelRecording(){ stopRecording(false); toast('لغو شد'); }
 
 async function uploadAudio(blob, ext, duration){
-  const bar = document.createElement('div');
-  bar.className = 'upload-bar';
-  bar.innerHTML = '<div class="fill" style="width:20%"></div>';
-  document.getElementById('composer').appendChild(bar);
-  const fill = bar.querySelector('.fill');
-
   const path = `${me.id}/voice-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-
-  const { error } = await sb.storage.from('media').upload(path, blob, {
-    cacheControl: '31536000', contentType: blob.type, upsert: false
-  });
-
-  fill.style.width = '100%';
-
-  if (error) { bar.remove(); return toast('آپلود نشد: ' + error.message); }
-
+  const { error } = await sb.storage.from('media').upload(path, blob, { cacheControl: '31536000', contentType: blob.type, upsert: false });
+  if (error) return toast('آپلود نشد: ' + error.message);
   const { data: { publicUrl } } = sb.storage.from('media').getPublicUrl(path);
-  setTimeout(() => bar.remove(), 300);
-
-  await sendPayload({
-    text: '',
-    type: 'audio',
-    media: publicUrl,
-    media_meta: { duration, size: blob.size, mime: blob.type, name: 'voice.' + ext }
-  });
+  await sendPayload({ text: '', type: 'audio', media: publicUrl, media_meta: { duration, size: blob.size, mime: blob.type } });
 }
 
-function formatDuration(sec){
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m}:${String(s).padStart(2, '0')}`;
-}
-
-// ═══════════════════════════════════════════════════════
-//  Message actions
-// ═══════════════════════════════════════════════════════
 function copyMsg(id){
   const m = activeMessages.find(x => x.id === id);
   if (!m || !m.text) return;
-  if (navigator.clipboard) {
-    navigator.clipboard.writeText(m.text).then(() => toast('📋 کپی شد')).catch(() => toast('کپی نشد'));
-  } else {
-    const ta = document.createElement('textarea');
-    ta.value = m.text; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); ta.remove();
-    toast('📋 کپی شد');
-  }
+  if (navigator.clipboard) navigator.clipboard.writeText(m.text).then(() => toast('📋 کپی شد')).catch(() => {});
 }
 
 async function deleteForMe(id){
@@ -963,15 +648,12 @@ async function deleteForMe(id){
   const { error } = await sb.from('messages').update({ deleted_for: arr }).eq('id', id);
   if (error) return toast(error.message);
   activeMessages = activeMessages.filter(x => x.id !== id);
-  const node = document.querySelector(`[data-msg="${id}"]`);
-  if (node) node.remove();
+  const node = document.querySelector(`[data-msg="${id}"]`); if (node) node.remove();
 }
 
 async function deleteForAll(id){
   if (!confirm('حذف برای همه؟')) return;
-  const { error } = await sb.from('messages').update({
-    deleted_for_everyone: true, text: '', media: ''
-  }).eq('id', id);
+  const { error } = await sb.from('messages').update({ deleted_for_everyone: true, text: '', media: '' }).eq('id', id);
   if (error) return toast(error.message);
   const m = activeMessages.find(x => x.id === id);
   if (m) { m.deleted_for_everyone = true; m.text = ''; m.media = ''; }
@@ -979,13 +661,9 @@ async function deleteForAll(id){
   if (node) node.outerHTML = deletedBubbleHTML({ id, sender: me.id });
 }
 
-// ═══════════════════════════════════════════════════════
-//  Attach file
-// ═══════════════════════════════════════════════════════
 function openAttach(){
   const inp = document.createElement('input');
-  inp.type = 'file';
-  inp.accept = 'image/*,video/*,*/*';
+  inp.type = 'file'; inp.accept = 'image/*,video/*,*/*';
   inp.onchange = async () => { if (inp.files[0]) await uploadAndSend(inp.files[0]); };
   inp.click();
 }
@@ -993,56 +671,23 @@ function openAttach(){
 async function uploadAndSend(file){
   const maxMB = window.MAX_FILE_MB || 500;
   if (file.size > maxMB * 1024 * 1024) return toast(`حجم بیش از ${maxMB}MB`);
-
-  const bar = document.createElement('div');
-  bar.className = 'upload-bar';
-  bar.innerHTML = '<div class="fill"></div>';
-  document.getElementById('composer').appendChild(bar);
-  const fill = bar.querySelector('.fill');
-  fill.style.width = '20%';
-
   const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
   const path = `${me.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-
-  const { error } = await sb.storage.from('media').upload(path, file, {
-    cacheControl: '31536000', upsert: false
-  });
-
-  fill.style.width = '90%';
-
-  if (error) { bar.remove(); return toast('آپلود نشد: ' + error.message); }
-
+  const { error } = await sb.storage.from('media').upload(path, file, { cacheControl: '31536000', upsert: false });
+  if (error) return toast('آپلود نشد: ' + error.message);
   const { data: { publicUrl } } = sb.storage.from('media').getPublicUrl(path);
-  fill.style.width = '100%';
-  setTimeout(() => bar.remove(), 300);
-
   let type = 'file';
   if (file.type.startsWith('image/')) type = 'image';
   else if (file.type.startsWith('video/')) type = 'video';
   else if (file.type.startsWith('audio/')) type = 'audio';
-
-  await sendPayload({
-    text: '',
-    type,
-    media: publicUrl,
-    media_meta: { name: file.name, size: file.size, mime: file.type }
-  });
+  await sendPayload({ text: '', type, media: publicUrl, media_meta: { name: file.name, size: file.size, mime: file.type } });
 }
 
-// ═══════════════════════════════════════════════════════
-//  Modals
-// ═══════════════════════════════════════════════════════
 function openModal(html){
-  document.getElementById('modalRoot').innerHTML =
-    `<div class="modal-bg" onclick="if(event.target===this)closeModal()">
-      <div class="modal" onclick="event.stopPropagation()">${html}</div>
-    </div>`;
+  document.getElementById('modalRoot').innerHTML = `<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal" onclick="event.stopPropagation()">${html}</div></div>`;
 }
 function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
 
-// ═══════════════════════════════════════════════════════
-//  Profile
-// ═══════════════════════════════════════════════════════
 function openProfile(){
   const html = `
     <div class="modal-hdr"><h3>پروفایل من</h3><button class="icon-btn" onclick="closeModal()">✕</button></div>
@@ -1054,7 +699,9 @@ function openProfile(){
         <div style="margin-top:8px;color:var(--text2);font-size:12px">برای تغییر کلیک کن</div>
       </div>
       <div class="field"><label>نام</label><input id="pName" value="${escapeAttr(me.name)}"></div>
-      <div class="field"><label>نام کاربری</label><input id="pUsername" value="${escapeAttr(me.username)}"></div>
+      <div class="field"><label>نام کاربری</label><input id="pUsername" value="${escapeAttr(me.username)}" placeholder="هرچی می‌خوای…">
+        <div style="font-size:11px;color:var(--text2);margin-top:4px">می‌تونی فارسی، انگلیسی، عدد یا ایموجی استفاده کنی</div>
+      </div>
       <div class="field"><label>شماره موبایل</label><input value="${escapeAttr(me.phone||'')}" disabled></div>
     </div>
     <div class="modal-ftr">
@@ -1076,39 +723,39 @@ async function changeAvatar(){
     const { error } = await sb.storage.from('avatars').upload(path, f, { upsert: true });
     if (error) return toast('آپلود نشد: ' + error.message);
     const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path);
-    const { data, error: e2 } = await sb.from('profiles')
-      .update({ avatar: publicUrl }).eq('id', me.id).select().single();
+    const { data, error: e2 } = await sb.from('profiles').update({ avatar: publicUrl }).eq('id', me.id).select().single();
     if (e2) return toast('ذخیره نشد: ' + e2.message);
     me.avatar = publicUrl;
     renderMyAvatar();
     const box = document.getElementById('profileAvatarBox');
     if (box) box.innerHTML = `<img src="${escapeAttr(publicUrl)}">`;
-    toast('✅ آواتار ذخیره شد');
+    toast('✅ ذخیره شد');
   };
   inp.click();
 }
 
 async function saveProfile(){
   const name = document.getElementById('pName').value.trim();
-  const username = document.getElementById('pUsername').value.trim().toLowerCase();
+  const username = document.getElementById('pUsername').value.trim();
 
+  // ✅ فقط چک حداقلی — هر نام کاربری قبول
   if (!name) return toast('نام خالی است');
-  if (!/^[a-z0-9_]{3,20}$/.test(username))
-    return toast('نام کاربری: فقط a-z، 0-9 و _ ، ۳ تا ۲۰ کاراکتر');
+  if (!username) return toast('نام کاربری خالی است');
+  if (username.length < 2) return toast('نام کاربری حداقل ۲ کاراکتر');
+  if (username.length > 40) return toast('نام کاربری حداکثر ۴۰ کاراکتر');
 
-  const { data, error } = await sb
-    .from('profiles')
-    .update({ name, username })
-    .eq('id', me.id)
-    .select();
-
-  if (error) {
-    if (error.code === '23505') return toast('این نام کاربری قبلاً گرفته شده');
-    if (error.code === '42501') return toast('مجوز نداری (RLS)');
-    return toast('خطا: ' + error.message);
+  // اگه یوزرنیم عوض شده، چک تکراری بودن
+  if (username !== me.username) {
+    const { data: exist } = await sb.from('profiles').select('id').eq('username', username).neq('id', me.id).maybeSingle();
+    if (exist) return toast('این نام کاربری قبلاً گرفته شده');
   }
 
-  if (!data || !data.length) return toast('⚠️ آپدیت انجام نشد — policy رو چک کن');
+  const { data, error } = await sb.from('profiles').update({ name, username }).eq('id', me.id).select();
+  if (error) {
+    if (error.code === '23505') return toast('این نام کاربری قبلاً گرفته شده');
+    return toast('خطا: ' + error.message);
+  }
+  if (!data || !data.length) return toast('آپدیت انجام نشد');
 
   me.name = data[0].name;
   me.username = data[0].username;
@@ -1119,12 +766,9 @@ async function saveProfile(){
   toast('✅ ذخیره شد');
 }
 
-// ═══════════════════════════════════════════════════════
-//  New chat modal
-// ═══════════════════════════════════════════════════════
 function openNewChat(){
   groupSelected = [];
-  const html = `
+  openModal(`
     <div class="modal-hdr"><h3>شروع چت جدید</h3><button class="icon-btn" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div class="tabs">
@@ -1133,200 +777,128 @@ function openNewChat(){
         <button data-tab="channel" onclick="switchNewTab('channel')">کانال</button>
       </div>
       <div id="newTabContent"></div>
-    </div>`;
-  openModal(html);
+    </div>`);
   switchNewTab('user');
 }
 
 function switchNewTab(tab){
-  document.querySelectorAll('.tabs button').forEach(b =>
-    b.classList.toggle('active', b.dataset.tab === tab));
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
   const c = document.getElementById('newTabContent');
   if (tab === 'user') c.innerHTML = userSearchHTML();
   else c.innerHTML = groupSearchHTML(tab);
   if (tab === 'user') setTimeout(() => document.getElementById('userSearchQ')?.focus(), 50);
-  else {
-    setTimeout(() => {
-      document.getElementById('groupSearchQ')?.focus();
-      searchGroups(tab);
-    }, 50);
-  }
+  else { setTimeout(() => { document.getElementById('groupSearchQ')?.focus(); searchGroups(tab); }, 50); }
 }
 
 function userSearchHTML(){
-  return `
-    <div class="field">
-      <input id="userSearchQ" placeholder="جستجوی نام، نام کاربری یا شماره…" oninput="searchUsers()">
-    </div>
+  return `<div class="field"><input id="userSearchQ" placeholder="جستجوی نام، نام کاربری یا شماره…" oninput="searchUsers()"></div>
     <div id="userResults" style="max-height:340px;overflow-y:auto"></div>`;
 }
 
 function groupSearchHTML(type){
-  return `
-    <div class="field">
-      <input id="groupSearchQ" placeholder="جستجوی ${type === 'group' ? 'گروه' : 'کانال'} عمومی…" oninput="searchGroups('${type}')">
-    </div>
+  return `<div class="field"><input id="groupSearchQ" placeholder="جستجوی ${type === 'group' ? 'گروه' : 'کانال'} عمومی…" oninput="searchGroups('${type}')"></div>
     <div id="groupResults" style="max-height:200px;overflow-y:auto"></div>
     <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
       <h4 style="margin-bottom:10px;font-size:14px">ساخت ${type === 'group' ? 'گروه' : 'کانال'} جدید</h4>
-      <div class="field"><label>نام</label><input id="gName" placeholder="نام ${type === 'group' ? 'گروه' : 'کانال'}"></div>
-      <div class="field"><label>توضیحات (اختیاری)</label><textarea id="gDesc" rows="2" placeholder="توضیح کوتاه"></textarea></div>
+      <div class="field"><label>نام</label><input id="gName" placeholder="نام"></div>
+      <div class="field"><label>توضیحات (اختیاری)</label><textarea id="gDesc" rows="2"></textarea></div>
       <div class="field"><label>اعضا</label>
-        <input id="gMemberSearch" placeholder="جستجوی کاربر برای افزودن…" oninput="searchGroupMembers()">
+        <input id="gMemberSearch" placeholder="جستجوی کاربر…" oninput="searchGroupMembers()">
         <div id="gSelected" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
         <div id="gMemberResults" style="max-height:160px;overflow-y:auto;margin-top:6px"></div>
       </div>
-      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gLocked" style="width:auto"> 🔒 قفل (فقط سازنده بتونه اضافه کنه)</label></div>
-      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gPublic" checked style="width:auto"> 🌐 عمومی (قابل جستجو و عضویت)</label></div>
-      <button class="btn btn-primary" style="width:100%" onclick="createGroup('${type}')">ساخت ${type === 'group' ? 'گروه' : 'کانال'}</button>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gLocked" style="width:auto"> 🔒 قفل</label></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gPublic" checked style="width:auto"> 🌐 عمومی</label></div>
+      <button class="btn btn-primary" style="width:100%" onclick="createGroup('${type}')">ساخت</button>
     </div>
-    <style>
-      #gSelected .chip{padding:5px 10px;background:var(--panel2);border-radius:14px;font-size:12px;display:flex;align-items:center;gap:6px}
-      #gSelected .chip button{color:#ef4444;font-size:14px}
-    </style>`;
+    <style>#gSelected .chip{padding:5px 10px;background:var(--panel2);border-radius:14px;font-size:12px;display:flex;align-items:center;gap:6px}#gSelected .chip button{color:#ef4444}</style>`;
 }
 
 async function searchUsers(){
   const q = document.getElementById('userSearchQ').value.trim();
   const box = document.getElementById('userResults');
-  if (!q) { box.innerHTML = '<div style="color:var(--text2);font-size:13px;text-align:center;padding:20px">نام یا شماره را وارد کن</div>'; return; }
-  const { data } = await sb.from('profiles')
-    .select('id,name,username,phone,avatar')
-    .neq('id', me.id)
-    .or(`name.ilike.%${q}%,username.ilike.%${q}%,phone.ilike.%${q}%`)
-    .limit(20);
+  if (!q) { box.innerHTML = ''; return; }
+  const { data } = await sb.from('profiles').select('id,name,username,phone,avatar')
+    .neq('id', me.id).or(`name.ilike.%${q}%,username.ilike.%${q}%,phone.ilike.%${q}%`).limit(20);
   if (!data?.length) { box.innerHTML = '<div style="color:var(--text2);text-align:center;padding:20px">پیدا نشد</div>'; return; }
   box.innerHTML = data.map(u => `
     <div class="result-item" onclick="startPrivateChat('${u.id}')">
       <div class="avatar sm">${u.avatar ? `<img src="${escapeAttr(u.avatar)}">` : escapeHtml((u.name||'?')[0])}</div>
-      <div class="info"><div class="n">${escapeHtml(u.name)}</div><div class="u">@${escapeHtml(u.username)} • ${escapeHtml(u.phone||'')}</div></div>
+      <div class="info"><div class="n">${escapeHtml(u.name)}</div><div class="u">@${escapeHtml(u.username)}</div></div>
       <button class="btn btn-primary" style="padding:6px 12px;font-size:12px">شروع</button>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 async function startPrivateChat(otherId){
-  const { data: existing } = await sb.from('chats').select('*')
-    .eq('type', 'private').contains('members', [me.id, otherId]);
+  const { data: existing } = await sb.from('chats').select('*').eq('type', 'private').contains('members', [me.id, otherId]);
   const found = (existing || []).find(c => c.members.length === 2 && c.members.includes(otherId));
   if (found) { closeModal(); await loadChats(); openChat(found.id); return; }
 
   const { data, error } = await sb.from('chats').insert({
-    type: 'private', members: [me.id, otherId], owner: me.id,
-    is_public: false, is_locked: true
+    type: 'private', members: [me.id, otherId], owner: me.id, is_public: false, is_locked: true
   }).select().single();
   if (error) return toast(error.message);
 
   const newContacts = [...new Set([...(me.contacts || []), otherId])];
   await sb.from('profiles').update({ contacts: newContacts }).eq('id', me.id);
   me.contacts = newContacts;
-
-  closeModal();
-  await loadChats();
-  openChat(data.id);
+  closeModal(); await loadChats(); openChat(data.id);
 }
 
-// 🔍 جستجوی گروه/کانال عمومی (با RPC)
 async function searchGroups(type){
   const q = document.getElementById('groupSearchQ').value.trim();
   const box = document.getElementById('groupResults');
-  box.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text2);font-size:13px">در حال جستجو…</div>';
-
-  const { data, error } = await sb.rpc('search_public_chats', {
-    p_query: q,
-    p_type: type
-  });
-
-  if (error) {
-    console.error('search error:', error);
-    box.innerHTML = '<div style="color:#ef4444;text-align:center;padding:16px;font-size:13px">خطا در جستجو</div>';
-    return;
-  }
-
-  if (!data || !data.length) {
-    box.innerHTML = `<div style="color:var(--text2);text-align:center;padding:16px;font-size:13px">
-      ${q ? 'چیزی پیدا نشد' : `هنوز ${type === 'group' ? 'گروه' : 'کانال'} عمومی ساخته نشده`}
-    </div>`;
-    return;
-  }
-
+  const { data, error } = await sb.rpc('search_public_chats', { p_query: q, p_type: type });
+  if (error) { box.innerHTML = '<div style="color:#ef4444;text-align:center;padding:16px">خطا</div>'; return; }
+  if (!data?.length) { box.innerHTML = '<div style="color:var(--text2);text-align:center;padding:16px">چیزی پیدا نشد</div>'; return; }
   box.innerHTML = data.map(c => {
     const isMember = (c.members || []).includes(me.id);
     const canJoin = !c.is_locked && !isMember;
-    return `
-      <div class="result-item">
-        <div class="avatar sm">${c.avatar ? `<img src="${escapeAttr(c.avatar)}">` : escapeHtml((c.name||'?')[0])}</div>
-        <div class="info">
-          <div class="n">${escapeHtml(c.name)} ${c.is_locked ? '🔒' : ''}</div>
-          <div class="u">${(c.members||[]).length} عضو${c.description ? ' • ' + escapeHtml(c.description).slice(0,30) : ''}</div>
-        </div>
-        ${isMember
-          ? `<button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="openExistingChat('${c.id}')">ورود</button>`
-          : canJoin
-            ? `<button class="btn btn-primary" style="padding:6px 12px;font-size:12px" onclick="joinGroup('${c.id}')">عضویت</button>`
-            : `<span style="font-size:11px;color:var(--text2)">قفل</span>`
-        }
-      </div>`;
+    return `<div class="result-item">
+      <div class="avatar sm">${c.avatar ? `<img src="${escapeAttr(c.avatar)}">` : escapeHtml((c.name||'?')[0])}</div>
+      <div class="info"><div class="n">${escapeHtml(c.name)} ${c.is_locked ? '🔒' : ''}</div><div class="u">${(c.members||[]).length} عضو</div></div>
+      ${isMember ? `<button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="openExistingChat('${c.id}')">ورود</button>`
+        : canJoin ? `<button class="btn btn-primary" style="padding:6px 12px;font-size:12px" onclick="joinGroup('${c.id}')">عضویت</button>`
+        : `<span style="font-size:11px;color:var(--text2)">قفل</span>`}
+    </div>`;
   }).join('');
 }
 
-// 🚪 عضویت در گروه/کانال عمومی (با RPC)
 async function joinGroup(chatId){
   toast('در حال عضویت…');
-  const { data, error } = await sb.rpc('join_public_chat', { p_chat_id: chatId });
-  if (error) {
-    console.error('join error:', error);
-    return toast('عضویت نشد: ' + error.message);
-  }
+  const { error } = await sb.rpc('join_public_chat', { p_chat_id: chatId });
+  if (error) return toast('عضویت نشد: ' + error.message);
   toast('✅ عضو شدی');
-  closeModal();
-  await loadChats();
-  openChat(chatId);
+  closeModal(); await loadChats(); openChat(chatId);
 }
 
-async function openExistingChat(chatId){
-  closeModal();
-  await loadChats();
-  openChat(chatId);
-}
+async function openExistingChat(chatId){ closeModal(); await loadChats(); openChat(chatId); }
 
 async function searchGroupMembers(){
   const q = document.getElementById('gMemberSearch').value.trim();
   const box = document.getElementById('gMemberResults');
   if (!q) { box.innerHTML = ''; return; }
-  const { data } = await sb.from('profiles')
-    .select('id,name,username,avatar')
-    .neq('id', me.id)
-    .or(`name.ilike.%${q}%,username.ilike.%${q}%`)
-    .limit(10);
+  const { data } = await sb.from('profiles').select('id,name,username,avatar')
+    .neq('id', me.id).or(`name.ilike.%${q}%,username.ilike.%${q}%`).limit(10);
   box.innerHTML = (data || []).map(u => {
     const sel = groupSelected.some(x => x.id === u.id);
-    return `
-      <div class="result-item ${sel ? 'selected' : ''}" onclick="toggleGroupMember('${u.id}', '${escapeAttr(u.name)}')">
-        <div class="avatar sm">${u.avatar ? `<img src="${escapeAttr(u.avatar)}">` : escapeHtml((u.name||'?')[0])}</div>
-        <div class="info"><div class="n">${escapeHtml(u.name)}</div><div class="u">@${escapeHtml(u.username)}</div></div>
-        ${sel ? '<span>✓</span>' : ''}
-      </div>`;
+    return `<div class="result-item ${sel ? 'selected' : ''}" onclick="toggleGroupMember('${u.id}', '${escapeAttr(u.name)}')">
+      <div class="avatar sm">${u.avatar ? `<img src="${escapeAttr(u.avatar)}">` : escapeHtml((u.name||'?')[0])}</div>
+      <div class="info"><div class="n">${escapeHtml(u.name)}</div><div class="u">@${escapeHtml(u.username)}</div></div>
+      ${sel ? '<span>✓</span>' : ''}
+    </div>`;
   }).join('');
 }
 
 function toggleGroupMember(id, name){
   if (groupSelected.some(x => x.id === id)) groupSelected = groupSelected.filter(x => x.id !== id);
   else groupSelected.push({ id, name });
-  renderSelectedMembers();
-  searchGroupMembers();
+  renderSelectedMembers(); searchGroupMembers();
 }
-
-function removeGroupMember(id){
-  groupSelected = groupSelected.filter(x => x.id !== id);
-  renderSelectedMembers();
-  searchGroupMembers();
-}
-
+function removeGroupMember(id){ groupSelected = groupSelected.filter(x => x.id !== id); renderSelectedMembers(); searchGroupMembers(); }
 function renderSelectedMembers(){
   document.getElementById('gSelected').innerHTML = groupSelected.map(x =>
-    `<span class="chip">${escapeHtml(x.name)} <button onclick="removeGroupMember('${x.id}')">✕</button></span>`
-  ).join('');
+    `<span class="chip">${escapeHtml(x.name)} <button onclick="removeGroupMember('${x.id}')">✕</button></span>`).join('');
 }
 
 async function createGroup(type){
@@ -1338,38 +910,27 @@ async function createGroup(type){
 
   const memberIds = groupSelected.map(x => x.id);
   const { data, error } = await sb.from('chats').insert({
-    type, name, description: desc,
-    owner: me.id,
-    members: [me.id, ...memberIds],
-    admins: [me.id],
-    is_locked: locked,
-    is_public: isPublic
+    type, name, description: desc, owner: me.id,
+    members: [me.id, ...memberIds], admins: [me.id], is_locked: locked, is_public: isPublic
   }).select().single();
   if (error) return toast(error.message);
   groupSelected = [];
-  closeModal();
-  await loadChats();
-  openChat(data.id);
+  closeModal(); await loadChats(); openChat(data.id);
   toast('✅ ساخته شد');
 }
 
-// ═══════════════════════════════════════════════════════
-//  Chat info
-// ═══════════════════════════════════════════════════════
 function openChatInfo(){
   if (!activeChat) return;
   const c = activeChat;
   const isAdmin = c.admins?.includes(me.id) || c.owner === me.id;
-  const html = `
-    <div class="modal-hdr"><h3>اطلاعات ${c.type === 'group' ? 'گروه' : c.type === 'channel' ? 'کانال' : 'چت'}</h3>
-      <button class="icon-btn" onclick="closeModal()">✕</button></div>
+  openModal(`
+    <div class="modal-hdr"><h3>اطلاعات ${c.type === 'group' ? 'گروه' : c.type === 'channel' ? 'کانال' : 'چت'}</h3><button class="icon-btn" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div style="text-align:center;margin-bottom:16px">
         <div class="avatar lg" id="chatAvatarBox" style="margin:0 auto;${isAdmin ? 'cursor:pointer' : ''}" ${isAdmin ? 'onclick="changeChatAvatar()"' : ''}>
           ${c._avatar ? `<img src="${escapeAttr(c._avatar)}">` : escapeHtml((c._title||'?')[0])}
         </div>
         <div style="font-weight:700;font-size:17px;margin-top:10px">${escapeHtml(c._title)}</div>
-        ${c.description ? `<div style="color:var(--text2);font-size:13px;margin-top:4px">${escapeHtml(c.description)}</div>` : ''}
         ${c.is_public ? '<div style="color:#22c55e;font-size:12px;margin-top:4px">🌐 عمومی</div>' : '<div style="color:var(--text2);font-size:12px;margin-top:4px">🔒 خصوصی</div>'}
       </div>
       ${c.type !== 'private' && isAdmin ? `
@@ -1378,42 +939,30 @@ function openChatInfo(){
         <div class="field"><label style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
           <span><input type="checkbox" id="ciLocked" ${c.is_locked ? 'checked' : ''} style="width:auto"> 🔒 قفل</span>
           <span><input type="checkbox" id="ciPublic" ${c.is_public ? 'checked' : ''} style="width:auto"> 🌐 عمومی</span>
-        </label></div>
-      ` : ''}
+        </label></div>` : ''}
       ${c.type !== 'private' ? `
-        <div style="margin-top:14px">
-          <h4 style="font-size:14px;margin-bottom:8px">اعضا (${c.members.length})</h4>
-          <div id="membersList"></div>
-          ${isAdmin ? `
-            <div class="field" style="margin-top:10px">
-              <input id="addMemberQ" placeholder="افزودن عضو با نام کاربری…" oninput="searchAddMember()">
-              <div id="addMemberResults" style="margin-top:6px"></div>
-            </div>` : ''}
-        </div>
-      ` : ''}
+        <div style="margin-top:14px"><h4 style="font-size:14px;margin-bottom:8px">اعضا (${c.members.length})</h4>
+        <div id="membersList"></div>
+        ${isAdmin ? `<div class="field" style="margin-top:10px"><input id="addMemberQ" placeholder="افزودن عضو…" oninput="searchAddMember()"><div id="addMemberResults" style="margin-top:6px"></div></div>` : ''}</div>` : ''}
     </div>
     <div class="modal-ftr">
       ${c.type !== 'private' ? `<button class="btn btn-danger" onclick="leaveChat()">خروج</button>` : ''}
       <button class="btn btn-ghost" onclick="closeModal()">بستن</button>
       ${c.type !== 'private' && isAdmin ? `<button class="btn btn-primary" onclick="saveChatInfo()">ذخیره</button>` : ''}
-    </div>`;
-  openModal(html);
+    </div>`);
   renderMembersList();
 }
 
 async function renderMembersList(){
   if (!activeChat || activeChat.type === 'private') return;
-  const { data: profs } = await sb.from('profiles')
-    .select('id,name,username,avatar').in('id', activeChat.members);
-  const box = document.getElementById('membersList');
-  if (!box) return;
+  const { data: profs } = await sb.from('profiles').select('id,name,username,avatar').in('id', activeChat.members);
+  const box = document.getElementById('membersList'); if (!box) return;
   box.innerHTML = (profs || []).map(p => {
     const isAdmin = activeChat.admins?.includes(p.id) || activeChat.owner === p.id;
-    return `
-      <div class="result-item">
-        <div class="avatar sm">${p.avatar ? `<img src="${escapeAttr(p.avatar)}">` : escapeHtml((p.name||'?')[0])}</div>
-        <div class="info"><div class="n">${escapeHtml(p.name)} ${p.id === me.id ? '(شما)' : ''} ${isAdmin ? '👑' : ''}</div><div class="u">@${escapeHtml(p.username)}</div></div>
-      </div>`;
+    return `<div class="result-item">
+      <div class="avatar sm">${p.avatar ? `<img src="${escapeAttr(p.avatar)}">` : escapeHtml((p.name||'?')[0])}</div>
+      <div class="info"><div class="n">${escapeHtml(p.name)} ${p.id === me.id ? '(شما)' : ''} ${isAdmin ? '👑' : ''}</div><div class="u">@${escapeHtml(p.username)}</div></div>
+    </div>`;
   }).join('');
 }
 
@@ -1422,7 +971,6 @@ async function changeChatAvatar(){
   inp.type = 'file'; inp.accept = 'image/*';
   inp.onchange = async () => {
     const f = inp.files[0]; if (!f) return;
-    toast('در حال آپلود…');
     const ext = (f.name.split('.').pop() || 'jpg').toLowerCase();
     const path = `chats/${activeChat.id}-${Date.now()}.${ext}`;
     const { error } = await sb.storage.from('avatars').upload(path, f, { upsert: true });
@@ -1430,13 +978,9 @@ async function changeChatAvatar(){
     const { data: { publicUrl } } = sb.storage.from('avatars').getPublicUrl(path);
     const { error: e2 } = await sb.from('chats').update({ avatar: publicUrl }).eq('id', activeChat.id);
     if (e2) return toast(e2.message);
-    activeChat.avatar = publicUrl;
-    activeChat._avatar = publicUrl;
-    const box = document.getElementById('chatAvatarBox');
-    if (box) box.innerHTML = `<img src="${escapeAttr(publicUrl)}">`;
-    await loadChats();
-    updateChatHeaderStatus();
-    toast('✅ ذخیره شد');
+    activeChat.avatar = publicUrl; activeChat._avatar = publicUrl;
+    const box = document.getElementById('chatAvatarBox'); if (box) box.innerHTML = `<img src="${escapeAttr(publicUrl)}">`;
+    await loadChats(); updateChatHeaderStatus(); toast('✅ ذخیره شد');
   };
   inp.click();
 }
@@ -1446,29 +990,21 @@ async function saveChatInfo(){
   const desc = document.getElementById('ciDesc').value.trim();
   const locked = document.getElementById('ciLocked').checked;
   const isPublic = document.getElementById('ciPublic').checked;
-  const { data, error } = await sb.from('chats').update({
-    name, description: desc, is_locked: locked, is_public: isPublic
-  }).eq('id', activeChat.id).select().single();
+  const { error } = await sb.from('chats').update({ name, description: desc, is_locked: locked, is_public: isPublic }).eq('id', activeChat.id);
   if (error) return toast(error.message);
-  activeChat.name = name;
-  activeChat._title = name;
-  activeChat.description = desc;
-  activeChat.is_locked = locked;
-  activeChat.is_public = isPublic;
+  activeChat.name = name; activeChat._title = name; activeChat.description = desc;
+  activeChat.is_locked = locked; activeChat.is_public = isPublic;
   await loadChats();
   document.getElementById('chatName').textContent = name;
-  toast('✅ ذخیره شد');
-  closeModal();
+  toast('✅ ذخیره شد'); closeModal();
 }
 
 async function searchAddMember(){
   const q = document.getElementById('addMemberQ').value.trim();
   const box = document.getElementById('addMemberResults');
   if (!q) { box.innerHTML = ''; return; }
-  const { data } = await sb.from('profiles')
-    .select('id,name,username,avatar')
-    .or(`name.ilike.%${q}%,username.ilike.%${q}%`)
-    .limit(10);
+  const { data } = await sb.from('profiles').select('id,name,username,avatar')
+    .or(`name.ilike.%${q}%,username.ilike.%${q}%`).limit(10);
   const filtered = (data || []).filter(u => !activeChat.members.includes(u.id));
   box.innerHTML = filtered.map(u => `
     <div class="result-item" onclick="addMemberToChat('${u.id}')">
@@ -1487,25 +1023,16 @@ async function addMemberToChat(userId){
   renderMembersList();
   document.getElementById('addMemberQ').value = '';
   document.getElementById('addMemberResults').innerHTML = '';
-  await loadChats();
-  updateChatHeaderStatus();
-  toast('✅ افزوده شد');
+  await loadChats(); updateChatHeaderStatus(); toast('✅ افزوده شد');
 }
 
-// 🚪 خروج (با RPC)
 async function leaveChat(){
   if (!confirm('خارج می‌شوی؟')) return;
   const { error } = await sb.rpc('leave_chat', { p_chat_id: activeChat.id });
   if (error) return toast(error.message);
-  toast('✅ خارج شدی');
-  closeModal();
-  closeChat();
-  await loadChats();
+  toast('✅ خارج شدی'); closeModal(); closeChat(); await loadChats();
 }
 
-// ═══════════════════════════════════════════════════════
-//  Theme
-// ═══════════════════════════════════════════════════════
 async function toggleTheme(){
   const isDark = document.body.classList.toggle('dark');
   document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
@@ -1514,116 +1041,50 @@ async function toggleTheme(){
   me.theme = isDark ? 'dark' : 'light';
 }
 
-// ═══════════════════════════════════════════════════════
-//  🗑️ Logout + حذف کامل حساب
-// ═══════════════════════════════════════════════════════
 async function logout(){
-  const ok = confirm(
-    '⚠️ هشدار!\n\n' +
-    'با این کار حساب شما کاملاً حذف می‌شود:\n' +
-    '• پروفایل، آواتار، پیام‌ها و مخاطبین\n' +
-    '• عضویت در گروه‌ها و کانال‌ها\n' +
-    '• امکان بازیابی وجود ندارد\n\n' +
-    'آیا مطمئنی؟'
-  );
-  if (!ok) return;
-
-  const ok2 = confirm('آخرین تأیید — حساب کاملاً پاک شود؟');
-  if (!ok2) return;
-
-  toast('در حال حذف حساب…');
-
+  if (!confirm('⚠️ حساب کاملاً حذف شود؟\n\nاین عمل قابل بازگشت نیست.')) return;
+  if (!confirm('آخرین تأیید — پاک شود؟')) return;
+  toast('در حال حذف…');
   try {
     try { await sb.removeAllChannels(); } catch(e){}
-
     try {
-      const { data: files } = await sb.storage.from('avatars').list(me.id);
-      if (files && files.length) {
-        await sb.storage.from('avatars').remove(files.map(f => `${me.id}/${f.name}`));
-      }
+      const { data: f1 } = await sb.storage.from('avatars').list(me.id);
+      if (f1?.length) await sb.storage.from('avatars').remove(f1.map(f => `${me.id}/${f.name}`));
+      const { data: f2 } = await sb.storage.from('media').list(me.id);
+      if (f2?.length) await sb.storage.from('media').remove(f2.map(f => `${me.id}/${f.name}`));
     } catch(e){}
-
-    try {
-      const { data: files } = await sb.storage.from('media').list(me.id);
-      if (files && files.length) {
-        await sb.storage.from('media').remove(files.map(f => `${me.id}/${f.name}`));
-      }
-    } catch(e){}
-
     const { error } = await sb.rpc('delete_my_account');
-    if (error) {
-      console.error('delete_my_account error:', error);
-      toast('حذف نشد: ' + error.message);
-      return;
-    }
-
+    if (error) return toast('حذف نشد: ' + error.message);
     await sb.auth.signOut();
     localStorage.removeItem('messenger-auth');
-    localStorage.removeItem('theme');
     sessionStorage.clear();
-
-    toast('✅ حساب حذف شد');
+    toast('✅ حذف شد');
     setTimeout(() => location.replace('index.html'), 800);
-
-  } catch (e) {
-    console.error('Logout error:', e);
-    toast('خطا: ' + e.message);
-  }
+  } catch (e) { toast('خطا: ' + e.message); }
 }
 
-// ═══════════════════════════════════════════════════════
-//  Lightbox
-// ═══════════════════════════════════════════════════════
 function openLightbox(type, url){
-  const l = document.getElementById('lightbox');
-  const c = document.getElementById('lightboxContent');
-  c.innerHTML = type === 'image'
-    ? `<img src="${escapeAttr(url)}">`
-    : `<video src="${escapeAttr(url)}" controls autoplay></video>`;
+  const l = document.getElementById('lightbox'); const c = document.getElementById('lightboxContent');
+  c.innerHTML = type === 'image' ? `<img src="${escapeAttr(url)}">` : `<video src="${escapeAttr(url)}" controls autoplay></video>`;
   l.style.display = 'flex';
 }
-function closeLightbox(){
-  document.getElementById('lightbox').style.display = 'none';
-  document.getElementById('lightboxContent').innerHTML = '';
-}
+function closeLightbox(){ document.getElementById('lightbox').style.display = 'none'; document.getElementById('lightboxContent').innerHTML = ''; }
 
-// ═══════════════════════════════════════════════════════
-//  Helpers
-// ═══════════════════════════════════════════════════════
-function escapeHtml(s){
-  return String(s || '').replace(/[&<>"']/g, ch => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[ch]));
-}
+function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch])); }
 function escapeAttr(s){ return escapeHtml(s); }
-function linkify(s){
-  return s.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline">$1</a>');
-}
-function formatClock(iso){
-  const d = new Date(iso);
-  return d.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' });
-}
+function linkify(s){ return s.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline">$1</a>'); }
+function formatClock(iso){ return new Date(iso).toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }); }
 function formatTime(iso){
-  const d = new Date(iso);
-  const now = new Date();
-  const diff = (now - d) / 1000;
+  const d = new Date(iso), n = new Date(), diff = (n - d) / 1000;
   if (diff < 60) return 'الان';
   if (diff < 3600) return Math.floor(diff/60) + 'د';
-  if (d.toDateString() === now.toDateString()) return formatClock(iso);
+  if (d.toDateString() === n.toDateString()) return formatClock(iso);
   if (diff < 86400 * 2) return 'دیروز';
   return d.toLocaleDateString('fa-IR', { month: 'short', day: 'numeric' });
 }
-function formatSize(bytes){
-  if (!bytes) return '';
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
-  if (bytes < 1024*1024*1024) return (bytes/1024/1024).toFixed(1) + ' MB';
-  return (bytes/1024/1024/1024).toFixed(1) + ' GB';
-}
 function toast(text){
   const t = document.getElementById('toast');
-  t.textContent = text;
-  t.classList.add('show');
+  t.textContent = text; t.classList.add('show');
   clearTimeout(window._toastTimer);
   window._toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
 }
