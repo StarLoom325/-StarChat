@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10152F"/>
+      <stop offset="100%" stop-color="#24104F"/>
+    </linearGradient>
+
+    <linearGradient id="bubble" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6C63FF"/>
+      <stop offset="100%" stop-color="#9B5CFF"/>
+    </linearGradient>
+
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="20"
+                    flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+
+  <!-- Stars -->
+  <g fill="#FFFFFF" opacity="0.9">
+    <circle cx="180" cy="190" r="6"/>
+    <circle cx="820" cy="190" r="5"/>
+    <circle cx="880" cy="350" r="4"/>
+    <circle cx="150" cy="420" r="4"/>
+    <circle cx="760" cy="790" r="6"/>
+    <circle cx="260" cy="820" r="5"/>
+  </g>
+
+  <!-- Main Chat Bubble -->
+  <g filter="url(#shadow)">
+    <path
+      d="M205 315
+         C205 235 270 175 350 175
+         H674
+         C754 175 819 235 819 315
+         V550
+         C819 630 754 690 674 690
+         H465
+         L330 805
+         V690
+         H350
+         C270 690 205 630 205 550
+         Z"
+      fill="url(#bubble)"/>
+  </g>
+
+  <!-- Star -->
+  <g filter="url(#glow)">
+    <path
+      d="M512 245
+         L545 350
+         L655 350
+         L566 415
+         L600 525
+         L512 458
+         L424 525
+         L458 415
+         L369 350
+         L479 350
+         Z"
+      fill="#FFFFFF"/>
+  </g>
+
+  <!-- Chat dots -->
+  <g fill="#FFFFFF">
+    <circle cx="410" cy="585" r="13"/>
+    <circle cx="512" cy="585" r="13"/>
+    <circle cx="614" cy="585" r="13"/>
+  </g>
+
+  <!-- Brand -->
+  <text
+    x="512"
+    y="900"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="82"
+    font-weight="700"
+    fill="#FFFFFF">
+    StarChat
+  </text>
+
+  <!-- Small subtitle -->
+  <text
+    x="512"
+    y="950"
+    text-anchor="middle"
+    font-family="Arial, Helvetica, sans-serif"
+    font-size="28"
+    fill="#CFCBFF">
+    CONNECT • CHAT • SHARE
+  </text>
+</svg>
