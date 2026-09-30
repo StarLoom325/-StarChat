@@ -191,11 +191,17 @@ input,textarea{outline:none;font-family:inherit}
 <div id="toast"></div>
 
 <script>
+// ═══════════════════════════════════════════════════════
+//  State
+// ═══════════════════════════════════════════════════════
 let sb = null, me = null, chats = [], activeChat = null, activeMessages = [];
 let onlineUsers = new Set(), realtimeChans = [], unread = {}, groupSelected = [];
 let typingTimeout = null, typingChannel = null, typingTimers = {};
 let mediaRecorder = null, recordedChunks = [], recordStartTime = 0, recordTimerInterval = null, recordStream = null;
 
+// ═══════════════════════════════════════════════════════
+//  SDK Load
+// ═══════════════════════════════════════════════════════
 (function loadSDK(){
   if (window.supabase && window.supabase.createClient) return init();
   const s = document.createElement('script');
@@ -210,6 +216,9 @@ let mediaRecorder = null, recordedChunks = [], recordStartTime = 0, recordTimerI
   document.head.appendChild(s);
 })();
 
+// ═══════════════════════════════════════════════════════
+//  Init
+// ═══════════════════════════════════════════════════════
 async function init(){
   try {
     const { createClient } = window.supabase;
@@ -246,6 +255,9 @@ async function init(){
   }
 }
 
+// ═══════════════════════════════════════════════════════
+//  Presence
+// ═══════════════════════════════════════════════════════
 async function setupPresence(){
   const ch = sb.channel('presence:global:' + me.id, { config: { presence: { key: me.id } } });
   ch.on('presence', { event: 'sync' }, () => {
@@ -256,6 +268,9 @@ async function setupPresence(){
   realtimeChans.push(ch);
 }
 
+// ═══════════════════════════════════════════════════════
+//  Load chats
+// ═══════════════════════════════════════════════════════
 async function loadChats(){
   const { data: rawChats, error } = await sb.from('chats').select('*')
     .contains('members', [me.id]).order('updated_at', { ascending: false });
@@ -293,6 +308,9 @@ async function loadChats(){
   renderChats();
 }
 
+// ═══════════════════════════════════════════════════════
+//  Realtime
+// ═══════════════════════════════════════════════════════
 function setupRealtime(){
   realtimeChans.forEach(c => { try { sb.removeChannel(c); } catch(e){} });
   realtimeChans = []; setupPresence();
@@ -371,6 +389,9 @@ function notifyNewMessage(chat, m){
   try { new Notification(chat._title || 'پیام جدید', { body }); } catch(e){}
 }
 
+// ═══════════════════════════════════════════════════════
+//  Render chat list
+// ═══════════════════════════════════════════════════════
 function renderChats(){
   const q = (document.getElementById('searchChats').value || '').toLowerCase().trim();
   const list = document.getElementById('chatList');
@@ -417,6 +438,9 @@ function renderMyAvatar(){
   else el.textContent = (me.name || '?')[0];
 }
 
+// ═══════════════════════════════════════════════════════
+//  Open chat
+// ═══════════════════════════════════════════════════════
 async function openChat(chatId){
   const chat = chats.find(c => c.id === chatId);
   if (!chat) return;
@@ -473,9 +497,12 @@ function updateChatHeaderStatus(){
   const el = document.getElementById('chatSub');
   if (activeChat.type === 'private') el.textContent = onlineUsers.has(activeChat._otherId) ? 'آنلاین' : 'آفلاین';
   else if (activeChat.type === 'group') el.textContent = `${activeChat.members.length} عضو${activeChat.is_locked ? ' • 🔒' : ''}`;
-  else el.textContent = `${activeChat.members.length} عضو • کانال`;
+  else el.textContent = `📢 کانال • ${activeChat.members.length} عضو`;
 }
 
+// ═══════════════════════════════════════════════════════
+//  Render messages
+// ═══════════════════════════════════════════════════════
 function renderMessages(){
   const el = document.getElementById('messages');
   if (!activeMessages.length) { el.innerHTML = `<div class="empty"><div class="big">👋</div><div>هنوز پیامی نیست</div></div>`; return; }
@@ -487,9 +514,14 @@ function messageHTML(m){
   const self = m.sender === me.id;
   const sender = m._sender || {};
   const time = formatClock(m.created_at);
+  // در کانال، فقط ادمین می‌تونه پیام بفرسته
+  const canReply = activeChat.type !== 'channel' ||
+    (activeChat.admins || []).includes(me.id) ||
+    activeChat.owner === me.id;
+
   let content = '';
   if (m.type === 'text') content = `<div>${linkify(escapeHtml(m.text || ''))}</div>`;
-  else if (m.type === 'image') content = `<img src="${escapeAttr(m.media)}" onclick="openLightbox('image','${escapeAttr(m.media)}')" loading="lazy">${m.text ? `<div style="margin-top:4px">${escapeHtml(m.text)}</div>` : ''}`;
+  else if (m.type === 'image') content = `<img src="${escapeAttr(m.media)}" onclick="openLightbox('image','${escapeAttr(m.media)}')" loading="lazy">`;
   else if (m.type === 'video') content = `<video src="${escapeAttr(m.media)}" controls preload="metadata" onclick="event.stopPropagation()"></video>`;
   else if (m.type === 'audio') content = `<div style="display:flex;align-items:center;gap:8px"><span style="font-size:20px">🎤</span><audio src="${escapeAttr(m.media)}" controls preload="metadata" style="flex:1"></audio></div>`;
   else content = `<a href="${escapeAttr(m.media)}" download class="file-link" target="_blank">📎 <span>${escapeHtml(m.media_meta?.name || 'فایل')}</span></a>`;
@@ -528,8 +560,16 @@ function scrollToBottom(){
   requestAnimationFrame(() => { el.scrollTop = el.scrollHeight; });
 }
 
+// ═══════════════════════════════════════════════════════
+//  Send
+// ═══════════════════════════════════════════════════════
 async function sendMessage(){
   if (!activeChat) return;
+  // در کانال فقط ادمین‌ها می‌تونن بفرستن
+  if (activeChat.type === 'channel') {
+    const canSend = (activeChat.admins || []).includes(me.id) || activeChat.owner === me.id;
+    if (!canSend) return toast('فقط ادمین‌های کانال می‌توانند پیام بفرستند');
+  }
   const input = document.getElementById('msgInput');
   const text = input.value.trim();
   if (!text) return;
@@ -580,8 +620,15 @@ function composerKey(e){
 
 function autoGrow(el){ el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
 
+// ═══════════════════════════════════════════════════════
+//  Record audio
+// ═══════════════════════════════════════════════════════
 async function startRecording(){
   if (!activeChat) return toast('اول یک چت انتخاب کن');
+  if (activeChat.type === 'channel') {
+    const canSend = (activeChat.admins || []).includes(me.id) || activeChat.owner === me.id;
+    if (!canSend) return toast('فقط ادمین‌های کانال می‌توانند پیام بفرستند');
+  }
   if (mediaRecorder && mediaRecorder.state === 'recording') return;
   try {
     recordStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
@@ -633,6 +680,9 @@ async function uploadAudio(blob, ext, duration){
   await sendPayload({ text: '', type: 'audio', media: publicUrl, media_meta: { duration, size: blob.size, mime: blob.type } });
 }
 
+// ═══════════════════════════════════════════════════════
+//  Message actions
+// ═══════════════════════════════════════════════════════
 function copyMsg(id){
   const m = activeMessages.find(x => x.id === id);
   if (!m || !m.text) return;
@@ -661,7 +711,14 @@ async function deleteForAll(id){
   if (node) node.outerHTML = deletedBubbleHTML({ id, sender: me.id });
 }
 
+// ═══════════════════════════════════════════════════════
+//  Attach
+// ═══════════════════════════════════════════════════════
 function openAttach(){
+  if (activeChat && activeChat.type === 'channel') {
+    const canSend = (activeChat.admins || []).includes(me.id) || activeChat.owner === me.id;
+    if (!canSend) return toast('فقط ادمین‌های کانال می‌توانند پیام بفرستند');
+  }
   const inp = document.createElement('input');
   inp.type = 'file'; inp.accept = 'image/*,video/*,*/*';
   inp.onchange = async () => { if (inp.files[0]) await uploadAndSend(inp.files[0]); };
@@ -683,13 +740,19 @@ async function uploadAndSend(file){
   await sendPayload({ text: '', type, media: publicUrl, media_meta: { name: file.name, size: file.size, mime: file.type } });
 }
 
+// ═══════════════════════════════════════════════════════
+//  Modals
+// ═══════════════════════════════════════════════════════
 function openModal(html){
   document.getElementById('modalRoot').innerHTML = `<div class="modal-bg" onclick="if(event.target===this)closeModal()"><div class="modal" onclick="event.stopPropagation()">${html}</div></div>`;
 }
 function closeModal(){ document.getElementById('modalRoot').innerHTML = ''; }
 
+// ═══════════════════════════════════════════════════════
+//  Profile
+// ═══════════════════════════════════════════════════════
 function openProfile(){
-  const html = `
+  openModal(`
     <div class="modal-hdr"><h3>پروفایل من</h3><button class="icon-btn" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div style="text-align:center;margin-bottom:20px">
@@ -707,8 +770,7 @@ function openProfile(){
     <div class="modal-ftr">
       <button class="btn btn-ghost" onclick="closeModal()">انصراف</button>
       <button class="btn btn-primary" onclick="saveProfile()">ذخیره</button>
-    </div>`;
-  openModal(html);
+    </div>`);
 }
 
 async function changeAvatar(){
@@ -737,14 +799,11 @@ async function changeAvatar(){
 async function saveProfile(){
   const name = document.getElementById('pName').value.trim();
   const username = document.getElementById('pUsername').value.trim();
-
-  // ✅ فقط چک حداقلی — هر نام کاربری قبول
   if (!name) return toast('نام خالی است');
   if (!username) return toast('نام کاربری خالی است');
   if (username.length < 2) return toast('نام کاربری حداقل ۲ کاراکتر');
   if (username.length > 40) return toast('نام کاربری حداکثر ۴۰ کاراکتر');
 
-  // اگه یوزرنیم عوض شده، چک تکراری بودن
   if (username !== me.username) {
     const { data: exist } = await sb.from('profiles').select('id').eq('username', username).neq('id', me.id).maybeSingle();
     if (exist) return toast('این نام کاربری قبلاً گرفته شده');
@@ -757,15 +816,16 @@ async function saveProfile(){
   }
   if (!data || !data.length) return toast('آپدیت انجام نشد');
 
-  me.name = data[0].name;
-  me.username = data[0].username;
-  me.avatar = data[0].avatar;
+  me.name = data[0].name; me.username = data[0].username; me.avatar = data[0].avatar;
   renderMyAvatar();
   await loadChats();
   closeModal();
   toast('✅ ذخیره شد');
 }
 
+// ═══════════════════════════════════════════════════════
+//  New Chat / Group / Channel
+// ═══════════════════════════════════════════════════════
 function openNewChat(){
   groupSelected = [];
   openModal(`
@@ -774,7 +834,7 @@ function openNewChat(){
       <div class="tabs">
         <button data-tab="user" class="active" onclick="switchNewTab('user')">کاربر</button>
         <button data-tab="group" onclick="switchNewTab('group')">گروه</button>
-        <button data-tab="channel" onclick="switchNewTab('channel')">کانال</button>
+        <button data-tab="channel" onclick="switchNewTab('channel')">📢 کانال</button>
       </div>
       <div id="newTabContent"></div>
     </div>`);
@@ -796,20 +856,24 @@ function userSearchHTML(){
 }
 
 function groupSearchHTML(type){
-  return `<div class="field"><input id="groupSearchQ" placeholder="جستجوی ${type === 'group' ? 'گروه' : 'کانال'} عمومی…" oninput="searchGroups('${type}')"></div>
-    <div id="groupResults" style="max-height:200px;overflow-y:auto"></div>
+  const isChannel = type === 'channel';
+  const label = isChannel ? 'کانال' : 'گروه';
+  const icon = isChannel ? '📢' : '👥';
+  return `
+    <div class="field"><input id="groupSearchQ" placeholder="جستجوی ${label} عمومی…" oninput="searchGroups('${type}')"></div>
+    <div id="groupResults" style="max-height:180px;overflow-y:auto"></div>
     <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px">
-      <h4 style="margin-bottom:10px;font-size:14px">ساخت ${type === 'group' ? 'گروه' : 'کانال'} جدید</h4>
-      <div class="field"><label>نام</label><input id="gName" placeholder="نام"></div>
-      <div class="field"><label>توضیحات (اختیاری)</label><textarea id="gDesc" rows="2"></textarea></div>
+      <h4 style="margin-bottom:10px;font-size:14px">${icon} ساخت ${label} جدید</h4>
+      <div class="field"><label>نام</label><input id="gName" placeholder="نام ${label}"></div>
+      <div class="field"><label>توضیحات (اختیاری)</label><textarea id="gDesc" rows="2" placeholder="توضیح کوتاه"></textarea></div>
       <div class="field"><label>اعضا</label>
         <input id="gMemberSearch" placeholder="جستجوی کاربر…" oninput="searchGroupMembers()">
         <div id="gSelected" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
-        <div id="gMemberResults" style="max-height:160px;overflow-y:auto;margin-top:6px"></div>
+        <div id="gMemberResults" style="max-height:140px;overflow-y:auto;margin-top:6px"></div>
       </div>
-      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gLocked" style="width:auto"> 🔒 قفل</label></div>
-      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gPublic" checked style="width:auto"> 🌐 عمومی</label></div>
-      <button class="btn btn-primary" style="width:100%" onclick="createGroup('${type}')">ساخت</button>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gLocked" style="width:auto"> 🔒 قفل (فقط سازنده بتونه اضافه کنه)</label></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="gPublic" checked style="width:auto"> 🌐 عمومی (قابل جستجو و عضویت)</label></div>
+      <button class="btn btn-primary" style="width:100%" onclick="createGroup('${type}')">ساخت ${label}</button>
     </div>
     <style>#gSelected .chip{padding:5px 10px;background:var(--panel2);border-radius:14px;font-size:12px;display:flex;align-items:center;gap:6px}#gSelected .chip button{color:#ef4444}</style>`;
 }
@@ -848,15 +912,21 @@ async function startPrivateChat(otherId){
 async function searchGroups(type){
   const q = document.getElementById('groupSearchQ').value.trim();
   const box = document.getElementById('groupResults');
+  box.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text2);font-size:13px">در حال جستجو…</div>';
   const { data, error } = await sb.rpc('search_public_chats', { p_query: q, p_type: type });
   if (error) { box.innerHTML = '<div style="color:#ef4444;text-align:center;padding:16px">خطا</div>'; return; }
-  if (!data?.length) { box.innerHTML = '<div style="color:var(--text2);text-align:center;padding:16px">چیزی پیدا نشد</div>'; return; }
+  if (!data?.length) {
+    box.innerHTML = `<div style="color:var(--text2);text-align:center;padding:16px;font-size:13px">${q ? 'چیزی پیدا نشد' : `هنوز ${type === 'channel' ? 'کانال' : 'گروه'} عمومی ساخته نشده`}</div>`;
+    return;
+  }
   box.innerHTML = data.map(c => {
     const isMember = (c.members || []).includes(me.id);
     const canJoin = !c.is_locked && !isMember;
+    const icon = c.type === 'channel' ? '📢' : '👥';
     return `<div class="result-item">
       <div class="avatar sm">${c.avatar ? `<img src="${escapeAttr(c.avatar)}">` : escapeHtml((c.name||'?')[0])}</div>
-      <div class="info"><div class="n">${escapeHtml(c.name)} ${c.is_locked ? '🔒' : ''}</div><div class="u">${(c.members||[]).length} عضو</div></div>
+      <div class="info"><div class="n">${icon} ${escapeHtml(c.name)} ${c.is_locked ? '🔒' : ''}</div>
+        <div class="u">${(c.members||[]).length} عضو${c.description ? ' • ' + escapeHtml(c.description).slice(0,30) : ''}</div></div>
       ${isMember ? `<button class="btn btn-ghost" style="padding:6px 12px;font-size:12px" onclick="openExistingChat('${c.id}')">ورود</button>`
         : canJoin ? `<button class="btn btn-primary" style="padding:6px 12px;font-size:12px" onclick="joinGroup('${c.id}')">عضویت</button>`
         : `<span style="font-size:11px;color:var(--text2)">قفل</span>`}
@@ -897,10 +967,14 @@ function toggleGroupMember(id, name){
 }
 function removeGroupMember(id){ groupSelected = groupSelected.filter(x => x.id !== id); renderSelectedMembers(); searchGroupMembers(); }
 function renderSelectedMembers(){
-  document.getElementById('gSelected').innerHTML = groupSelected.map(x =>
+  const el = document.getElementById('gSelected');
+  if (el) el.innerHTML = groupSelected.map(x =>
     `<span class="chip">${escapeHtml(x.name)} <button onclick="removeGroupMember('${x.id}')">✕</button></span>`).join('');
 }
 
+// ═══════════════════════════════════════════════════════
+//  Create Group / Channel
+// ═══════════════════════════════════════════════════════
 async function createGroup(type){
   const name = document.getElementById('gName').value.trim();
   const desc = document.getElementById('gDesc').value.trim();
@@ -910,28 +984,44 @@ async function createGroup(type){
 
   const memberIds = groupSelected.map(x => x.id);
   const { data, error } = await sb.from('chats').insert({
-    type, name, description: desc, owner: me.id,
-    members: [me.id, ...memberIds], admins: [me.id], is_locked: locked, is_public: isPublic
+    type,
+    name,
+    description: desc,
+    owner: me.id,
+    members: [me.id, ...memberIds],
+    admins: [me.id],
+    is_locked: locked,
+    is_public: isPublic
   }).select().single();
-  if (error) return toast(error.message);
+  if (error) return toast('ساخت نشد: ' + error.message);
   groupSelected = [];
-  closeModal(); await loadChats(); openChat(data.id);
-  toast('✅ ساخته شد');
+  closeModal();
+  await loadChats();
+  openChat(data.id);
+  toast(type === 'channel' ? '✅ کانال ساخته شد' : '✅ گروه ساخته شد');
 }
 
+// ═══════════════════════════════════════════════════════
+//  Chat Info
+// ═══════════════════════════════════════════════════════
 function openChatInfo(){
   if (!activeChat) return;
   const c = activeChat;
-  const isAdmin = c.admins?.includes(me.id) || c.owner === me.id;
+  const isAdmin = (c.admins || []).includes(me.id) || c.owner === me.id;
+  const typeLabel = c.type === 'group' ? 'گروه' : c.type === 'channel' ? 'کانال' : 'چت';
   openModal(`
-    <div class="modal-hdr"><h3>اطلاعات ${c.type === 'group' ? 'گروه' : c.type === 'channel' ? 'کانال' : 'چت'}</h3><button class="icon-btn" onclick="closeModal()">✕</button></div>
+    <div class="modal-hdr"><h3>اطلاعات ${typeLabel}</h3><button class="icon-btn" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div style="text-align:center;margin-bottom:16px">
         <div class="avatar lg" id="chatAvatarBox" style="margin:0 auto;${isAdmin ? 'cursor:pointer' : ''}" ${isAdmin ? 'onclick="changeChatAvatar()"' : ''}>
           ${c._avatar ? `<img src="${escapeAttr(c._avatar)}">` : escapeHtml((c._title||'?')[0])}
         </div>
         <div style="font-weight:700;font-size:17px;margin-top:10px">${escapeHtml(c._title)}</div>
-        ${c.is_public ? '<div style="color:#22c55e;font-size:12px;margin-top:4px">🌐 عمومی</div>' : '<div style="color:var(--text2);font-size:12px;margin-top:4px">🔒 خصوصی</div>'}
+        ${c.description ? `<div style="color:var(--text2);font-size:13px;margin-top:4px">${escapeHtml(c.description)}</div>` : ''}
+        <div style="margin-top:6px">
+          ${c.is_public ? '<span style="color:#22c55e;font-size:12px">🌐 عمومی</span>' : '<span style="color:var(--text2);font-size:12px">🔒 خصوصی</span>'}
+          ${c.is_locked ? ' <span style="color:#ef4444;font-size:12px">• 🔒 قفل</span>' : ''}
+        </div>
       </div>
       ${c.type !== 'private' && isAdmin ? `
         <div class="field"><label>نام</label><input id="ciName" value="${escapeAttr(c.name)}"></div>
@@ -941,9 +1031,14 @@ function openChatInfo(){
           <span><input type="checkbox" id="ciPublic" ${c.is_public ? 'checked' : ''} style="width:auto"> 🌐 عمومی</span>
         </label></div>` : ''}
       ${c.type !== 'private' ? `
-        <div style="margin-top:14px"><h4 style="font-size:14px;margin-bottom:8px">اعضا (${c.members.length})</h4>
-        <div id="membersList"></div>
-        ${isAdmin ? `<div class="field" style="margin-top:10px"><input id="addMemberQ" placeholder="افزودن عضو…" oninput="searchAddMember()"><div id="addMemberResults" style="margin-top:6px"></div></div>` : ''}</div>` : ''}
+        <div style="margin-top:14px">
+          <h4 style="font-size:14px;margin-bottom:8px">اعضا (${c.members.length})</h4>
+          <div id="membersList"></div>
+          ${isAdmin ? `<div class="field" style="margin-top:10px">
+            <input id="addMemberQ" placeholder="افزودن عضو…" oninput="searchAddMember()">
+            <div id="addMemberResults" style="margin-top:6px"></div>
+          </div>` : ''}
+        </div>` : ''}
     </div>
     <div class="modal-ftr">
       ${c.type !== 'private' ? `<button class="btn btn-danger" onclick="leaveChat()">خروج</button>` : ''}
@@ -958,10 +1053,11 @@ async function renderMembersList(){
   const { data: profs } = await sb.from('profiles').select('id,name,username,avatar').in('id', activeChat.members);
   const box = document.getElementById('membersList'); if (!box) return;
   box.innerHTML = (profs || []).map(p => {
-    const isAdmin = activeChat.admins?.includes(p.id) || activeChat.owner === p.id;
+    const isAdmin = (activeChat.admins || []).includes(p.id) || activeChat.owner === p.id;
     return `<div class="result-item">
       <div class="avatar sm">${p.avatar ? `<img src="${escapeAttr(p.avatar)}">` : escapeHtml((p.name||'?')[0])}</div>
-      <div class="info"><div class="n">${escapeHtml(p.name)} ${p.id === me.id ? '(شما)' : ''} ${isAdmin ? '👑' : ''}</div><div class="u">@${escapeHtml(p.username)}</div></div>
+      <div class="info"><div class="n">${escapeHtml(p.name)} ${p.id === me.id ? '(شما)' : ''} ${isAdmin ? '👑' : ''}</div>
+      <div class="u">@${escapeHtml(p.username)}</div></div>
     </div>`;
   }).join('');
 }
@@ -971,6 +1067,7 @@ async function changeChatAvatar(){
   inp.type = 'file'; inp.accept = 'image/*';
   inp.onchange = async () => {
     const f = inp.files[0]; if (!f) return;
+    toast('در حال آپلود…');
     const ext = (f.name.split('.').pop() || 'jpg').toLowerCase();
     const path = `chats/${activeChat.id}-${Date.now()}.${ext}`;
     const { error } = await sb.storage.from('avatars').upload(path, f, { upsert: true });
@@ -1033,6 +1130,9 @@ async function leaveChat(){
   toast('✅ خارج شدی'); closeModal(); closeChat(); await loadChats();
 }
 
+// ═══════════════════════════════════════════════════════
+//  Theme & Logout
+// ═══════════════════════════════════════════════════════
 async function toggleTheme(){
   const isDark = document.body.classList.toggle('dark');
   document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
@@ -1063,6 +1163,9 @@ async function logout(){
   } catch (e) { toast('خطا: ' + e.message); }
 }
 
+// ═══════════════════════════════════════════════════════
+//  Lightbox
+// ═══════════════════════════════════════════════════════
 function openLightbox(type, url){
   const l = document.getElementById('lightbox'); const c = document.getElementById('lightboxContent');
   c.innerHTML = type === 'image' ? `<img src="${escapeAttr(url)}">` : `<video src="${escapeAttr(url)}" controls autoplay></video>`;
@@ -1070,6 +1173,9 @@ function openLightbox(type, url){
 }
 function closeLightbox(){ document.getElementById('lightbox').style.display = 'none'; document.getElementById('lightboxContent').innerHTML = ''; }
 
+// ═══════════════════════════════════════════════════════
+//  Helpers
+// ═══════════════════════════════════════════════════════
 function escapeHtml(s){ return String(s || '').replace(/[&<>"']/g, ch => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[ch])); }
 function escapeAttr(s){ return escapeHtml(s); }
 function linkify(s){ return s.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank" style="color:inherit;text-decoration:underline">$1</a>'); }
